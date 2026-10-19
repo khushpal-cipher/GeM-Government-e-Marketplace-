@@ -10,6 +10,8 @@ Details live in `docs/HANDOFF.md`; this file only says what is done, what is nex
 - Explain things in simple words.
 - **Update this file before the session ends**: move finished items to "Done", rewrite "Continue from here",
   add the date. Then commit it locally.
+- When the owner types **"give me a prompt"**: update this file and `docs/NEXT_SESSION_PROMPT.md`,
+  commit locally, and reply with the "Prompt to paste" box from that file.
 
 ## Done
 
@@ -32,7 +34,13 @@ Video progress: all 15 ticked:
 - [x] 1  - [x] 2  - [x] 3  - [x] 4  - [x] 5  - [x] 6  - [x] 7  - [x] 8
 - [x] 9  - [x] 10 - [x] 11 - [x] 12 - [x] 13 - [x] 14 - [x] 15
 
-Next (ask the owner which to start; he hasn't chosen yet):
+State: code unchanged since `ca5a4b1`; `cd backend && uv run pytest -q` → **398 passed** (20 Oct 2026).
+The next session follows `docs/NEXT_SESSION_PROMPT.md` ("Full instructions").
+
+**Next exact action:** ask the owner "build (A) or plan the live tour (B)?"; if he just says go, do A step 1
+(list which extra bid-PDF fields are missing, then add them test-first).
+
+Options:
 1. **Live read-only tour** (Later #1 below). The videos never show orders, invoices, CRAC or
    payment, so the tour should cover only those, plus one check: is the buyer's **Red/Orange payment
    flag** visible anywhere without login (videos only show it on the logged-in bid page).
