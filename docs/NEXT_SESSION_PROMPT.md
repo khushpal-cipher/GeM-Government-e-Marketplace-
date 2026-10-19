@@ -32,37 +32,18 @@ Continue GeM Assistant in ~/Documents/startup/GEM/GeM (branch docs/hinglish-test
   deleted on 20 Oct 2026 (owner's request); only the Hindi captions remain in `../gem-videos/*.hi.vtt`.
   To look at a screen again, re-download that one video (commands in git history of progress.md).
 - Code is unchanged since the merge `ca5a4b1`. Tests: 398 passed on 20 Oct 2026.
-- The owner has **not yet chosen** between building and the live tour.
+- The owner chose (20 Oct 2026): **plan first, then build everything**. The full build plan is in
+  progress.md ("Build plan"), with phases 0–9, owner decisions D1–D7 and a model/effort note per step.
 
-### Step 1: ask one question
+### Step 1: follow the build plan
 
-Ask the owner: "Start building (A) or plan the live read-only tour of your GeM account (B)?"
-If he says "go" without choosing, do A.
+Do progress.md "Next exact action", then the plan's steps in order, one at a time: failing test with a
+saved fixture → make it pass → full suite → commit → update progress.md. Ask the owner only the
+decisions D1–D7 (product, money, accounts); use the stated default when he hasn't answered.
 
-### A. Build (HANDOFF §2 order, sharpened by docs/gem-videos.md)
+### A. Build: see progress.md "Build plan" (replaces the old A list)
 
-Do one slice at a time; for each: write a failing test with a saved fixture, make it pass, run the
-full suite, commit, update progress.md.
-
-1. **More fields from the bid PDF** (the parser already reads ~26, see `backend/src/gem_assistant/parsing/`
-   and HANDOFF §1). First list which of these are missing, then add them with page + quote evidence
-   like the existing fields: consignee address(es) + quantity + **delivery days**; EMD amount; ePBG %
-   and duration (months); evaluation method total-value vs item-wise (may exist); PAC items
-   (fixed make/model); estimated bid value; inspection required; MSE/MII purchase preference;
-   links to the specification document and BOQ detail document. Fixtures: use bid PDFs already in
-   `backend/tests/fixtures/`; if a new one is needed, fetch one public bid PDF through the app's
-   existing safe fetcher, never by hand-written scraping.
-2. **Read the ATC**: the text ATC is at the end of the bid PDF ("Buyer Added Bid Specific Terms and
-   Conditions") and, per the videos, on `fulfilment.gem.gov.in/contract/terms.jsp?bidra=…`; the
-   buyer may also attach an ATC file. Check first whether these are reachable without login through
-   the existing `UrlPolicy`/`SafeFetcher`; if a new host is needed, ask the owner before allowing it.
-   Output: a per-bid **document checklist** (each required document, where it was asked, page + quote;
-   remind ≤10 MB and ≤100 pages per upload, ATC certificates merged into one PDF).
-3. Then early alerts for new bids, then delivery-state / exact-spec / certificate / OEM checks, then
-   past L1 prices from public result pages (`bidplus.gem.gov.in/bidding/bid/getBidResultView/<id>`).
-   `gem.gov.in/view_contracts` has a captcha: never automate it.
-
-### B. Plan the live tour (no code)
+### B. Plan the live tour (no code; this is build step 8.0)
 
 Write `docs/live-tour-plan.md`: the owner logs in himself, human speed, read-only, no submit / accept /
 pay / OTP clicks. Cover only what the videos don't show: orders (accept/decline, buyer requests),
