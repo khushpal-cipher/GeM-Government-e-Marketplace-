@@ -22,43 +22,39 @@ Details live in `docs/HANDOFF.md`; this file only says what is done, what is nex
 | 19 Oct 2026 | Read GeM's official rules (GTC v1.29 of 25 Mar 2026, FAQs, penalty policy): orders, ePBG, delivery, invoices, payment, penalties, disputes; 2024 video facts checked | HANDOFF.md §4a |
 | 20 Oct 2026 | Full seller process table: what AI can do fully / prepare only / never (given in chat; matches §2) | HANDOFF.md §2 |
 | 20 Oct 2026 | Tested that the built-in browser can play the videos and screenshot frames (works; ads need skipping) | — |
+| 20 Oct 2026 | Watched all 15 training videos ("Option A"): frames at each screen change + Hindi captions; screen-by-screen notes, what changed since 2024, AI level per screen, and a product summary at the end | docs/gem-videos.md |
 | 20 Oct 2026 | Decided: **no logging in or scraping GeM with a bot** (grave-penalty risk). A later live tour is read-only, the owner logs in himself, human speed, no submit/accept/pay clicks | — |
 
-## Continue from here: watch all 15 videos ("Option A"), owner approved on 20 Oct 2026
+## Continue from here (written 20 Oct 2026)
 
-Goal: learn what is **on screen** in every video (menus, buttons, fields, steps), not just what is said.
-
-Playlist: https://youtube.com/playlist?list=PLffbgSv9050j2xxXP117UIAt3dkJszQBz (15 videos, ~4 h, 2024).
-
-Steps:
-1. **Check the download size first and tell the owner before downloading** (this was promised):
-   `uvx yt-dlp -F <url>` or `uvx yt-dlp --print "%(title)s %(filesize_approx)s" -f "bv*[height<=480]+ba/b[height<=480]" <playlist url>`.
-   Wait for his OK on the size.
-2. Download at 480p into a folder **outside the repo**: `/Users/khushpalsinghchouhan/Documents/startup/GEM/gem-videos/`
-   (never commit videos or frames). Also get the Hindi captions:
-   `uvx yt-dlp --write-auto-subs --sub-langs hi --sub-format vtt ...`
-3. ffmpeg is **not installed**. Either ask the owner to run `brew install ffmpeg`, or use the bundled
-   binary: `uvx --with imageio-ffmpeg python -c "import imageio_ffmpeg; print(imageio_ffmpeg.get_ffmpeg_exe())"`.
-4. Save a frame each time the screen changes, e.g.
-   `ffmpeg -i v.mp4 -vf "select='gt(scene,0.08)',showinfo" -vsync vfr frames/v02_%04d.jpg`
-   (the showinfo log gives each frame's time). Drop near-identical frames. Expect ~300–600 in total.
-5. Go video by video: look at the frames next to the captions at the same time.
-6. Write `docs/gem-videos.md`, one section per video:
-   steps in order (e.g. Dashboard → Catalogue → Add product), what each screen shows,
-   timestamps, what changed since 2024 (check against HANDOFF.md §4a), and AI level per screen
-   (full / prepare / never). Own words only; don't copy the videos.
-7. Commit `docs/gem-videos.md` and this file after each few videos, so a cut-off session loses little.
-
-Video progress (tick as done):
+The 15 videos are done; read the **summary at the end of `docs/gem-videos.md`** first.
+Video progress: all 15 ticked:
 - [x] 1  - [x] 2  - [x] 3  - [x] 4  - [x] 5  - [x] 6  - [x] 7  - [x] 8
-- [x] 9  - [x] 10 - [ ] 11 - [ ] 12 - [ ] 13 - [ ] 14 - [ ] 15
+- [x] 9  - [x] 10 - [x] 11 - [x] 12 - [x] 13 - [x] 14 - [x] 15
+
+Next (ask the owner which to start; he hasn't chosen yet):
+1. **Live read-only tour** (Later #1 below). The videos never show orders, invoices, CRAC or
+   payment, so the tour should cover only those, plus one check: is the buyer's **Red/Orange payment
+   flag** visible anywhere without login (videos only show it on the logged-in bid page).
+2. Or start building (HANDOFF §2 order). The videos sharpen steps 1–3:
+   read the ATC page `fulfilment.gem.gov.in/contract/terms.jsp?bidra=…` + the buyer-uploaded ATC file
+   + custom/BOQ spec PDFs; extract consignee address and delivery days, EMD amount, ePBG %/months,
+   total vs item-wise, PAC items from the bid PDF; per-bid document checklist.
+3. Past L1 prices: public result pages `bidplus.gem.gov.in/bidding/bid/getBidResultView/<id>`
+   (found via all-bids with "Bid/RA Status"). `gem.gov.in/view_contracts` has a **captcha → never automate**.
+
+Housekeeping: videos, captions and frames are in `../gem-videos/` (outside the repo, ~365 MB + frames).
+Keep them until the owner says to delete. Frames were made with the bundled ffmpeg
+(`uvx --with imageio-ffmpeg python -c "import imageio_ffmpeg; print(imageio_ffmpeg.get_ffmpeg_exe())"`)
+and `select='gt(scene,0.08)'`, keeping the last frame of each burst less than 3 s apart.
 
 ## Later (in order)
 
 1. Live read-only tour of the seller's own GeM account (he logs in; he agrees first). Cover only what
    the videos don't show: orders, invoices, receipt (CRAC), payment.
 2. Leftover checks from HANDOFF.md §4a "Still not checked" (Payment Escalation SOP, current penalty
-   policy version, Revenue Policy v1.5 PDF, minimum delivery days, 10 MB limit, vendor check fee).
+   policy version, Revenue Policy v1.5 PDF, minimum delivery days, vendor check fee). The 10 MB limit
+   is now seen on screen in video 10 (2024; also max 100 pages per file).
 3. Build in the order in HANDOFF.md §2: read the buyer's attached ATC file → early alerts for new bids →
    delivery-state / exact-spec / certificate / OEM checks + document checklist → past L1 prices.
    New ideas from §4a: show the buyer's Orange/Red payment flag; deadline reminders.

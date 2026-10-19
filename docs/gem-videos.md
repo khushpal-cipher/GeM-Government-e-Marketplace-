@@ -440,3 +440,208 @@ The core video. He walks through four real bids (broom Q4, broom V2 Q4, lyophili
 - The document upload screen is the model for our checklist: one line per row, ≤10 MB and ≤100
   pages each, ATC certificates merged into one PDF.
 - Remind: list the matching product **2+ days before** the bid ends.
+
+---
+
+## Video 11: Taking part in a custom bid (12:05)
+
+Custom bid = buyer wants something with **no GeM category**. Buyer first makes a non-availability
+report, then a custom catalogue with a spec PDF, then publishes the bid (open at least 21 days per
+captions). The seller makes a **one-off catalogue for that one bid**.
+
+### Screens in order
+
+| Time | Screen | What is on it | AI |
+|---|---|---|---|
+| 3:21 | Seller bid list, **By Bid Type = Product Custom Bid/RAs**, category "Customitem prod…" | Same pink "select a category" box | never |
+| 4:05 | Two bid PDFs side by side | **Category bid PDF:** a spec table "Specification / Specification Name / Bid Requirement (Allowed Values)" (e.g. bedside table: material, type, dimensions). Page 3 shows long standard clauses (MSE purchase preference: L1+15% band, 25% to MSE; MII Class-1/Class-2 local supplier; RA rules: H1 elimination exceptions) and an **Evaluation Method: Item-wise** table (Schedule, Estimated Value, Item/Category, Quantity) | full (we parse this PDF) |
+| 5:02 | **Custom bid PDF** (Optical Elements (Q3), IIT Kanpur) | No spec table; instead a link to the buyer's **specification PDF** at `mkp.gem.gov.in/catalog_data/catalog_support_document/buyer_documents/.../SpecificationDocument/...pdf` (an annexure listing each optical part with numbers). Bid page 1 shows turnover 14 lakh, OEM turnover 28 lakh, experience 3 years | full (read the spec PDF) |
+| 6:07 | Bid Participation page | **Buyer Payment Status: Red** again. Item "Optical Elements (Q3)", **Specification Document: Download**. Documents Required here: Experience, Past Performance, Bidder Turnover, Certificate (ATC), OEM Authorization, OEM Annual Turnover, Additional Doc 1 and 2 (ATC), **Financial Document** | prepare |
+| 6:41 | "Choose the product…" → **UPLOAD NEW PRODUCT** (only way to make a custom catalogue) | Opens listing form in **Universal Category >> Universal Category…** | never |
+| 7:20 | 1 General Information | Brand/OEM + tick "I certify that I am the OEM of the brand… or have authorisation…"; Golden Parameters: **Custom Specification** dropdown | prepare |
+| 7:33 | 2 Catalogue Information | Model, Product Name, … "Is there any active/current bid for this catalogue?" → **Yes + Bid No. (mandatory for this category)**. A custom catalogue works **only for that bid** (not other bids, not direct purchase) | prepare |
+| 8:28 | 3 Offering Quantity & Price | Country of origin, PPP-MII local content (with warning: false origin/MII = **grave incident**, account disabled), Make in India declaration, SKU, HSN, offer price (tentative) | prepare |
+| 9:03 | 4 Product Specification | "Catalogue Document Guidelines: upload a document with the specs of the product you offer; buyer will use it to evaluate against his spec document". Upload **Specification Document** | prepare (draft a point-by-point compliance sheet) |
+| 9:43 | 5 Upload Images → Review T&C → captcha → Publish | SUCCESS pop-up | never |
+| 10:49 | Back in the bid → Choose the product | His new "Optical Elements ₹1,00,000" card appears **at once** (custom catalogues don't wait). Then Buyer Spec Document / Offered Spec Document, confirm tick, Product Title/Make/Model, Quantity you can fulfil, Encrypt & Save; rest as video 10 | never |
+
+Captions tip: make your own spec PDF **and** add the buyer's spec PDF signed and stamped, merged into one file.
+
+### Changed since 2024
+
+- Nothing in §4a contradicts this. Minimum 21 days for custom bids not checked against an official source.
+
+### For the product
+
+- For custom bids the buyer's real requirements are in a **separate spec PDF** (link in the bid
+  PDF). Our app should download and read it, same as the ATC file (HANDOFF §2 "read spec file").
+- AI can draft the **compliance sheet** (buyer's line → his offer → complies yes/no) for him to sign.
+- "Financial Document" can appear as an extra required document; include it in the checklist.
+
+---
+
+## Video 12: Bunch bids (several items) and service bids (8:42)
+
+### Screens in order
+
+| Time | Screen | What is on it | AI |
+|---|---|---|---|
+| 1:56 | Logged-in bid list, then `gem.gov.in` → public bid list | — | full |
+| 3:13 | Bid PDF of a 2-item bid (Modular Table + Almirah Steel), "Bid Details" page | **Bid to RA enabled** No, **Type of Bid** Two Packet, **Primary product category**, **Time allowed for technical clarifications** 2 days, **Inspection required** No, **Estimated Bid Value** ₹17,25,000, **Evaluation Method: Total value wise evaluation**; **EMD Detail**: advisory bank, **EMD amount** ₹34,500; **ePBG Detail**: bank, **ePBG % 2.00**, **duration 12 months**; EMD exemption note (MSE makers / startups, upload proof; traders not exempt) | full (we parse this PDF) |
+| 3:33 | Same PDF, later pages | Past-performance clause (40% of bid quantity in one of last 3 years, to a govt org/PSU/listed company); per-item spec tables ("As per GeM Category Specification"); **consignee table: Reporting Officer, Address, Quantity, Delivery Days (15)**; Buyer Added ATC: bidder and OEM turnover clauses, **Service & Support: functional service centre in each consignee state** (or set one up within 30 days of award; payment only after proof), **dedicated toll-free number** | full |
+| 3:56 | 5-item bid PDF | **Evaluation Method: Item wise** table with Schedule 1–5, estimated value, item, quantity; items marked **"(Under PAC)"** with fixed Make/Model; MII purchase preference No, MSE purchase preference Yes; **"Details of the Competent Authority approval for PAC"** (name, designation, approval number, date, "View Document") | full |
+| 5:10 | Participate (item-wise bid) → Catalogue Offering | Note: **"Seller can participate in one or more schedules… EMD % will apply on the selected schedules only."** Table: Schedule Name, Category, Quantity, Consignee VIEW, tick boxes, SELECT ALL SCHEDULES, **SAVE SELECTED SCHEDULES** (he ticks 2, 4, 5) | prepare (which schedules he can supply) |
+| 5:53 | Service bid: category **Cab and Taxi Hiring** | 574 bids; e.g. "Monthly Basis Cab & Taxi Hiring Services – Sedan; 2000 km × 320 hours; Local 24×7", Number of vehicles 1, Buyer Payment Status shown | never |
+| 6:59 | Service **Catalogue Offering** | Table: **Specification / Bid Requirement / Offered** (dropdown per row): vehicle type Sedan vs Hatchback, type of car (pick ≥3: Dzire, Xcent, Tigor), usage 2000 km × 320 h, local 24×7, model year 2021–23, km travelled ≤25,000, A/C, hilly + plain area, fuel any. **ENCRYPT & SAVE**. No new catalogue needed per bid for services | prepare (fill offered column from his fleet) |
+| 7:21 | Done | "The technical offering has been encrypted…", CHANGE CATALOGUE, CONTINUE; then price, documents, OTP as video 10 | never |
+
+Captions: total-value bids need every item; item-wise bids let him choose; service bids always need all services.
+
+### Changed since 2024
+
+- EMD shown (2% here) fits [GTC cl. 4(m)] range. ePBG 2% for 12 months: buyer may pick up to 5%
+  (GFR 3–5%) [GTC cl. 7], so 2% on a 2024 bid is lower than today's GFR range; not re-checked.
+
+### For the product
+
+- From the bid PDF we can show at once: **total-value vs item-wise** (can he bid on part?),
+  **PAC items** (fixed brand/model: only that model can bid), **EMD amount**, **ePBG % and months**,
+  **estimated bid value**, **inspection required**, **service-centre-in-each-state** and toll-free
+  rules in ATC. Some are already parsed (HANDOFF §1); check which are missing.
+- For item-wise bids, list the schedules his catalogue can match, so he ticks only those.
+
+---
+
+## Video 13: BOQ bids (no catalogue needed) (8:18, 360p)
+
+BOQ (bill of quantity) bid = buyer needs **5 or more** items that have no GeM category, in one bid.
+The only bid type where the seller **lists nothing first**. Captions: don't expect BOQ for items that
+do have a category.
+
+### Screens in order
+
+| Time | Screen | What is on it | AI |
+|---|---|---|---|
+| 2:09 | Seller bid list, category **"BOQ"** selected | BOQ bids show up like others | never |
+| 2:31 | BOQ bid PDF | Page 1: Item Category = a list (self inking stamp ink, …ink1, ink2…), **BOQ Title**, Bid to RA No, Type Two Packet, Primary product category, technical clarification 2 days, inspection No, Evaluation **Total value wise**. Per item: "(Minimum 50% and 20% local content for Class 1 and Class 2 local supplier)", links **Specification Document: View File** and **BOQ Detail Document: View File**; consignee table with Delivery Days (10) | full |
+| 2:45 | Buyer's spec PDF (`mkp.gem.gov.in/uploaded_documents/.../BoqDocument/...`) | A one-page letter: table of items (particulars, spec, colour, quantity) + notes (e.g. "only participants ready to supply", "adequate experience") | full (read it) |
+| 3:13 | **BOQ Detail Document** (spreadsheet) | Columns: Item Number, Item Title, Item Description, Item Quantity, Unit of Measure, Consignee ID, Delivery Period (days). Captions: sellers used to fill prices in this sheet; since ~2023 not needed, it is for reading only | full |
+| 3:51 | Bid Participation → Catalogue Offering | Each item row has **SELECT CATALOGUE** → "Please enter the item details": **Make, Model, HSN Code** → SAVE AND CONTINUE (row turns to CHANGE CATALOGUE). Captions: these **go onto the purchase order** exactly, so be correct. Documents required here: Certificate (ATC), **Compliance of BoQ specification and supporting document** | prepare (draft make/model/HSN list) |
+| 5:25 | Offer Price | Unit price (incl. all taxes) per item; site shows the total | prepare |
+| 6:13 | Representation pop-up | Here the note says **"up to 2 days from bid publish"** (a shorter bid); one per window; reopens on corrigendum. Another bid shows only "My Representations" (window closed) | prepare |
+| 7:38 | Talking head | Next: results and competitors' prices | — |
+
+### Changed since 2024
+
+- The 2-day representation window on screen matches the official rule for 6–9-day bids [SFAQ].
+- Nothing else here conflicts with §4a.
+
+### For the product
+
+- BOQ bids are the easiest to bid on (no listing). Good alert target for a small seller: search
+  **BOQ Title** (video 9) for his product words.
+- The BOQ detail sheet is a clean, machine-readable item list; parse it to tell him which lines he
+  can supply.
+- AI can prepare the **Make / Model / HSN** list per line (it ends up on the PO, so he checks it).
+
+---
+
+## Video 14: Getting a direct purchase order (filmed in Ladakh) (10:42)
+
+First 6 minutes: talking head outdoors. Direct purchase is meant to be "buyer picks the cheapest
+listing"; sellers use it when a **known buyer** wants to order from them. Before starting he must
+know three things: **exact price, exact delivery location, exact quantity**.
+
+### Screens in order
+
+| Time | Screen | What is on it | AI |
+|---|---|---|---|
+| 6:23 | Market → **Plain Copier Paper (V2) as per IS 14490 (Q4 Category)** | 1,247 products, from ₹70 | full (public) |
+| 6:37 | Sort **Price: High to Low** | Top listings ₹500 (OEM, VA). Check: can his target price (₹385) sit in this category's range at all? | full |
+| 7:28 | Left filters → **Product Specifications** | BIS, grammage, ECO-mark, "agree to provide advance samples…", number of sheets in a ream, **Sizes** (A4), BIS marked, test report from NABL/ILAC lab… He ticks **A4** → 789 products | full |
+| 7:39 | Result cards around his price (₹395, ₹310, ₹300) | Rule in captions: if the matching listing shows **more** than his target → copy it ("Sell this item"), set price/stock/location, then **send the product link to the buyer**. If it shows **less** → check where that cheaper price applies | full / prepare |
+| 8:05 | Product page (Bindals A4 ₹395, MRP ₹475; country of origin "Not Declared") | MRP decides the lowest he can go (≥10% below MRP) | full |
+| 8:22 | **VIEW ALL SELLERS** → **Other Sellers** for RADEX A4 80 GSM | Rows: ₹359 for district Jalpaiguri (WB) + pin 735232; ₹305 Dehradun district; ₹440 Delhi; ₹320 Andhra Pradesh… each with OEM-verified flags, stock, min qty. He checks no one lists **below his price for the buyer's location** (Meghalaya) → he can win it | full (public) |
+| 10:16 | Talking head | Next video promised: ₹25k–₹5 lakh direct purchase (not in this playlist) | — |
+
+### Changed since 2024
+
+- Video: direct up to **₹25,000** with no comparison; ₹25k–₹5 lakh needs 3-way comparison; tender
+  above ₹5 lakh. **Today:** direct up to **₹50,000**; **₹50k–₹10 lakh** = L1 among ≥3 sellers/OEMs;
+  above ₹10 lakh bid/RA [GTC cl. 4, BFAQ].
+- Direct/L1 orders are auto-accepted except red-flag buyers/freight-heavy (120 h to decide);
+  declining freezes stock for 15 days [SFAQ] (not in the video).
+- MRP rule (≥10% below) still true [SFAQ].
+
+### For the product
+
+- A **"win this direct order" helper** is all public data and read-only: given category, spec
+  (e.g. A4), buyer's district/state and target price, scan the category sorted by price, open
+  "Other Sellers" for the closest listings, and tell him whether anyone undercuts him **for that
+  location**, and the lowest price he can list (MRP − 10%). He then lists and sends the link himself.
+- Warn: once listed for that location he must deliver any direct order from it (video 5 warning).
+
+---
+
+## Video 15: Bid results, competitors' prices, Push Button Procurement, contracts (10:48)
+
+### Screens in order
+
+| Time | Screen | What is on it | AI |
+|---|---|---|---|
+| 3:25 | Seller bid list → tick **Participated Bids** | Extra filter **By Bid/RA Status: Technical Evaluated, Financial Evaluated, Bid/RA Awarded**. Cards show Status (e.g. Technical Evaluation, Bid Award), **Technical Status: Qualified / Disqualified 👁**, links **BID Document**, **Participation Document**, progress Technical Evaluation → Financial Evaluation → Bid Award, **View BID Results** | never (login) |
+| 4:19 | **Bid result page** (`bidplus.gem.gov.in/bidding/bid/getBidResultView/<id>`) | 1 Bid Details (status, quantity, dates, validity, avg turnover asked, experience asked), Buyer Details, **2 Technical Evaluation: "List of Sellers Participated"**: S.No, **Seller Name**, Offered Item (make/model/title), Participated On, **EMD Status** (e.g. "Registered with designated Agency/Authority", "Start-up"), MSE/MII status, **Status Qualified/Disqualified** (eye icon shows the buyer's reason), Specification view, Clarifications, **Challenge/Representation**; **3 Financial Evaluation** (prices and rank) | full (public, see below) |
+| 4:47 | Disqualified row | Captions: a **challenge window of 2 days**, once; buyer may or may not reconsider. Advisory: accepting/rejecting is the buyer's call, GeM has no role | prepare (draft challenge text) |
+| 5:40 | Logged out: `bidplus.gem.gov.in/all-bids` → tick **Bid/RA Status** | 18,039 records with Status Not Evaluated / Technical Evaluation / Financial Evaluation / Bid Award; buttons **View Bid Results** and **View RA Results**. Keyword "almirah" → past almirah bids; open one → same result page as above, **without login** | full (public) |
+| 6:58 | Seller dashboard → **Push Button Procurement** (`bestprice.gem.gov.in/…`) | **Product PBP Notice** list: PBP Notice Number (GEM/2024/PBP/…), item (e.g. Laptop – Notebook), quantity, ministry, organisation, department/address, PBP Notice Status (Published / Cancelled), create and end date, **Offer Product**. Captions: experimental mode, open only **3 days**, **no documents**, only some categories; buyer uses it when listed prices look too high | prepare (alert); never (offer) |
+| 8:07 | `gem.gov.in` → **View Contracts** (`gem.gov.in/view_contracts`) | Search by date range (+ bid number), category; **captcha required**. Each contract: Contract No (GEMC-…), Status (Order Accepted / Fulfilment in Progress / Waiting for Seller Payment), Organisation type and name, ministry, department, office zone, buyer designation, **Buying Mode: Direct or Bid/RA** (+ bid number), contract date, total; product, **brand, model, ordered quantity, price**. Contract PDF downloadable: buyer, financial approval, paying authority, **seller name/company**, GST note ("GST invoice to be raised in the name of the buyer"), product table | full to read by hand; **not for a bot (captcha)** |
+| 9:48 | Talking head | Next: direct purchase (video 14 in this playlist) | — |
+
+### Changed since 2024
+
+- Challenge: once, within **48 hours after technical evaluation** [SFAQ]: matches "2 days".
+- "Waiting for Seller Payment" status on a contract is likely the transaction-charge step (must pay
+  before accepting/invoicing) [SFAQ]; not explained in the video.
+
+### For the product
+
+- **Past results are public without login**: `bidplus.gem.gov.in/all-bids` with Bid/RA Status, then
+  `…/getBidResultView/<id>` lists every bidder, qualified or not, and (financial tab) their prices.
+  This is the source for HANDOFF §2 "past winning (L1) prices" and for "who are my competitors".
+  Keep the same safety limits as today's search (read-only, slow, daily budget).
+- **View Contracts needs a captcha**: our app must **not** automate it (the "no CAPTCHA, no
+  scraping-past-protection" rule). He can look up a contract himself, or paste a contract PDF for
+  the AI to read.
+- **Push Button Procurement notices** are short (3 days) and have no paperwork: worth an alert if he
+  sells in a PBP category. Where they show without login is not checked.
+- After a rejection, the AI can read the buyer's reason (he pastes it) and draft the one-time
+  challenge within 48 h.
+
+---
+
+## What the 15 videos add for the product (summary)
+
+New compared with HANDOFF §4/§4a, all seen on screen:
+
+1. **Public pages we can read without login** (read-only, slow, within today's limits):
+   category search with quadrants (`mkp.gem.gov.in/search?q=`), category pages with prices and
+   filters, Browse All Categories / Brands, a product's **Other Sellers** (price per location),
+   bid list filters and Advance Search (category, ministry/state, consignee city, BOQ title),
+   bid results with all bidders (`getBidResultView`). Not for a bot: **View Contracts** (captcha).
+2. **Bid documents hold more than we read today:** consignee address + delivery days, EMD amount,
+   ePBG % and months, evaluation method (total vs item-wise), PAC items, inspection, estimated
+   value, MSE/MII preference, plus **ATC text** (`fulfilment.gem.gov.in/contract/terms.jsp`),
+   the **buyer-uploaded ATC file**, the **custom/BOQ spec PDF** and the **BOQ detail sheet**.
+3. **Buyer Payment Status (Red/Orange)** appears on the logged-in bid participation page.
+4. **Exact-spec matching** is the real gate: the bid's "Allowed Values" table vs his listing.
+   Listing a match takes up to 48 h to reach the bid → alerts must come early.
+5. **Prepare-only helpers** the screens make obvious: per-bid document checklist (≤10 MB,
+   ≤100 pages per file, ATC certificates merged), spec-sheet → GeM dropdown mapping for new
+   listings, listing pre-check (photos, MRP proof, brand/model), compliance sheet for custom bids,
+   Make/Model/HSN list for BOQ, buyer questions (representation) and challenge drafts,
+   "can I win this direct order at this location?" check.
+6. **Still never for the AI:** anything after login that submits, declares, pays or uses an OTP
+   (sign-up, profile, listing publish, bid submit, MII/land-border declarations, caution money).
+
+Not covered by the playlist (unchanged from HANDOFF §4): accepting orders, delivery, invoices,
+payments, ePBG upload, ₹50k–₹10 lakh L1 purchase, ratings, incidents. These are for the live tour.

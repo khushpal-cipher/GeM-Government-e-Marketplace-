@@ -93,6 +93,9 @@ What a seller does, by stage (V = video number):
 - **Direct purchase (V14):** ≤ ₹25k direct order; ₹25k–₹5 lakh needs 3-way comparison; to win a
   promised order, list a product with no lower price for that location and send the buyer the link.
 
+**Screens of all 15 videos (watched 20 Oct 2026):** see `docs/gem-videos.md` (pages, fields,
+what changed since 2024, AI level per screen, summary at the end).
+
 Not covered by the playlist: accepting orders, delivery, invoices, payments, ePBG submission,
 ₹25k–₹5 lakh direct purchase, ratings/penalties, disputes.
 
