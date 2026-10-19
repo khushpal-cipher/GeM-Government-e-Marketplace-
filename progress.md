@@ -50,8 +50,8 @@ Steps:
 7. Commit `docs/gem-videos.md` and this file after each few videos, so a cut-off session loses little.
 
 Video progress (tick as done):
-- [x] 1  - [x] 2  - [x] 3  - [x] 4  - [x] 5  - [ ] 6  - [ ] 7  - [ ] 8
-- [ ] 9  - [ ] 10 - [ ] 11 - [ ] 12 - [ ] 13 - [ ] 14 - [ ] 15
+- [x] 1  - [x] 2  - [x] 3  - [x] 4  - [x] 5  - [x] 6  - [x] 7  - [x] 8
+- [x] 9  - [x] 10 - [ ] 11 - [ ] 12 - [ ] 13 - [ ] 14 - [ ] 15
 
 ## Later (in order)
 

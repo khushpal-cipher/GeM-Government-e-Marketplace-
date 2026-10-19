@@ -223,3 +223,220 @@ shows him no bids in it.
   can **really** deliver to (warn: refusing a selected location = possible debarment), stock,
   min qty, lead time.
 - Warn: the offer price can't be raised for 30 days.
+
+---
+
+## Video 6: Uploading a new product (24:06)
+
+First 3 minutes: talking head. Resellers can make new listings only in Q3/Q4 (Q1/Q2 are OEM-only).
+Owning a brand (registered trademark) is different from being an OEM (which needs vendor
+assessment); a reseller with a trademark can get the brand approved and list under it.
+
+### Screens in order
+
+| Time | Screen | What is on it | AI |
+|---|---|---|---|
+| 3:09 | Category **Executive Table (V2) (Q3)** → link **(Sell in this category)** | Opens `admin-mkp.gem.gov.in/#!/catalog/new?bnid=...` | — |
+| 3:28 | Step bar with 5 dots: General Information → Catalogue Information → Offering Quantity & Price → Product Specification → Upload Images | Top: **"Find your Product Category in the Marketplace"** (search by keywords, or four Level 1–4 dropdowns) and **"My Categories"** (categories he already has products in, each with ADD ITEM). Link: "Cannot find a suitable category? Click here to submit a request for creation of a new category or to suggest changes" | prepare (pick category) |
+| 3:50 | **1. General Information** | Category path line (Furniture and Furnishings >> Commercial and Industrial furniture >> Freestanding furniture >> Executive Table (V2)). Fields: Product Category, **Brand/OEM\*** dropdown (all brands in this category; "Unbranded" at the end), **"Couldn't find your brand? Click here to add"**, *Auto Create Catalogue*, **Clone Catalogue Specifications** (enter a catalogue id), **Golden Parameters\*** (GENERIC: frame, storage type, keyboard tray, footrest; MATERIAL: tabletop material…) | prepare |
+| 4:55 | **"New Request"** pop-up (brand) | Request types: *We own a Registered Trademark for a Brand* / *We own a brand but have no registered trademark* / *We don't own a brand and want an OEM dashboard without a brand*. Brand name + Confirm. Note: **processing usually takes 7 days** by the GeM Brand Approval team; track it under Brand/OEM Requests. Captions: then website (or NA) + trademark certificate upload | prepare (gather documents); never (submit) |
+| 6:21 | Catalogue → **Catalogue Search** → More → **Brand / OEM Requests** | "There are no products to show" (none filed) | never |
+| 7:19 | Brand/OEM = **Unbranded**, then every golden parameter from dropdowns | Captions: values must be picked from the lists, **no free text**; if your exact spec isn't listed you can't type it | prepare (map his spec sheet to the dropdown values) |
+| 9:04 | Pop-up after Save/Proceed | "Please find below existing products in the marketplace with the same specifications… you may pair… or click **Proceed with new item**". Here: "You have no matching product available, please upload new product matching buyer requirements to participate" | prepare |
+| 10:23 | **2. Catalogue Information** | **Model\*** (50 chars), **Product Name\*** (100 chars), Product Description, Video url, Product Page Link (brand site page showing MRP), "Is there any active/current bid for this catalogue? Yes/No" | prepare (draft text) |
+| 11:05 | **3. Offering Quantity & Price** | Authorization fields (as video 5); **Country of Origin**; "Declare local content as per **PPP-MII** policy?" Yes/No (can't change later); **Local Content %** (as per PPP-MII Order 29 May 2019; can't change for 30 days); **Make in India Declaration** tick (takes ownership; false % → action by GeM and buyers); SKU; HSN; **MRP in INR\*** | prepare (never tick the declaration for him) |
+| 12:11 | **MRP Document Guidelines** + Upload MRP Documents\* | Document type list: Product Brochure, Government Order Copy, GST Invoice, Import Document, **MRP Declaration on OEM Letterhead**, Packaging Photo; "+ Add New Document". Captions: the proof must point clearly at this one product (not a 90-item brochure) | prepare |
+| 14:02 | Offer price "Range [5000–150000]" (this category), discount slabs, delivery locations, stock, min qty, lead time, Undertaking tick | Same as video 5 | prepare |
+| 15:10 | **4. Product Specification** | Long list of required dropdowns in groups (GENERIC, MATERIAL, EXTENDED RETURN UNIT, pedestal unit…), values quoting IS standards (e.g. "particle board grade II of IS 12823") | prepare |
+| 15:49 | **Catalogue Document Guidelines** + Upload Documents\* | Accepted: OEM spec sheet/datasheet, **BIS certificate/licence**, OEM authorisation, GST invoice showing pack size/model, any mandatory licence (FSSAI, PESO, CE, USFDA, CPCB…). At least one needed | prepare |
+| 16:07 | **5. Upload Images** | Three slots: Front view / Side-Top-Back view / Interior-close-up view. Guidelines: real product photo, **white background, no watermark or seller logo, ≤300 KB, jpg/png, 3 different angles**; tick "I certify that all images are distinct". Same file thrice → red bar **"Please upload distinct images"** | prepare (check photos) |
+| 18:20 | Captions only | Model "Godrej" on an Unbranded listing, or "purple table" when the photo isn't purple → rejected. Photo, name and specs must agree | full (check) |
+| 18:40 | Review T&C, tick, captcha, PUBLISH | **SUCCESS!** "queued for review… see it under **Waiting for Admin Clearance**" | never |
+| 19:10 | Catalogue Search → **Waiting For Admin Clearance** tab | His listing with status "Waiting for Admin Clearance"; another row shows **"Awaiting OEM Approval"** | never |
+| 19:56 | **Notified Products** tab | Rejected listing: Product Status "Incomplete", Inventory "Stock Expired", links **Admin Rejection reason**, Show Reasons, edit; red "Stock Note: the stock has been marked invalid". Pop-up lists Field + Reason, e.g. *Make → "kindly mention the brand name"*; *ISI CM/L number → "if ISI marked is yes, must specify CM/L no."*. Fix with edit and resend | prepare (read reasons, draft fixes) |
+| 20:41 | **Session Expiration Warning** | "Because you have been inactive, your session is about to expire" STAY LOGGED IN / LOG OUT NOW | — |
+| 21:27 | A published listing's page | Captions: **published listings can't be edited**; to change a spec, make a new listing | full |
+| 22:12 | **Clone Catalogue Specifications**: paste the old product's catalogue id → Submit | All golden parameters fill in automatically; only price, MRP proof etc. left | prepare |
+| 22:55 | Talking head | Next: services | — |
+
+### Changed since 2024
+
+- Success pop-up says 4–6 hours; GeM now says listings normally need **48 hours** [GTC cl. 4(e)].
+- MRP change only 90 days after the last approved MRP [SFAQ]; not shown here.
+- Brand approval "usually 7 days" is from the 2024 screen; not re-checked.
+
+### For the product
+
+- Biggest prepare-only job here: **turn his product spec sheet into GeM's dropdown values** for a
+  category, and list the missing ones before he starts (no free text is allowed).
+- **Pre-check before he publishes**: brand vs model text, photo vs colour/spec, 3 distinct
+  white-background photos ≤300 KB, MRP proof that names this exact product, at least one
+  catalogue document (BIS etc.), offer ≥10% under MRP and inside the category range.
+- **Read rejection reasons** from Notified Products (he pastes them) and suggest exact fixes.
+- MII %: tell him it is locked once declared and false values are punished.
+
+---
+
+## Video 7: Becoming an OEM (vendor assessment) (20:11)
+
+First 10 minutes: talking head (already in HANDOFF §4: everyone starts as reseller; RITES does a
+document check then a video check; exemptions; trademark vs no trademark).
+
+### Screens in order
+
+| Time | Screen | What is on it | AI |
+|---|---|---|---|
+| 9:55 | My Account → **Vendor Assessment → Assessments** (`my-account#!/seller_profile/vendor_assessments`) | Rules box: vendor assessment is **mandatory for OEMs** unless exempt; checks capacity and past performance; a **non-refundable fee** is paid online to the verifying agency; assessment is **finished within 15 days of payment**; seller can object **within 5 days** of the draft report. Table: Seller Name, Status, Assessor Status, Created At, Marked for Revert At, Actions; **NEW ASSESSMENT REQUEST**. Sub-menu: Assessments, Assessment Exemption Documents, Assessment Exemption | full (explain) |
+| 10:35 | **Vendor Assessment** wizard (`mkp.gem.gov.in/vendor_assessment#!/index`) | Left steps: **Assess me As → Vendor Profile → Bank Account Details → Category details → Financial details → Submit VA** (and Assessor Response later). "Assess me as": Manufacturers or OEMs / Resellers | never |
+| 10:58 | Vendor Profile | Profile values copied from his account; asks **Additional Contact Number\*** and **Additional Email ID\*** | never |
+| 11:07 | Bank Account Details | Fetched from profile; PROCEED | never |
+| 11:32 | **Category Details** | "Category for which vendor assessment required": Offering type (Product), Category\* (type-ahead, e.g. "table" → Executive Table (V2), Table Mats…), Description\*, **Production Capacity per month\***, OEM authorization tick; ADD NEW ROW (no limit). **Sold Details**: Sold to type, Entity/Govt ministry, Year, Category, Quantity, Sold Value (₹) | prepare (list his made-in-house categories, capacity, past sales) |
+| 13:22 | Financial details | His ITR rows (ack number, year, turnover, P&L, ITR type) fetched from profile | never |
+| 14:26 | **Submit VA** | "Vendor Assessment details are completed. Proceed to submit." → **Submission success!!!** with a VA id and time. Captions: a login for the agency's site comes by email; documents there, then fee, then video assessment, then report | never |
+| 14:53 | **Assessment Exemption** (`.../vendor_assessment_exemption`) | Box: sellers with **₹500 crore+ turnover, BIS licence holders for that category, central/state PSUs, govt departments** are exempt; **exemption check is free**; agency takes **2 working days**. NEW EXEMPTION REQUEST | full (tell him if he may qualify) |
+| 15:41 | Exemption wizard → **Assessment Exemption Criteria** | Options: Central/State PSUs; **OEMs holding BIS licence for that product category**; sellers recommended by a CPSE/govt department for set categories and period; registered societies/trusts with government representation; vaccine makers on the Health Ministry list; drug makers with notarised undertaking + valid drug licence; medical-device makers with a valid manufacturing licence. Then Category details → Documents → Submit | prepare |
+| 16:38 | Talking head | Trademark: with a registered trademark his listings are approved instantly; without one he can still be an OEM as "BrandName – CompanyName" (affidavit) or "Unbranded – CompanyName", but each listing waits for GeM checking | — |
+
+### Changed since 2024
+
+- Vendor-assessed sellers are **exempt from EMD** [GTC cl. 4(m)], a strong reason for a maker to do it.
+- Exemption list matches §4 of HANDOFF. **Fee amount still not checked** (listed in §4a "Still not checked").
+
+### For the product
+
+- Simple yes/no check from his profile: "Do you make this item yourself? Do you have a BIS licence
+  for it? Turnover ≥ ₹500 cr?" → suggest exemption request (free, 2 days) or paid assessment.
+- Tell makers the payoff: OEM panel → can list in Q1/Q2, authorise resellers, and no EMD.
+
+---
+
+## Video 8: Listing a service (11:25)
+
+First 4 minutes: talking head. GeM has products and services only (no "job work"). A product's
+own after-sales service can't be listed as a service; only GeM's standard service categories
+(manpower, security, catering, vehicle hiring, horticulture…). No category = can't list (e.g. tuition).
+
+### Screens in order
+
+| Time | Screen | What is on it | AI |
+|---|---|---|---|
+| 3:52 | Catalogue → Services → **Add new offering** (`admin-mkp.gem.gov.in/admin/cat/service_catalogs#!/browse/`) | Service tiles (3D Printing, Advertisement, Afforestation, Air Ambulance, AMC/CMC of Fire Fighting Equipment, AMC of Integrated Security…), List/Grid, **All Categories / My Categories**, search "Search Service Name/ID" | prepare |
+| 5:11 | Search "air conditioner" | Suggestions: Annual Maintenance service Air Conditioner; Comprehensive Annual Maintenance Services for Precision Air Conditioners; Hiring of Air Conditioners and Desert Coolers (event / monthly) | full |
+| 5:32 | Service page (e.g. *Comprehensive Annual Maintenance Services for Precision Air Conditioners*) | **Description** (what the service is; buyers/sellers with problems mail services.gem@gem.gov.in with subject "Organisation \| Service Category"), **Service Level Agreement** (expandable), green **Create** | full (read SLA) |
+| 5:53 | After Create | Green bar "Service Catalogue initiated, fill details and click VALIDATE & SAVE…". Sections: Description, SLA, **Experience**, **Rate Sheet**, (Certificates for some) | never |
+| 6:31 | **Experience** | "Relevant project experience of same and similar service in the last 3 years (max 3) from any Central/State Govt org / PSU / Public Listed Company". Project 1: Organisation Name\*, Order Number\*, Current Project Status (Completed), Project value (₹)\*, Date of commencement / completion, **Upload Relevant Document\***; "+ Add New Project". Captions: new sellers can skip it | prepare (collect his POs / completion certificates) |
+| 6:56 | **Rate Sheet** | Table of dropdown columns for this service (e.g. Type of precision AC system, Capacity, Vintage, Dedicated manpower at site, Condition of equipment, Type of AMC, Type of CAMC provider); Edit, Add row | prepare |
+| 7:14 | **Validate & Save** | "Service Catalogue Saved"; green line **"This Service Catalogue has been approved and is live"**; red **Deactivate the Offering** button | never |
+| 7:43 | **Security Manpower Service (Version 2.0)** → Create | Extra section **Certificates**: **PSARA certificate — mandatory**; "User Manual for Service Provider" link; "Refer to this link for Service Approval Process/SOP" | prepare |
+| 8:20 | A manpower service → Certificates | ISO certificate (optional), Compliance with Labour Laws (optional), **Undertaking for Labour Identification Number (LIN) — mandatory** | prepare |
+| 9:03 | Talking head | Catalogue part done. Next: how orders come (bids, or direct purchase) | — |
+
+### Changed since 2024
+
+- Nothing here conflicts with §4a. Service listings going live at once (unless a certificate is
+  mandatory) not re-checked.
+
+### For the product
+
+- For a service seller, the AI can check before he starts: does the category exist, which
+  certificates are **mandatory** for it (PSARA, labour/LIN, food licence…), and whether he has up to
+  3 government/PSU/listed-company projects from the last 3 years with documents.
+- The service's SLA text is readable; the AI can summarise it (penalties, response times) for him.
+
+---
+
+## Video 9: Bid types and how to search bids (23:57)
+
+Two ways to get orders: bids (GeM sends him bids in categories he has listed) or direct purchase.
+Most of the bid-type explanation (4:36–18:23) is spoken over the bid list page; summary is in
+HANDOFF §4 (product, service, bid-to-RA, custom ≥21 days, BOQ ≥5 items, bunch, PAC).
+
+### Screens in order
+
+| Time | Screen | What is on it | AI |
+|---|---|---|---|
+| 3:55 | `gem.gov.in` home, logged out | Banners: **Vivad se Vishwas – I** (relief for MSEs: refund of forfeited PBG, EMD, LD, risk purchase; revocation of bans), ODOP; news line about IPIndia outage delaying brand/OEM approvals (Mar 2024) | full |
+| 4:14 | **Bid Listing** (`bidplus.gem.gov.in/all-bids`) | Note "It may take up to **15 mins** for newly published or modified bids to show". Keyword box with "Contains" option. **Filters:** Ongoing Bids/RA, Bid/RA Status; *By Bid Type*: All, Product Bid/RAs, Service Bid/RAs, **Bid To RAs**, **Product Custom Bid/RAs**, **BOQ Bids**; *By Bid Value*: **High Value Bids**; Bid End Date From/To. Sort "Bid End Date: Oldest First". ~39,685 records | full (public; our app already reads this page) |
+| 4:33 | One bid card | Bid No. (e.g. GEM/2024/B/…) → **RA NO.** (if bid-to-RA), Items, Quantity, Department Name and Address (ministry / department), Start Date, End Date, **View Corrigendum/Representation**, **View RA Schedules** | full |
+| 18:23 | Search by bid number → click the blue bid number | Bid PDF downloads (`GeM-Bidding-<n>.pdf`, 7 pages here). First-page table (Hindi + English): Item Category, Contract Period, **Minimum Average Annual Turnover (3 yrs)**, **Years of Past Experience**, **MSE exemption** for experience/turnover, **Startup exemption**, **Documents required from seller** (with note: if claiming exemption, upload proof), **Bid to RA enabled**, **RA Qualification Rule** ("50% lowest priced technically qualified bidders"); page 2 "Bid Details": Type of Bid (e.g. Two Packet Bid) | full (our app already parses this) |
+| 19:05 | Keyword "air conditioner" | 2,418 matching bids (any bid whose items contain the words) | full |
+| 19:30 | **Advance Search** (`bidplus.gem.gov.in/advance-search`), only when **logged out** | Tabs: **Search by Bid/RA Details** (bid number, **Category** dropdown, end date range), **Search by Ministry/Organization** (Ministry\*, State\*, Organisation, Department, dates), **Search by Consignee Location** (Consignee State\*, Consignee City, dates), **Search by BOQ Title** (BOQ Title\*, Bid Value, dates). Note "This search is available for Ongoing Bids only". e.g. Television Tv, 21–31 Mar → "No data found"; Laptop – Notebook → list | full (public) |
+| 21:16 | Consignee location result | Shows all categories for that city; you **can't combine city + category** | full |
+| 21:56 | BOQ Title search | Buyers can now give BOQ bids a title, so you can see what a BOQ is about without downloading | full |
+| 23:56 | Talking head | Next: taking part in a product bid | — |
+
+### Changed since 2024
+
+- Bid-to-RA "50% lowest priced technically qualified bidders" still true [BFAQ].
+- Captions say custom and BOQ bids run **at least 21 days** and normal bids 10 days; not in §4a sources; not re-checked.
+- Vivad se Vishwas–I was a 2023–24 scheme; whether still open not checked (not product-critical).
+
+### For the product
+
+- The app already reads `bidplus.gem.gov.in/all-bids` and the bid PDF. The screens show **filters it
+  doesn't use yet**: bid type (product / service / bid-to-RA / custom / BOQ), High Value, end-date
+  range, and the Advance Search by **category**, **ministry/state**, **consignee state/city** and
+  **BOQ title** (HANDOFF §2 "GeM filters"). Advance Search only works logged out, which suits us.
+- New bids can take 15 minutes to appear: alerts can't be faster than that.
+- Custom and BOQ bids have no category, so a category-based search misses them; search them by
+  keyword / BOQ title too.
+
+---
+
+## Video 10: Taking part in a product bid (33:28)
+
+The core video. He walks through four real bids (broom Q4, broom V2 Q4, lyophilizer Q3, e-cart garbage Q3).
+
+### Screens in order
+
+| Time | Screen | What is on it | AI |
+|---|---|---|---|
+| 2:25 | Dashboard → **Bids** → `bidplus.gem.gov.in/seller-bids` (logged in) | Same filters as the public list plus **Participated Bids** and **By Category: "None selected"** (only categories he has listings in). Pink box: you must pick a category first; the search box finds nothing without one; to see all bids, log out and use `bidplus.gem.gov.in/all-bids`; use "Exact Bid Search" if you know the number | never (login) |
+| 3:32 | Category = Broom Sticks… | Bid cards now have **Participation Status: Not participated**, **View Corrigendum**, **My Representations / Create Representation**, a 5-dot progress bar **Technical Bid → Offer Price → Upload Documents → EMD/EPBG → Verify & Esign**, and **Participate** | never |
+| 3:44 | Participate → pop-up **"Compliance regarding Beneficial Ownership and Transfer of Technology"** | 3 questions: is bidder/OEM from a land-border country (Yes/No); any ToT arrangement with such entities (Yes/No); certify compliance (Yes). Save | never (legal) |
+| 4:10 | **Bid Participation** page (`bidplus.gem.gov.in/bidding/sellerbid/participate/<id>`) | Left steps: **Catalogue Offering, Offer Price, Upload Documents, EMD/EPBG, Verify Bid Participation**. *Bid Details*: Bid Number, Bid Status, Bid Start / End Date, **Bid Validity (from end date): 30 days**, Bid Opening Date, links **TERMS AND CONDITIONS** and **CONSIGNEES / REPORTING OFFICER / DELIVERY LOCATION(S)**. *Buyer Details* (name masked in one bid), Ministry, Organisation, Department, Office. Item table: Item, **Category (with quadrant, e.g. "Broom Sticks (Q4)")**, Quantity, **SPECIFICATION** button. **Documents Required** list (Experience Criteria, Past Performance, Bidder Turnover, Certificate (Requested in ATC)) | prepare |
+| 6:49 | **Consignees / Delivery Location(s)** pop-up | S.No., Consignee, **Address**, Category, Quantity, **Delivery Days** (15 in one bid, **60** in another). Captions: buyer and consignee can differ (bid from Delhi, deliver to Kerala); price the freight to the consignee | full (read it for him) |
+| 7:52 | Another bid's Bid Details | **"Buyer Payment Status: Red"** shown on the right of Buyer Details. **Corrigendum Details** table: Modified On + "Bid extended to …", new Bid Opening Date. Bid validity 90 days on this one | full |
+| 8:28 | **SPECIFICATION** expanded | Table: Category (Material / Classification / Dimensions…), Specification (e.g. Material of Handle, Type of Broom, Minimum overall weight), **Bid Requirement (Allowed Values)** — often a list of several allowed values ("200, 300, 400… or higher") | full (compare to his product) |
+| 10:01 | Catalogue Offering → "Choose the product that you would like to offer" | "Only live catalogue matching the required specifications is shown." Buttons **UPLOAD NEW PRODUCT** and **CLICK HERE TO COMPARE WITH CURRENT CATALOGUE**; category filters pre-set to the bid's values. Message: **"You have no matching product available, please upload new product matching buyer requirements to participate"** | prepare |
+| 12:48 | Market → Broom (V2) → left **Product Specifications** filters set to the bid's values (Material of handle = Plastic, Type = Soft broom with grass strips…) | 2,141 → 1,188 → fewer products. He picks one and pairs it (video 5). Captions: **exact match only** (bid asks 128 GB, a 256 GB phone can't bid). The new listing may take **from minutes up to 24 h to appear in the bid** (heavy in March) → list 1–2 days early | prepare (find matching listings) |
+| 16:35 | Lyophilizer bid: Catalogue Offering done (✓) | "CHANGE CATALOGUE", CONTINUE. Note: **"The technical offering has been encrypted by the system"** | never |
+| 17:01 | Custom-catalogue bid (e-cart / X-ray film) | "Choose this catalogue" cards with *Specification Document* links; then **Buyer Specification Document / Offered Specification Document** (Download), tick "I confirm the offered product meets the requirements in the buyer's specification document", Product Title / Make / Model, **Quantity You Can Fulfil**. Note: you may offer less than the bid quantity only if the bid allows it, and never below the minimum asked. **ENCRYPT & SAVE** | prepare |
+| 17:26 | **Offer Price** | "Transaction charges would be applicable as per the Revenue Policy of GeM" (link). Yellow: **"Please enter price (inclusive of all taxes including GST)"**; per item unit price; **Total Offer Price** in words; "Encrypt and Save encrypts your financial quote; price visible only when the bid is opened. Take a screenshot for your records". Box: charges apply 1) when seller crosses ₹20 lakh merchandise value in a financial year (Annual Milestone Charges) 2) on all contracts ≥ ₹5 lakh after that | prepare (price advice) ; never (enter) |
+| 19:31 | **Upload Documents** | One row per required document, each "Upload File (pdf, **max 10 MB**, max **100 pages**)": Experience Criteria, Past Performance, Bidder Turnover, **Certificate (Requested in ATC)** ("merge all ATC documents into a single file"), OEM Authorization Certificate, OEM Annual Turnover, **Additional Doc 1 (Requested in ATC)**. Bid Category. **"Are you manufacturing MSE for this product?" Yes/No** → Yes asks an MSE category certificate. Long note: false MSE / MII / EMD-exemption claims → rejection and action under GeM terms | prepare (the main job) |
+| 20:20 | Bid PDF page 1 | Min. average annual turnover (3 yrs) **20 lakh**, **OEM average turnover** 20 lakh, years of past experience **2**, MSE exemption Yes, startup exemption No, documents required list, **Past Performance 20%** | full |
+| 22:31 | **ATC page** (`fulfilment.gem.gov.in/contract/terms.jsp?bidra=…`) opened from TERMS AND CONDITIONS; same text on the last pages of the bid PDF ("Buyer Added Bid Specific Terms and Conditions") | Clauses: option clause ±25% quantity; bidder not bankrupt (undertaking); imported products need an Indian service office; OEM net worth positive; scope = supply only; **ISO 9001** required; **"Buyer uploaded ATC document: Click here to view the file"**; "Buyer added text based ATC clauses": a long list (ISO 14001/9001/45001, CVC, AIOTA, labour certs, GST cert, GSTR-3B/GSTR-1/GSTR-9, solvency ₹80 lakh, turnover certificate, balance sheet 3 yrs, toll-free number, escalation matrix…); turnover clause: CA/CS certificate or audited balance sheets | full (read and list documents) |
+| 25:05 | Uploading the files | Each row turns to **Re-upload File** with the PDF name | never |
+| 26:22 | EMD/EPBG step (not needed in this bid) → **VERIFY OTP/eSign/DSC** | Four declarations (land border; won't withdraw/modify during validity, info not false, will give PBG, GeM may debar; read GTC/STC/ATC/corrigenda; product meets specs), link **Bid Participation Draft Document**, tick "I agree…", buttons **VERIFY WITH OTP / ESIGN / DSC**; mobile OTP pop-up | never |
+| 28:43 | Done | **"Bid Participation Participated"**, Bid No, Participated on …, **Bid Participation Document** (PDF: seller, bid details, technical offer "Encrypted", offer price as an encrypted string), **WITHDRAW BID**, VIEW MORE BIDS | never |
+| 30:27 | Captions | Withdraw and re-submit **up to 3 times** before the deadline. His advice: bid even if you lack 2 of 10 documents and let the buyer decide | — |
+| 31:06 | **Create Representation** (from a bid card) | Note: representation allowed **up to 4 days from bid publish**, **only once** per window; window can reopen if the buyer issues a corrigendum. Fields: Select Bid Section, Query (≤1000 chars), Add, Submit. "My Representations" table (Bid Section, Query, Submitted On). Captions: if the buyer doesn't answer, he can't open the bid until he extends it 3 days and replies | prepare (draft the question) |
+| 32:18 | Talking head | Next: service bids | — |
+
+### Changed since 2024
+
+- Video (captions): ₹10k + GST each time he crosses ₹20 lakh, then **5%** on orders ≥ ₹5 lakh.
+  On-screen box: Annual Milestone Charges at ₹20 lakh, then charges on contracts ≥ ₹5 lakh.
+  **Today:** ₹10,000 + GST **once a year** at ₹20 lakh; then **0.30% only on orders above ₹10 lakh,
+  max ₹3 lakh** (from 9 Aug 2024) [SFAQ, NEWS]. The 5% in the captions was wrong or a slip.
+- Listing-to-bid delay: video says up to 24 h; GeM now says approval **normally 48 h** [GTC cl. 4(e)].
+- Representation timing: §4a has the fuller rule (4 days for 10+-day bids, 1 day for 3–5-day, 2 days
+  for 6–9-day; buyer must answer 72 h before bid end) [SFAQ].
+- Bid validity, EMD, ePBG: see §4a (EMD none below ₹5 lakh; ePBG within 15 days of contract).
+- 10 MB per file is on screen; §4a listed it as unchecked: **now seen on screen (2024)**, plus 100 pages.
+
+### For the product
+
+- **Buyer Payment Status (Red/Orange) is printed on the bid participation page** (logged in). Check
+  whether the public bid PDF or list carries it too; if not, he can paste it, or the live tour can confirm.
+- **Consignee address and delivery days** sit behind a pop-up and also in the bid PDF; we should
+  extract them (HANDOFF §1 gap "consignee not extracted"). Delivery days varied 15 vs 60.
+- **ATC lives at `fulfilment.gem.gov.in/contract/terms.jsp?bidra=…`** and at the end of the bid PDF,
+  with a separate "buyer uploaded ATC document" file. That file is the gap in HANDOFF §2 step 1.
+  The text ATC alone listed ~13 extra documents; a **document checklist per bid** is the biggest
+  time-saver.
+- **Exact spec match**: compare the bid's "Allowed Values" table against his listing's values and
+  say which field fails, before he spends time.
+- The document upload screen is the model for our checklist: one line per row, ≤10 MB and ≤100
+  pages each, ATC certificates merged into one PDF.
+- Remind: list the matching product **2+ days before** the bid ends.
