@@ -51,8 +51,9 @@ Options:
 3. Past L1 prices: public result pages `bidplus.gem.gov.in/bidding/bid/getBidResultView/<id>`
    (found via all-bids with "Bid/RA Status"). `gem.gov.in/view_contracts` has a **captcha → never automate**.
 
-Housekeeping: videos, captions and frames are in `../gem-videos/` (outside the repo, ~365 MB + frames).
-Keep them until the owner says to delete. Frames were made with the bundled ffmpeg
+Housekeeping: videos and frames were **deleted on 20 Oct 2026** at the owner's request (~530 MB freed).
+Only the 15 Hindi caption files remain in `../gem-videos/*.hi.vtt` (3 MB). To see a screen again,
+re-download that one video at 480p (size check first). Frames were made with the bundled ffmpeg
 (`uvx --with imageio-ffmpeg python -c "import imageio_ffmpeg; print(imageio_ffmpeg.get_ffmpeg_exe())"`)
 and `select='gt(scene,0.08)'`, keeping the last frame of each burst less than 3 s apart.
 

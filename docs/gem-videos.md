@@ -5,7 +5,8 @@ menus, buttons, fields, in order. Made by pulling a frame each time the screen c
 it next to the Hindi auto-captions at the same time. Own words; nothing copied from the videos.
 
 Playlist: https://youtube.com/playlist?list=PLffbgSv9050j2xxXP117UIAt3dkJszQBz (recorded early 2024).
-Videos and frames are kept outside the repo in `../gem-videos/` (not committed).
+Videos and frames were deleted after this write-up (20 Oct 2026); the Hindi captions are kept in
+`../gem-videos/*.hi.vtt` outside the repo.
 
 How to read each section:
 - **Time** is mm:ss in the video.

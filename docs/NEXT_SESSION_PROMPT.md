@@ -28,8 +28,9 @@ Continue GeM Assistant in ~/Documents/startup/GEM/GeM (branch docs/hinglish-test
 ### Where things stand (20 Oct 2026)
 
 - The 15 GeM training videos are fully written up in `docs/gem-videos.md` (screen by screen, what
-  changed since 2024, AI level per screen, product summary at the end). Videos, captions and frames
-  are in `../gem-videos/` outside the repo; don't commit or delete them.
+  changed since 2024, AI level per screen, product summary at the end). Videos and frames were
+  deleted on 20 Oct 2026 (owner's request); only the Hindi captions remain in `../gem-videos/*.hi.vtt`.
+  To look at a screen again, re-download that one video (commands in git history of progress.md).
 - Code is unchanged since the merge `ca5a4b1`. Tests: 398 passed on 20 Oct 2026.
 - The owner has **not yet chosen** between building and the live tour.
 
