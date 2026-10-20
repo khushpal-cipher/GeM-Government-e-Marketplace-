@@ -22,6 +22,7 @@ from .infrastructure.groq_chat import GroqChatModel
 from .infrastructure.httpx_transport import HttpxTransport
 from .infrastructure.pypdf_extractor import PypdfTextExtractor, pdf_links
 from .infrastructure.sqlite_repositories import (
+    SqliteAlertRepository,
     SqliteBidRepository,
     SqliteBreakerStateStore,
     SqliteDiscoveryRunStore,
@@ -39,6 +40,7 @@ from .safety.rate_limiter import RateLimiter
 from .safety.response_classifier import ResponseClassifier
 from .safety.safe_fetcher import SafeFetcher
 from .safety.url_policy import UrlPolicy
+from .services.alert_service import AlertService
 from .services.bid_fetch_service import BidFetchService
 from .services.bid_import_service import BidImportService
 from .services.bid_query_service import BidQueryService
@@ -61,6 +63,7 @@ class Container:
     discovery: DiscoveryService
     corpus: CorpusService
     chat_model: ChatModel
+    alerts: AlertService
 
     @classmethod
     def build(cls, settings: Settings, clock: Clock | None = None,
@@ -171,6 +174,7 @@ class Container:
             bid_fetch=bid_fetch,
             discovery=discovery,
             corpus=corpus,
+            alerts=AlertService(SqliteAlertRepository(db), clock),
             chat_model=chat_model or GroqChatModel(lambda: _groq_key(settings), settings.groq_model),
         )
 

@@ -49,6 +49,11 @@ export class ApiClient {
 
   // ---- seller profile ----
   getProfile() { return this.#request("/profile"); }
+  getAlertKinds() { return this.#request("/alerts/kinds"); }
+  previewAlerts(kind, text) { return this.#json("POST", "/alerts/preview", { kind, text }); }
+  saveAlerts(kind, items) { return this.#json("POST", "/alerts", { kind, items }); }
+  getAlerts() { return this.#request("/alerts"); }
+  finishAlert(id) { return this.#request(`/alerts/${id}/done`, { method: "POST" }); }
   getProfileWarnings() { return this.#request("/profile/warnings"); }
   saveProfile(profile) { return this.#json("PUT", "/profile", profile); }
 

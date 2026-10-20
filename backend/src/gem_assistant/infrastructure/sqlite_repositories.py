@@ -428,3 +428,32 @@ class SqliteDiscoveryRunStore:
             downloaded=r["downloaded"], requests=r["requests"],
             corrigenda_checked=r["corrigenda_checked"],
         )
+
+
+class SqliteAlertRepository:
+    def __init__(self, db: Database):
+        self._db = db
+
+    def add(self, kind: str, ref: str, text: str, due: str | None, now: datetime) -> bool:
+        """False when the same open alert (kind, number, date) is already there."""
+        with self._db.connect() as conn:
+            same = conn.execute(
+                "SELECT 1 FROM alert WHERE done_at IS NULL AND kind = ? AND ref = ? AND due IS ?",
+                (kind, ref, due)).fetchone()
+            if same and ref:
+                return False
+            conn.execute("INSERT INTO alert (kind, ref, text, due, created_at) VALUES (?, ?, ?, ?, ?)",
+                         (kind, ref, text, due, _iso(now)))
+        return True
+
+    def open(self) -> list[dict]:
+        with self._db.connect() as conn:
+            rows = conn.execute(
+                "SELECT id, kind, ref, text, due FROM alert WHERE done_at IS NULL ORDER BY due IS NULL, due, id"
+            ).fetchall()
+        return [dict(r) for r in rows]
+
+    def done(self, alert_id: int, now: datetime) -> bool:
+        with self._db.connect() as conn:
+            return conn.execute("UPDATE alert SET done_at = ? WHERE id = ? AND done_at IS NULL",
+                                (_iso(now), alert_id)).rowcount == 1

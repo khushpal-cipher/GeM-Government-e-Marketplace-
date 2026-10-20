@@ -31,6 +31,7 @@ Details live in `docs/HANDOFF.md`; this file only says what is done, what is nex
 | 20 Oct 2026 | **Step 0.1** chat run against real Groq (3 of the 4 guide sentences; bid search skipped, needs D2). Fixed: it said "₹5 lakh" for 50 lakh; Hinglish got Devanagari replies. Prompt-only fixes. Still: the line beside a Confirm card is sometimes English for Hinglish input (model habit); "Bid 1" on an empty database gives a confused answer | 8f625b0 |
 | 20 Oct 2026 | **Step 1.0** wording rules: `domain/wording.py` (`DRAFT_NOTE`, `deadline()` in Indian time with days/hours left, `check_draft()` blocks "for you / the app sent / eligible / guaranteed", PAN, IFSC) + chat prompt line for AI drafts; 420 tests pass | c00be05, docs/wording-rules.md |
 | 20 Oct 2026 | **Step 1.1** profile details: GeM registration date, ITR filed on GeM (yes/no/don't know), PFMS bank, OEM products, self-made items (new `details_json` column, migration 6); chat can propose them; warnings (over 24 months without ITR, bank not verified, MSE with nothing self-made) in chat and on the profile page (`GET /api/profile/warnings`). Not added: states/certificates (already existed) | b298e80 |
+| 20 Oct 2026 | **Step 1.2** Daily GeM check: page `#/today` (link "Daily check" top right). He picks what he found (buyer asks documents / order to accept / near delivery / CRAC without payment / show-cause), pastes; code finds bid/contract numbers and dates (several formats), shows them back to fix, saves alerts with due dates (clarification: last date; acceptance +5 days; payment +10 days after CRAC; SCN +10 days) listed most urgent first with where-on-GeM and what-if-missed. New table `alert` (migration 7). Not done: a chat card for alerts, Mac notifications (5.2); parser tested on invented samples, not real pasted GeM text | COMMIT12, domain/gem_alerts.py |
 | 20 Oct 2026 | FINAL build plan from videos + live tour (replaces the first plan; Phase 1 = paste-in daily check, shortfall helper, order tracker) | progress.md |
 
 ## Which model to use (owner switches it in the app's model picker)
@@ -47,10 +48,10 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 
 ## Continue from here (written 20 Oct 2026)
 
-State: code unchanged since `ca5a4b1`; `cd backend && uv run pytest -q` → **429 passed** (20 Oct 2026, after 1.1).
+State: code unchanged since `ca5a4b1`; `cd backend && uv run pytest -q` → **451 passed** (20 Oct 2026, after 1.2).
 **FINAL build plan written 20 Oct 2026 (below, commit 356ce01). Owner said start building (20 Oct 2026).** Nothing in it is started yet.
 
-**Next exact action:** step **1.2** (Sonnet · Medium) daily GeM check card + alerts. Every later draft/reminder must use `domain/wording.py`. Steps 0.2/0.3 wait for D2 (contact email).
+**Next exact action:** step **1.3** (Sonnet · Medium) shortfall-reply helper (uses 1.0 wording + 1.1 profile). First ask the owner to paste one real pending clarification (no names/phones) so the parser is checked on real text. Every later draft/reminder must use `domain/wording.py`. Steps 0.2/0.3 wait for D2 (contact email).
 
 ## Build plan (FINAL, written 20 Oct 2026, approved by the owner 20 Oct 2026, nothing started)
 

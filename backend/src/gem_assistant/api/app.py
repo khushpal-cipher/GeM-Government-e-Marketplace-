@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 
 from ..container import Container
 from .auth import COOKIE, Login
-from .routes import bids, chat, discovery, profile, safety, session
+from .routes import alerts, bids, chat, discovery, profile, safety, session
 
 LOCAL_HOSTS = frozenset({"127.0.0.1", "localhost"})
 
@@ -84,6 +84,7 @@ def create_app(container: Container, allowed_hosts: frozenset[str] = LOCAL_HOSTS
     app.include_router(session.router)
     app.include_router(bids.router)
     app.include_router(profile.router)
+    app.include_router(alerts.router)
     app.include_router(safety.router)
     app.include_router(discovery.router)
     app.include_router(chat.router)

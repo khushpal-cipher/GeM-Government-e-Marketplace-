@@ -142,6 +142,18 @@ MIGRATIONS: list[str] = [
     """
     ALTER TABLE seller_profile ADD COLUMN details_json TEXT NOT NULL DEFAULT '{}';
     """,
+    # 7 — alerts from the daily GeM check (things waiting in his own GeM account, pasted by him).
+    """
+    CREATE TABLE alert (
+        id INTEGER PRIMARY KEY,
+        kind TEXT NOT NULL,
+        ref TEXT NOT NULL,
+        text TEXT NOT NULL,
+        due TEXT,
+        created_at TEXT NOT NULL,
+        done_at TEXT
+    );
+    """,
 ]
 
 

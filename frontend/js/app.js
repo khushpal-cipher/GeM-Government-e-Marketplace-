@@ -8,6 +8,7 @@ import { renderBidDetail } from "./views/bidDetail.js";
 import { renderProfile } from "./views/profile.js";
 import { renderSafety } from "./views/safety.js";
 import { renderDiscover } from "./views/discover.js";
+import { renderToday } from "./views/today.js";
 import { renderChat } from "./views/chat.js";
 import { renderLogin } from "./views/login.js";
 import { el } from "./dom.js";
@@ -58,6 +59,7 @@ if (!session.logged_in) {
     .register("/bids", (c, p) => withErrors(renderBidList, c, p))
     .register("/bids/:id", (c, p) => withErrors(renderBidDetail, c, p))
     .register("/discover", (c, p) => withErrors(renderDiscover, c, p))
+    .register("/today", (c, p) => withErrors(renderToday, c, p))
     .register("/profile", (c, p) => withErrors(renderProfile, c, p))
     .register("/safety", (c, p) => withErrors(renderSafety, c, p))
     .resolve();
