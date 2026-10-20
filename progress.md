@@ -33,6 +33,7 @@ Details live in `docs/HANDOFF.md`; this file only says what is done, what is nex
 | 20 Oct 2026 | **Step 1.1** profile details: GeM registration date, ITR filed on GeM (yes/no/don't know), PFMS bank, OEM products, self-made items (new `details_json` column, migration 6); chat can propose them; warnings (over 24 months without ITR, bank not verified, MSE with nothing self-made) in chat and on the profile page (`GET /api/profile/warnings`). Not added: states/certificates (already existed) | b298e80 |
 | 20 Oct 2026 | **Step 1.2** Daily GeM check: page `#/today` (link "Daily check" top right). He picks what he found (buyer asks documents / order to accept / near delivery / CRAC without payment / show-cause), pastes; code finds bid/contract numbers and dates (several formats), shows them back to fix, saves alerts with due dates (clarification: last date; acceptance +5 days; payment +10 days after CRAC; SCN +10 days) listed most urgent first with where-on-GeM and what-if-missed. New table `alert` (migration 7). Not done: a chat card for alerts, Mac notifications (5.2); parser tested on invented samples, not real pasted GeM text | b2f59c3, domain/gem_alerts.py |
 | 20 Oct 2026 | **Step 1.3** Shortfall-reply helper: `domain/shortfall.py` (detects OEM turnover, OEM authorisation, GST, ITR, Udyam, experience, ISO/certifications, undertakings), checks against profile (OEM vs reseller, MSE, turnover, certs), drafts covering note meeting 1.0 wording rules (`DRAFT_NOTE`, quotes buyer, placeholders, no PAN/IFSC), API endpoint `POST /api/shortfall/reply`, integration in `#/today`; 462 tests pass | eb934fa, domain/shortfall.py |
+| 20 Oct 2026 | **Step 1.4** Order tracker: stages Contract Placed → Dispatched → Received (CRAC) → Payment; deadlines (ePBG 15d, invoice before delivery date, LD 0.5%/wk up to 5%/10%, buyer request 5d, CRAC 10d after delivery, payment 10d after CRAC with delay-in-payment draft); GeM charges calculator (₹10k+GST at ₹20L/yr, 0.30% over ₹10L up to ₹3L); sqlite persistence + API + `#/orders` page; 476 tests pass | 331d1eb, domain/order_tracker.py |
 | 20 Oct 2026 | FINAL build plan from videos + live tour (replaces the first plan; Phase 1 = paste-in daily check, shortfall helper, order tracker) | progress.md |
 
 ## Which model to use (owner switches it in the app's model picker)
@@ -49,9 +50,9 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 
 ## Continue from here (written 20 Oct 2026)
 
-State: `cd backend && uv run pytest -q` → **462 passed** (20 Oct 2026, after 1.3).
+State: `cd backend && uv run pytest -q` → **476 passed** (20 Oct 2026, after 1.4).
 
-**Next exact action:** step **1.4** (Sonnet · Medium) **Order tracker**: he pastes the order details (or types contract no, date, value, expected delivery date, ePBG %). Stages Contract Placed → Dispatched → Received (CRAC) → Payment. Deadlines from HANDOFF §4a + live tour: ePBG 15 days; invoice before expected delivery date or the order expires; LD 0.5%/week late (max 5%/10%); buyer request 5 days; CRAC 10 days after proof of delivery; payment 10 days after CRAC → "late since <date>: raise 'delay in payment' incident" with draft text. GeM charges calculator (₹10k + GST at ₹20 lakh/year; 0.30% on orders > ₹10 lakh, max ₹3 lakh). Steps 0.2/0.3 wait for D2 (contact email).
+**Next exact action:** step **1.5** (Sonnet · Medium) **Rejection reason reader + challenge draft**: he pastes the buyer's disqualification reason; the app names the missing document, checks it against the profile, drafts the one-time challenge with the 48 h deadline, and remembers the reason so future checklists warn earlier.
 
 ## Build plan (FINAL, written 20 Oct 2026, approved by the owner 20 Oct 2026, nothing started)
 
