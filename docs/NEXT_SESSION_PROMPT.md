@@ -30,6 +30,14 @@ The FINAL build plan in progress.md is approved: start BUILDING now.
    and reply with the "Prompt to paste" box from that file.
 ```
 
+## For a different AI tool (not Claude)
+
+Any coding agent can continue: it needs only this repo. Paste the box above. Model/effort advice in
+progress.md ("Opus/Sonnet") means: use your strongest model for steps marked Opus (1.0 is done; 2.5a,
+2.5b, 3.0, 0.3, 8.2 remain), a mid model for the rest. Code lives in `backend/` (Python, `uv run pytest -q`
+must stay green: 451 tests on 20 Oct 2026) and `frontend/`. Same rules: commit locally only, never push,
+never log in to GeM, never solve captchas, use `domain/wording.py` for every draft and deadline.
+
 ## Full instructions
 
 ### Where things stand (20 Oct 2026)

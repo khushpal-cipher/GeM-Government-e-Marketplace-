@@ -51,7 +51,7 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 State: code unchanged since `ca5a4b1`; `cd backend && uv run pytest -q` → **451 passed** (20 Oct 2026, after 1.2).
 **FINAL build plan written 20 Oct 2026 (below, commit 356ce01). Owner said start building (20 Oct 2026).** Nothing in it is started yet.
 
-**Next exact action:** step **1.3** (Sonnet · Medium) shortfall-reply helper (uses 1.0 wording + 1.1 profile). First ask the owner to paste one real pending clarification (no names/phones) so the parser is checked on real text. Every later draft/reminder must use `domain/wording.py`. Steps 0.2/0.3 wait for D2 (contact email).
+**Next exact action:** step **1.3** (Sonnet · Medium) shortfall-reply helper (uses 1.0 wording + 1.1 profile). The owner has no pending clarification in his account (20 Oct 2026), so there is no real sample: build on invented text and say so in "Not verified yet". Every later draft/reminder must use `domain/wording.py`. Steps 0.2/0.3 wait for D2 (contact email).
 
 ## Build plan (FINAL, written 20 Oct 2026, approved by the owner 20 Oct 2026, nothing started)
 
@@ -271,5 +271,7 @@ re-download that one video at 480p (size check first). Frames were made with the
 and `select='gt(scene,0.08)'`, keeping the last frame of each burst less than 3 s apart.
 
 ## Not verified yet
+
+Pasted-text parser (1.2) and shortfall helper (1.3) are tested only on invented text; no real GeM clarification was available.
 
 Chat run against real Groq only for profile + refusal (20 Oct 2026); bid search and "what does bid N need" with a real bid not tried; website mode never deployed (HANDOFF.md §1).
