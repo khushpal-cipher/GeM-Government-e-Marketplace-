@@ -1,0 +1,214 @@
+<title>GeM Seller Task Map</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@500;600;700&display=swap">
+<style>
+/* Layout: one reading column; a summary strip, filter chips, then one wide table grouped by seller stage. */
+:root {
+  --bg: #faf9f5; --surface: #f1efe8; --fg: #141413; --muted: #5f5d55; --line: #dedbd0; --accent: #d97757;
+  --done-bg: #e3efe1; --done-fg: #2e6a33;
+  --part-bg: #f6ead2; --part-fg: #8a5a12;
+  --no-bg: #ebe9e2; --no-fg: #5f5d55;
+  --full-bg: #f7e1d8; --full-fg: #a2462a;
+  --prep-bg: #e1e8f3; --prep-fg: #2f4f80;
+  --never-bg: #f4dede; --never-fg: #9a2b2b;
+  --display: "Poppins", "Helvetica Neue", Arial, sans-serif;
+  --body: "Lora", Georgia, "Times New Roman", serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #141413; --surface: #1d1c1a; --fg: #faf9f5; --muted: #b3b0a6; --line: #34322e; --accent: #e08a6c;
+  --done-bg: #1f3322; --done-fg: #9fd3a3; --part-bg: #3a2e17; --part-fg: #f0c477; --no-bg: #2a2926; --no-fg: #b3b0a6;
+  --full-bg: #43261c; --full-fg: #f2a98d; --prep-bg: #1f2a3d; --prep-fg: #a8c1ea; --never-bg: #3d2020; --never-fg: #f0a3a3;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #141413; --surface: #1d1c1a; --fg: #faf9f5; --muted: #b3b0a6; --line: #34322e; --accent: #e08a6c;
+  --done-bg: #1f3322; --done-fg: #9fd3a3; --part-bg: #3a2e17; --part-fg: #f0c477; --no-bg: #2a2926; --no-fg: #b3b0a6;
+  --full-bg: #43261c; --full-fg: #f2a98d; --prep-bg: #1f2a3d; --prep-fg: #a8c1ea; --never-bg: #3d2020; --never-fg: #f0a3a3;
+  color-scheme: dark }
+
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-block: 40px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 28px; }
+h1 { font-family: var(--display); font-weight: 700; font-size: clamp(1.7rem, 3.2vw, 2.4rem); line-height: 1.15; margin: 0; text-wrap: balance; }
+h1 span { color: var(--accent); }
+.lede { margin: 8px 0 0; max-width: 68ch; color: var(--muted); }
+.eyebrow { font-family: var(--display); font-weight: 600; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
+
+.summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 2px; }
+.stat b { font-family: var(--display); font-size: 1.8rem; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.stat span { font-size: .85rem; color: var(--muted); }
+
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: .85rem; color: var(--muted); align-items: center; }
+.legend div { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+
+.filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.filters button { font-family: var(--display); font-size: .8rem; font-weight: 500; padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.filters button:focus-visible, .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.tablebox { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; min-width: 0; }
+table { border-collapse: collapse; width: 100%; min-width: 880px; }
+thead th { position: sticky; top: 0; background: var(--fg); color: var(--bg); text-align: left; font-family: var(--display);
+  font-weight: 600; font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; padding: 12px 14px; }
+th:first-child, td:first-child { width: 26%; }
+th:nth-child(2), td:nth-child(2) { width: 34%; }
+td { padding: 12px 14px; border-top: 1px solid var(--line); vertical-align: top; }
+td .what { font-family: var(--display); font-weight: 600; font-size: .92rem; line-height: 1.35; }
+td .sub { display: block; font-size: .82rem; color: var(--muted); margin-top: 3px; }
+td p { margin: 6px 0 0; }
+tr.stage td { background: var(--surface); font-family: var(--display); font-weight: 600; font-size: .8rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--accent); padding: 10px 14px; }
+tr.row:hover td { background: color-mix(in srgb, var(--surface) 55%, transparent); }
+
+.chip { display: inline-block; font-family: var(--display); font-weight: 600; font-size: .7rem; letter-spacing: .05em;
+  text-transform: uppercase; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+.done { background: var(--done-bg); color: var(--done-fg); }
+.part { background: var(--part-bg); color: var(--part-fg); }
+.no { background: var(--no-bg); color: var(--no-fg); }
+.full { background: var(--full-bg); color: var(--full-fg); }
+.prep { background: var(--prep-bg); color: var(--prep-fg); }
+.never { background: var(--never-bg); color: var(--never-fg); }
+.src { display: block; margin-top: 6px; font-size: .78rem; color: var(--muted); font-style: italic; }
+
+.notes { font-size: .88rem; color: var(--muted); max-width: 80ch; display: grid; gap: 6px; }
+.notes p { margin: 0; }
+@media (max-width: 600px) { .wrap { padding-block: 24px 40px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">GeM Assistant · 20 Oct 2026</p>
+    <h1>Every GeM seller task, and where <span>AI</span> stands</h1>
+    <p class="lede">Left: what a seller does on GeM, in order. Middle: what our app does for it today. Right: what AI could still take on, based on the 15 training videos and GeM's own rules, and how far it may go.</p>
+  </header>
+
+  <section class="summary" id="summary" aria-label="Summary"></section>
+
+  <div class="legend">
+    <div><b>Today:</b> <span class="chip done">Done</span> <span class="chip part">Partly</span> <span class="chip no">Not yet</span></div>
+    <div><b>Possible:</b> <span class="chip full">AI can do it</span> reads public pages or files <span class="chip prep">AI prepares</span> drafts, checks, reminders; he clicks <span class="chip never">Never</span> his login, OTP, money or legal promise</div>
+  </div>
+
+  <div class="filters" role="group" aria-label="Filter rows">
+    <button type="button" id="f-all" data-f="all" aria-pressed="true">All tasks</button>
+    <button type="button" id="f-done" data-f="done" aria-pressed="false">Done or partly</button>
+    <button type="button" id="f-full" data-f="full" aria-pressed="false">AI can do it, not built</button>
+    <button type="button" id="f-prep" data-f="prep" aria-pressed="false">AI can prepare</button>
+    <button type="button" id="f-never" data-f="never" aria-pressed="false">Never automate</button>
+  </div>
+
+  <div class="tablebox">
+    <table>
+      <thead><tr><th scope="col">Seller task</th><th scope="col">AI-automated today</th><th scope="col">Can be automated, not done yet</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+  <div class="notes">
+    <p><b>"Today"</b> means the GeM Assistant code as of commit ca5a4b1 (398 tests passing). The chat itself has not yet been run against real Groq.</p>
+    <p><b>Sources:</b> V1–V15 are the 2024 training videos (screens in docs/gem-videos.md); GTC, SFAQ, BFAQ are GeM's official rules read on 19 Oct 2026 (HANDOFF §4a). Rules that changed since 2024 use today's values.</p>
+    <p><b>Standing rule:</b> no bot ever logs in to GeM, solves a captcha or submits anything. Public pages only, read-only, at human speed.</p>
+  </div>
+</div>
+
+<script>
+// [stage, task, sub, todayStatus, todayText, possibleLevel, possibleText, source]
+const S = "Registration and profile", C = "Catalogue (listing products and services)", F = "Finding bids",
+      R = "Reading and checking a bid", B = "Bidding", D = "Direct purchase and quick buys", A = "After the bid closes",
+      O = "Orders, delivery and payment";
+const rows = [
+ [S,"Sign up as a seller","Aadhaar/PAN + OTP, email OTP, user ID","no","Not done.","prep","Show the document checklist for his business type (proprietor, company…) before he starts. Sign-up itself stays his: OTPs.","V2"],
+ [S,"Complete the seller profile","PAN, office, bank, ITR, e-invoicing, Udyam, startup, land-border declaration","part","Profile is built from chat (products, turnover, experience, MSE/startup/OEM) for our own checks only; nothing goes to GeM.","prep","Checklist mirroring GeM's profile menu, with warnings: older than 24 months and no ITR on GeM = can't bid; enter \"revenue from operations\" from the ITR; Udyam with the same mobile; PFMS-verified bank for some buyers.","V2"],
+ [S,"Caution money","","no","Not needed.","none","Nothing to do: caution money was discontinued in 2025. Old deposits can be withdrawn by him.","V2, GTC cl. 27"],
+ [S,"Add staff logins","Up to 50 secondary users with roles","no","Not done.","prep","Advice only: one login works in one place at a time; give staff their own secondary users.","V4"],
+ [S,"Become an OEM (vendor assessment)","Paid assessment or free exemption","no","Not done.","prep","Check from his profile whether he can claim the free exemption (BIS licence for that item, ₹500 cr turnover, PSU…); list his made-in-house categories, capacity and past sales for the form. Payoff: Q1/Q2 listings and no EMD.","V7, GTC cl. 4(m)"],
+ [S,"Get his brand approved","Needs a registered trademark","no","Not done.","prep","Gather trademark certificate and website link; remind that approval takes about 7 days.","V6"],
+
+ [C,"Find the right GeM category","Including its quadrant Q1–Q4","part","Product match uses his own words only (\"office chair\" misses \"Revolving Chair\"); no GeM category names.","full","Search GeM's public category search for his words and synonyms; it returns every category with its quadrant (Q1–Q4). The full category list can also be downloaded once.","V3, V4"],
+ [C,"Check if he may sell an item","Quadrant, OEM-verified listing, authorisation","no","Not done.","full","Read the quadrant and the \"verified by OEM\" flags on the public product page and tell him: Q1 no; Q2 needs the brand's authorisation number; Q3/Q4 can copy.","V3, V5"],
+ [C,"Copy an existing listing (\"Sell this item\")","Price, MRP, delivery states, stock, min qty","no","Not done.","prep","Pick the right listing; suggest an offer price ≥10% under MRP and inside the category range; list only states he can really deliver to (refusing one later risks debarment). Publishing stays his.","V5"],
+ [C,"Upload a new product","Spec dropdowns, MRP proof, 3 photos, documents","no","Not done.","prep","Turn his spec sheet into GeM's dropdown values and flag what's missing; pre-check photos (3 angles, white background, ≤300 KB), MRP proof that names this exact product, brand/model text, BIS or other certificates.","V6"],
+ [C,"Fix a rejected listing","Admin rejection reasons","no","Not done.","prep","He pastes the rejection reasons; AI says exactly what to change.","V6"],
+ [C,"List a service","Experience, rate sheet, mandatory licences","no","Not done.","prep","Check the service category exists and which certificates are mandatory (PSARA for security, labour LIN for manpower, food licence for catering); collect up to 3 govt/PSU projects from the last 3 years.","V8"],
+ [C,"Set his prices against other sellers","Price per delivery location","no","Not done.","full","Read the public \"Other Sellers\" page: every seller's price, delivery area, stock and quantity discounts for that product.","V5, V14"],
+
+ [F,"Search for bids","","done","Searches GeM's public bid list by keyword (5 keywords × 2 pages, 15 min apart, 250 requests a day) with a safety stop.","full","Use GeM's own filters: bid type (product, service, bid-to-RA, custom, BOQ), high value, end date, and Advance Search by category, ministry/state, consignee city and BOQ title.","V9"],
+ [F,"Daily search and \"new since last time\"","","no","Not done; he must ask each time.","full","Run the search on a schedule and show only new bids. New bids can take up to 15 minutes to appear on GeM.","V9"],
+ [F,"Alerts for new bids","WhatsApp / SMS / email","no","Not done.","full","Alert early: a new matching listing needs up to 48 h to be approved before he can use it in a bid.","V10, GTC cl. 4(e)"],
+ [F,"Find custom and BOQ bids","No GeM category, so category search misses them","no","Not done.","full","Search them by keyword and BOQ title. BOQ bids are the easiest: no listing needed.","V9, V11, V13"],
+ [F,"Push Button Procurement notices","3-day quick buys, no documents","no","Not done.","prep","Alert him when one appears in his categories (where it shows without login is not yet checked).","V15"],
+
+ [R,"Read the bid document","Dates, turnover, experience, EMD, ePBG, MSE/MII…","part","Reads about 26 fields with page and quote: deadline, EMD and amount, ePBG and %, turnover, experience, MSE/startup relaxations, MII, evaluation method, quantity, ministry.","full","Also read: consignee address and delivery days, ePBG duration in months, PAC items (fixed brand/model), estimated bid value, inspection required, item-wise schedules.","V10, V12"],
+ [R,"Read the buyer's extra terms (ATC)","Text ATC + buyer-uploaded ATC file","part","Flags keywords in buyer clauses; the attached ATC file is never read (\"open it yourself\").","full","Read the ATC text at the end of the bid PDF, the ATC page and the buyer's uploaded file; quote each clause.","V10"],
+ [R,"Read the spec PDF / BOQ sheet","Custom and BOQ bids","no","Not done.","full","Download and read the buyer's specification PDF and the BOQ item sheet; list which lines he can supply.","V11, V13"],
+ [R,"Corrigendum (changes to the bid)","","part","Fetched and shown as raw text.","full","Summarise what changed: new dates, specs, quantities.","HANDOFF §2"],
+ [R,"Am I eligible?","Turnover, experience, deadline, EMD","done","Verdict per bid: Eligible / Needs review / Blocked, each reason with page and quote.","full","Add the checks it skips: delivery state vs his states, required certificates, OEM authorisation, MSE EMD exemption only if he makes the item, no EMD below ₹5 lakh.","HANDOFF §1, GTC cl. 4(m)"],
+ [R,"Does my product match the spec exactly?","GeM rejects any mismatch","no","Not done.","full","Compare the bid's \"Allowed values\" table with his listing and name the field that fails (a 256 GB phone can't bid on a 128 GB bid).","V10"],
+ [R,"Will this buyer pay?","Red / Orange payment flag","no","Not done.","full","Show the buyer's Red/Orange payment flag (seen on the logged-in bid page; whether it's public is not yet checked).","V10, SFAQ"],
+ [R,"Document checklist for this bid","","no","Not done.","full","One line per required document with where it was asked; remind: PDF ≤10 MB and ≤100 pages each, ATC certificates merged into one file.","V10, V12"],
+
+ [B,"Ask the buyer a question (representation)","Only in the first days, once","no","Not done.","prep","Draft the question and remind him of the window (4 days for 10+ day bids, 2 days for 6–9, 1 day for 3–5).","V10, V13, SFAQ"],
+ [B,"Decide the price to quote","","no","Not done.","full","Show past winning prices and competitors from public bid results; price advice is his call.","V15"],
+ [B,"Pick items in a multi-item bid","Item-wise vs total-value bids","no","Not done.","full","Say whether he may bid on some items only, and which schedules his listings match.","V12"],
+ [B,"Fill the bid","Make/model/HSN, compliance sheet, uploads","no","Not done.","prep","Prepare the Make / Model / HSN list (it goes onto the purchase order) and a point-by-point compliance sheet for custom bids.","V11, V13"],
+ [B,"Submit the bid","Declarations, encrypted price, OTP / eSign","no","Not done.","never","Never: land-border and MII declarations, the price and the OTP are his legal acts.","V10"],
+ [B,"Pay EMD","","no","Not done.","never","Never pays. AI already reads the EMD amount and can say if he's exempt.","GTC cl. 4(m)"],
+ [B,"Withdraw or change a bid","Up to 3 times before the deadline","no","Not done.","never","Never. AI can warn: withdrawing after the deadline loses EMD and can mean suspension.","V10, GTC cl. 4(n)"],
+
+ [D,"Win a direct order from a known buyer","Up to ₹50,000; ₹50k–₹10 lakh = lowest of 3","no","Not done.","full","Given category, spec, buyer's district and target price: check if anyone lists lower for that location and the lowest he can list (MRP − 10%). He lists and sends the link himself.","V14, GTC cl. 4"],
+ [D,"Offer on a Push Button Procurement notice","","no","Not done.","never","Never submits. Alerts are in the row above.","V15"],
+
+ [A,"Check his bid results","Qualified, rank, reasons","no","Not done.","full","Read the public result page: every bidder, qualified or not, and the prices.","V15"],
+ [A,"Challenge a rejection","Once, within 48 hours","no","Not done.","prep","He pastes the buyer's reason; AI drafts the challenge and reminds him of the 48 h limit.","V15, SFAQ"],
+ [A,"Watch competitors","Who bids, at what price","no","Not done.","full","Build a list from public results. (GeM's View Contracts page needs a captcha, so the bot never uses it.)","V15"],
+ [A,"Excel report of bids","","no","Not done.","full","Export the bid list, verdicts and deadlines to Excel.","HANDOFF §2"],
+
+ [O,"Accept or decline an order","Bid orders are auto-accepted; red-flag buyers: 120 h","no","Not done.","never","Never. Reminder of the 120 h window; warn that declining freezes that product's stock for 15 days.","SFAQ"],
+ [O,"Submit ePBG","Within 15 days of the contract","no","Not done.","prep","Reminder with the due date; he submits.","GTC cl. 7"],
+ [O,"Deliver on time","Late delivery: 0.5% per week","no","Not done.","prep","Delivery-date reminders and a late-penalty calculator.","GTC cl. 15"],
+ [O,"Answer buyer requests","Cancel / extend: 5 days to reply","no","Not done.","prep","Reminder before the 5 days run out.","BFAQ"],
+ [O,"Raise invoice and proof of delivery","GeM invoice + separate GST invoice","no","Not done.","never","Never raises it. Can remind him a proper GST invoice must go with the goods.","GTC cl. 8, BFAQ"],
+ [O,"Track receipt (PRC/CRAC) and payment","Payment due 10 days after CRAC","no","Not done.","prep","Order tracker with due dates; draft the incident / escalation text when payment is late.","GTC cl. 11–12, SFAQ"],
+ [O,"Pay GeM's charges","₹10k + GST at ₹20 lakh a year; 0.30% on orders over ₹10 lakh","no","Not done.","full","Calculate what he owes from his order values (rates from 9 Aug 2024).","SFAQ"],
+ [O,"Reply to a penalty notice / appeal","Show-cause: 10 days; appeal: 10 days","no","Not done.","prep","Draft the reply and remind both deadlines.","IFAQ"]
+];
+const todayChip = {done:["done","Done"], part:["part","Partly"], no:["no","Not yet"]};
+const levelChip = {full:["full","AI can do it"], prep:["prep","AI prepares"], never:["never","Never"], none:["no","Nothing to do"]};
+const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+
+const tbody = document.getElementById("rows");
+let html = "", last = "";
+for (const [stage, task, sub, st, stText, lvl, lvlText, src] of rows) {
+  if (stage !== last) { html += `<tr class="stage" data-stage="${esc(stage)}"><td colspan="3">${esc(stage)}</td></tr>`; last = stage; }
+  const [tc, tl] = todayChip[st], [lc, ll] = levelChip[lvl];
+  html += `<tr class="row" data-stage="${esc(stage)}" data-today="${st}" data-level="${lvl}">
+    <td><span class="what">${esc(task)}</span>${sub ? `<span class="sub">${esc(sub)}</span>` : ""}</td>
+    <td><span class="chip ${tc}">${tl}</span><p>${esc(stText)}</p></td>
+    <td><span class="chip ${lc}">${ll}</span><p>${esc(lvlText)}</p><span class="src">Source: ${esc(src)}</span></td></tr>`;
+}
+tbody.innerHTML = html;
+
+const count = f => rows.filter(f).length;
+const stats = [
+  [rows.length, "seller tasks"],
+  [count(r => r[3] === "done") + count(r => r[3] === "part"), "done or partly done today"],
+  [count(r => r[3] !== "done" && r[5] === "full"), "AI can fully do, not built"],
+  [count(r => r[5] === "prep"), "AI can prepare, he acts"],
+  [count(r => r[5] === "never"), "never automate"]
+];
+document.getElementById("summary").innerHTML = stats.map(([n, l]) => `<div class="stat"><b>${n}</b><span>${l}</span></div>`).join("");
+
+const tests = { all: () => true, done: r => r.dataset.today !== "no", full: r => r.dataset.level === "full" && r.dataset.today !== "done",
+  prep: r => r.dataset.level === "prep", never: r => r.dataset.level === "never" };
+document.querySelectorAll(".filters button").forEach(btn => btn.addEventListener("click", () => {
+  document.querySelectorAll(".filters button").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
+  const t = tests[btn.dataset.f], shown = new Set();
+  tbody.querySelectorAll("tr.row").forEach(r => { const on = t(r); r.hidden = !on; if (on) shown.add(r.dataset.stage); });
+  tbody.querySelectorAll("tr.stage").forEach(r => { r.hidden = !shown.has(r.dataset.stage); });
+}));
+</script>
