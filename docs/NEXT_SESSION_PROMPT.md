@@ -17,7 +17,8 @@ The FINAL build plan in progress.md is approved: start BUILDING now.
 2. Do progress.md "Next exact action", then the plan's steps in order (0.1, then 1.0 to 1.6, then
    Phase 2...). One step at a time: failing test on a saved real fixture -> make it pass -> full suite
    -> commit locally -> update progress.md (Done row with commit hash, next exact action).
-   Don't redo anything under "Done". Use the model/effort written on each step.
+   Don't redo anything under "Done". BEFORE each step, tell me in one line if I must switch model
+   (see "Which model to use" in progress.md), and wait for me if it's an Opus step.
 3. Commit only on this computer. Never push, never open a PR: my friend is changing the GitHub repo.
 4. The app and you never log in to GeM, never solve or bypass a captcha, never submit anything on
    GeM. Public GeM pages only, read-only, through SafeFetcher. If you need to see inside my account,

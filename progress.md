@@ -30,6 +30,18 @@ Details live in `docs/HANDOFF.md`; this file only says what is done, what is nex
 | 20 Oct 2026 | Live read-only tour of the seller's own GeM account (step 8.0): owner logged in himself in his Chrome; dashboard, orders, shipment/CRAC/payment, participated bids, clarification history, incidents. New steps 4.5, 5.0, 7.6 added | docs/live-tour.md |
 | 20 Oct 2026 | FINAL build plan from videos + live tour (replaces the first plan; Phase 1 = paste-in daily check, shortfall helper, order tracker) | progress.md |
 
+## Which model to use (owner switches it in the app's model picker)
+
+Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner in one line if he must switch.
+
+| Steps | Model · Effort |
+|---|---|
+| 0.3, 1.0, 2.5a, 2.5b, 3.0, 8.2 | **Switch to Opus · High**, switch back to Sonnet after the step |
+| 2.1 | Sonnet · **High** (money and quantity parsing) |
+| 0.1 | Sonnet · Low |
+| 2.7, 4.3, 5.3 | Haiku · Low (or just stay on Sonnet) |
+| everything else | Sonnet · Medium |
+
 ## Continue from here (written 20 Oct 2026)
 
 State: code unchanged since `ca5a4b1`; `cd backend && uv run pytest -q` → **398 passed** (20 Oct 2026).
