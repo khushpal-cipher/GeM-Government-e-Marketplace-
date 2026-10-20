@@ -49,6 +49,7 @@ from .services.corpus_service import CorpusService
 from .services.discovery_service import DiscoveryService
 from .services.profile_service import ProfileService
 from .services.safety_service import SafetyService
+from .services.shortfall_service import ShortfallService
 
 
 @dataclass
@@ -64,6 +65,7 @@ class Container:
     corpus: CorpusService
     chat_model: ChatModel
     alerts: AlertService
+    shortfall: ShortfallService
 
     @classmethod
     def build(cls, settings: Settings, clock: Clock | None = None,
@@ -175,6 +177,7 @@ class Container:
             discovery=discovery,
             corpus=corpus,
             alerts=AlertService(SqliteAlertRepository(db), clock),
+            shortfall=ShortfallService(profile_repo, clock),
             chat_model=chat_model or GroqChatModel(lambda: _groq_key(settings), settings.groq_model),
         )
 

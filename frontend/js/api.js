@@ -56,6 +56,9 @@ export class ApiClient {
   finishAlert(id) { return this.#request(`/alerts/${id}/done`, { method: "POST" }); }
   getProfileWarnings() { return this.#request("/profile/warnings"); }
   saveProfile(profile) { return this.#json("PUT", "/profile", profile); }
+  getShortfallReply(text, bidNumber = null, due = null) {
+    return this.#json("POST", "/shortfall/reply", { text, bid_number: bidNumber, due });
+  }
 
   // ---- login (website mode) ----
   getSession() { return this.#request("/session"); }
