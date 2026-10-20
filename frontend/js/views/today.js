@@ -44,6 +44,48 @@ export async function renderToday(container, _params, api) {
     target.append(replyBox);
   }
 
+  function renderChallengeReply(analysis, target) {
+    const existing = target.querySelector(".challenge-box");
+    if (existing) existing.remove();
+    const replyBox = el("div", { class: "card challenge-box", style: "margin-top: 10px; background: #fdfdfd; border: 1px solid #d1d5db;" },
+      el("div", { class: "row" },
+        el("strong", {}, `One-time Challenge Draft${analysis.bid_number ? `: ${analysis.bid_number}` : ""}`),
+        el("span", { class: "badge warn" }, analysis.deadline_text)),
+      el("div", { style: "margin: 8px 0;" },
+        el("strong", {}, `Grounds: ${analysis.primary_reason}`),
+        analysis.missing_docs && analysis.missing_docs.length ? el("ul", { style: "margin: 4px 0 10px 20px; padding: 0;" },
+          ...analysis.missing_docs.map(d => el("li", { style: "margin-bottom: 4px;" },
+            el("strong", {}, d.name),
+            el("span", { class: `badge ${d.in_profile === true ? "ok" : (d.in_profile === false ? "bad" : "warn")}`, style: "margin-left: 6px;" },
+              d.in_profile === true ? "In profile" : (d.in_profile === false ? "Missing from profile" : "Check manual")),
+            el("div", { class: "hint" }, `${d.profile_note} (Quote: "${d.quote}")`)))) : null),
+      analysis.rebuttal_points && analysis.rebuttal_points.length ? el("div", { class: "hint", style: "margin-bottom:8px;" },
+        el("strong", {}, "Rebuttal: "), analysis.rebuttal_points.join(" ")) : null,
+      el("label", {}, "Challenge representation draft (submit once within 48h):"),
+      el("textarea", { rows: "8", style: "width: 100%; font-family: monospace; font-size: 13px;", readonly: "true" }, analysis.challenge_draft),
+      el("div", { class: "row", style: "margin-top: 8px;" },
+        el("button", {
+          type: "button",
+          click: (e) => {
+            navigator.clipboard.writeText(analysis.challenge_draft);
+            e.target.textContent = "Copied!";
+            setTimeout(() => { e.target.textContent = "Copy draft"; }, 2000);
+          }
+        }, "Copy draft"),
+        el("button", {
+          type: "button",
+          class: "secondary",
+          click: async (e) => {
+            await api.saveRejectionHistory(analysis.bid_number, analysis.raw_text, analysis.primary_reason);
+            e.target.textContent = "Saved to history";
+            e.target.disabled = true;
+          }
+        }, "Remember rejection"),
+        el("button", { type: "button", class: "secondary", click: () => replyBox.remove() }, "Close"))
+    );
+    target.append(replyBox);
+  }
+
   function alertCard(a) {
     const card = el("div", { class: "card" });
     const done = el("button", { type: "button", class: "secondary" }, "Done");
@@ -54,6 +96,13 @@ export async function renderToday(container, _params, api) {
       draft.addEventListener("click", async () => {
         const reply = await api.getShortfallReply(a.text, a.ref, a.due);
         renderShortfallReply(reply, card);
+      });
+      actions.unshift(draft);
+    } else if (a.kind === "rejection") {
+      const draft = el("button", { type: "button", class: "secondary" }, "Draft challenge");
+      draft.addEventListener("click", async () => {
+        const analysis = await api.analyzeRejection(a.text, a.ref, a.due);
+        renderChallengeReply(analysis, card);
       });
       actions.unshift(draft);
     }
@@ -97,6 +146,13 @@ export async function renderToday(container, _params, api) {
         draftBtn.addEventListener("click", async () => {
           const reply = await api.getShortfallReply(item.text, ref.value, due.value || null);
           renderShortfallReply(reply, rowCard);
+        });
+        headerRow.append(draftBtn);
+      } else if (kind.value === "rejection") {
+        const draftBtn = el("button", { type: "button", class: "secondary" }, "Draft challenge");
+        draftBtn.addEventListener("click", async () => {
+          const analysis = await api.analyzeRejection(item.text, ref.value, due.value || null);
+          renderChallengeReply(analysis, rowCard);
         });
         headerRow.append(draftBtn);
       }

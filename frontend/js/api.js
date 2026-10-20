@@ -68,6 +68,17 @@ export class ApiClient {
   getOrderIncidentDraft(id) { return this.#request(`/orders/${encodeURIComponent(id)}/incident-draft`); }
   parseOrderPaste(text) { return this.#json("POST", "/orders/parse", { text }); }
 
+  // ---- rejection & challenge ----
+  analyzeRejection(text, bidNumber = null, evalDate = null) {
+    return this.#json("POST", "/rejection/analyze", { text, bid_number: bidNumber, eval_date: evalDate });
+  }
+  saveRejectionHistory(bidNumber, reasonText, missingDoc, category = null) {
+    return this.#json("POST", "/rejection/history", { bid_number: bidNumber, reason_text: reasonText, missing_doc: missingDoc, category });
+  }
+  getRejectionHistory() { return this.#request("/rejection/history"); }
+  deleteRejectionHistory(id) { return this.#request(`/rejection/history/${id}`, { method: "DELETE" }); }
+  getRejectionWarnings(docs) { return this.#request(`/rejection/warnings?docs=${encodeURIComponent(docs)}`); }
+
   // ---- login (website mode) ----
   getSession() { return this.#request("/session"); }
   login(password) { return this.#json("POST", "/login", { password }); }

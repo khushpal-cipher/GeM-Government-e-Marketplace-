@@ -29,6 +29,7 @@ from .infrastructure.sqlite_repositories import (
     SqliteListingRepository,
     SqliteOrderRepository,
     SqliteProfileRepository,
+    SqliteRejectionRepository,
     SqliteRequestLog,
 )
 from .infrastructure.system_clock import SystemClock
@@ -50,6 +51,7 @@ from .services.corpus_service import CorpusService
 from .services.discovery_service import DiscoveryService
 from .services.order_service import OrderService
 from .services.profile_service import ProfileService
+from .services.rejection_service import RejectionService
 from .services.safety_service import SafetyService
 from .services.shortfall_service import ShortfallService
 
@@ -69,6 +71,11 @@ class Container:
     alerts: AlertService
     shortfall: ShortfallService
     orders: OrderService
+    rejections: RejectionService
+
+    @property
+    def rejection_service(self) -> RejectionService:
+        return self.rejections
 
     @classmethod
     def build(cls, settings: Settings, clock: Clock | None = None,
@@ -182,6 +189,7 @@ class Container:
             alerts=AlertService(SqliteAlertRepository(db), clock),
             shortfall=ShortfallService(profile_repo, clock),
             orders=OrderService(SqliteOrderRepository(db), profile_repo, clock),
+            rejections=RejectionService(SqliteRejectionRepository(db), profile_repo),
             chat_model=chat_model or GroqChatModel(lambda: _groq_key(settings), settings.groq_model),
         )
 

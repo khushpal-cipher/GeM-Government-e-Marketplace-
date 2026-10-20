@@ -174,6 +174,18 @@ MIGRATIONS: list[str] = [
         updated_at             TEXT NOT NULL
     );
     """,
+    # 9 — past rejections (disqualification reasons and missing documents remembered for warnings).
+    """
+    CREATE TABLE past_rejection (
+        id              INTEGER PRIMARY KEY AUTOINCREMENT,
+        bid_number      TEXT,
+        reason_text     TEXT NOT NULL,
+        missing_doc     TEXT,
+        category        TEXT,
+        created_at      TEXT NOT NULL
+    );
+    CREATE INDEX past_rejection_doc ON past_rejection(missing_doc);
+    """,
 ]
 
 

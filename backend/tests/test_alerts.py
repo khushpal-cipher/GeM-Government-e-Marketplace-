@@ -41,6 +41,7 @@ def test_the_date_formats_gem_shows(written):
     ("scn", "10-10-2026", date(2026, 10, 20)),          # 10 days after the notice
     ("clarification", "10-10-2026", date(2026, 10, 10)),  # the last date itself
     ("delivery", "10-10-2026", date(2026, 10, 10)),
+    ("rejection", "10-10-2026", date(2026, 10, 12)),     # 48 hours = 2 days
 ])
 def test_the_due_date_follows_the_gem_rule_for_that_kind(kind, written, due):
     (item,) = parse_paste(kind, f"GEMC-511687724 {written}")
@@ -62,7 +63,7 @@ def test_nothing_pasted_gives_nothing():
 
 
 def test_every_kind_says_what_where_and_what_happens_if_missed():
-    assert set(KINDS) == {"clarification", "acceptance", "delivery", "payment", "scn"}
+    assert set(KINDS) == {"clarification", "acceptance", "delivery", "payment", "scn", "rejection"}
     for kind in KINDS.values():
         assert kind.where and kind.if_missed and kind.label
 

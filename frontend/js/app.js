@@ -10,6 +10,7 @@ import { renderSafety } from "./views/safety.js";
 import { renderDiscover } from "./views/discover.js";
 import { renderToday } from "./views/today.js";
 import { renderOrders } from "./views/orders.js";
+import { renderRejections } from "./views/rejections.js";
 import { renderChat } from "./views/chat.js";
 import { renderLogin } from "./views/login.js";
 import { el } from "./dom.js";
@@ -62,6 +63,7 @@ if (!session.logged_in) {
     .register("/discover", (c, p) => withErrors(renderDiscover, c, p))
     .register("/today", (c, p) => withErrors(renderToday, c, p))
     .register("/orders", (c, p) => withErrors(renderOrders, c, p))
+    .register("/rejections", (c, p) => withErrors(renderRejections, c, p))
     .register("/profile", (c, p) => withErrors(renderProfile, c, p))
     .register("/safety", (c, p) => withErrors(renderSafety, c, p))
     .resolve();

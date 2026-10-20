@@ -42,6 +42,10 @@ KINDS = {
         "Show-cause notice", "Incidents: paste the notice line with its date",
         "Incidents → the notice → reply",
         "no reply means automatic action by severity (up to suspension)", 10),
+    "rejection": Kind(
+        "Technical rejection / disqualification", "Bids → List of Bids → Already participated → View Result: paste the rejection reason",
+        "Bids → List of Bids → Already participated → View Result → Challenge Rejection (one-time within 48h)",
+        "after 48 hours the technical evaluation is finalized and no representation is accepted on GeM", 2),
 }
 
 _REF = re.compile(r"GEM/\d{4}/[A-Z]/\d+|GEMC-\d+", re.IGNORECASE)

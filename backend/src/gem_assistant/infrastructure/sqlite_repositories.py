@@ -554,3 +554,52 @@ class SqliteOrderRepository:
             buyer_request_at=date.fromisoformat(row["buyer_request_at"]) if row["buyer_request_at"] else None,
             buyer_department=row["buyer_department"],
         )
+
+
+class SqliteRejectionRepository:
+    def __init__(self, db: Database):
+        self._db = db
+
+    def save_rejection(
+        self,
+        bid_number: str | None,
+        reason_text: str,
+        missing_doc: str | None,
+        category: str | None = None,
+        now: datetime | None = None,
+    ) -> int:
+        now = now or datetime.now(timezone.utc)
+        with self._db.connect() as conn:
+            cur = conn.execute(
+                "INSERT INTO past_rejection (bid_number, reason_text, missing_doc, category, created_at) VALUES (?, ?, ?, ?, ?)",
+                (bid_number, reason_text, missing_doc, category, _iso(now)),
+            )
+            return int(cur.lastrowid)
+
+    def list_rejections(self) -> list[dict]:
+        with self._db.connect() as conn:
+            rows = conn.execute("SELECT * FROM past_rejection ORDER BY id DESC").fetchall()
+        return [dict(r) for r in rows]
+
+    def find_warnings_for_docs(self, doc_names: Sequence[str]) -> list[dict]:
+        if not doc_names:
+            return []
+        warnings = []
+        all_rejections = self.list_rejections()
+        for doc in doc_names:
+            doc_lower = doc.lower()
+            for rej in all_rejections:
+                rej_doc = rej.get("missing_doc", "")
+                if rej_doc and (rej_doc.lower() in doc_lower or doc_lower in rej_doc.lower()):
+                    warnings.append({
+                        "missing_doc": rej_doc,
+                        "bid_number": rej.get("bid_number", ""),
+                        "reason_text": rej.get("reason_text", ""),
+                        "warning": f"Past bid {rej.get('bid_number', '')} was rejected for '{rej_doc}'. Verify before bidding!",
+                    })
+        return warnings
+
+    def delete_rejection(self, rejection_id: int) -> bool:
+        with self._db.connect() as conn:
+            res = conn.execute("DELETE FROM past_rejection WHERE id = ?", (rejection_id,))
+            return res.rowcount == 1
