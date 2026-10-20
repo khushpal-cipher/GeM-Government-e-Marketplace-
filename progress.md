@@ -27,6 +27,7 @@ Details live in `docs/HANDOFF.md`; this file only says what is done, what is nex
 | 20 Oct 2026 | Watched all 15 training videos ("Option A"): frames at each screen change + Hindi captions; screen-by-screen notes, what changed since 2024, AI level per screen, and a product summary at the end | docs/gem-videos.md |
 | 20 Oct 2026 | Decided: **no logging in or scraping GeM with a bot** (grave-penalty risk). A later live tour is read-only, the owner logs in himself, human speed, no submit/accept/pay clicks | — |
 | 20 Oct 2026 | Full build plan for everything on top of the current app (below, "Build plan") | progress.md |
+| 20 Oct 2026 | Live read-only tour of the seller's own GeM account (step 8.0): owner logged in himself in his Chrome; dashboard, orders, shipment/CRAC/payment, participated bids, clarification history, incidents. New steps 4.5, 5.0, 7.6 added | docs/live-tour.md |
 
 ## Continue from here (written 20 Oct 2026)
 
@@ -34,7 +35,7 @@ State: code unchanged since `ca5a4b1`; `cd backend && uv run pytest -q` → **39
 The owner chose: **plan first, then build the whole thing** (20 Oct 2026). The plan is below; nothing
 in it is started.
 
-**Next exact action:** get the owner's answers to "Decisions for the owner" (below; each has a
+**Tour done 20 Oct 2026 (docs/live-tour.md).** **Next exact action:** get the owner's answers to "Decisions for the owner" (below; each has a
 default, so building may start without them). Then start **step 1.1** (bid-PDF fields, test-first with
 the 4 fixtures already in `backend/tests/fixtures/`). Steps 0.1 and 0.2 run as soon as the owner gives
 the Groq key and the contact email.
@@ -162,12 +163,16 @@ Annotation per step (owner's rule): `→ Model · Effort · Why`.
   → Sonnet · Medium · touches the browser search, which must stay within the safety rules.
 - **4.3** "New since last search" on bids and in chat.
   → Haiku · Low · a stored first-seen time already exists.
+- **4.5** Import the bids GeM invites him to: he pastes the dashboard's "You are invited to participate in bid (GEM/…)" lines; the app finds each bid's PDF via the public listing search and checks it (live-tour.md).
+  → Sonnet · Medium · bid number → PDF lookup through existing guards.
 - **4.4** Scheduled search inside the running server (e.g. 9:00 and 15:00), respecting 15 min,
   5×2 pages, 250/day and the breaker; one at a time; skipped while stopped.
   → Sonnet · Medium · background timing in the server; must not double-run.
 
 ### Phase 5 — Tell him in time
 
+- **5.0** Daily GeM check card: the app asks him each morning to look at *List of Bids → Already participated* and his dashboard and paste pending clarifications (bid, text, last date), orders pending acceptance, late deliveries, CRACs without payment, open SCNs. The app never logs in (live-tour.md: a buyer's shortfall request sat unnoticed there).
+  → Sonnet · Medium · new form + table feeding 5.1.
 - **5.1** In-app alerts list: new matching bids; closing in 3 days; representation window closing;
   "list your matching product 2+ days before the bid ends" (approval can take 48 h).
   → Sonnet · Medium · new table + chat card.
@@ -195,11 +200,12 @@ Annotation per step (owner's rule): `→ Model · Effort · Why`.
 - **7.3** Make / Model / HSN list for BOQ bids (it goes onto the purchase order).
 - **7.4** Rejection challenge text (he pastes the reason; 48 h window).
 - **7.5** Listing pre-check (MRP −10%, 3 photos, MRP proof names this product, brand vs model).
-  → 7.1–7.5: Sonnet · Medium · built on 1.x data and the 7.0 rules.
+- **7.6** Shortfall-reply helper: he pastes the buyer's clarification text; the app lists the documents asked, matches them to his profile and drafts the covering note. He uploads and submits himself.
+  → 7.1–7.6: Sonnet · Medium · built on 1.x data and the 7.0 rules.
 
 ### Phase 8 — After he wins (needs the live tour first)
 
-- **8.0** Live read-only tour of his GeM account (he logs in himself, human speed, no
+- **8.0** DONE 20 Oct 2026, see docs/live-tour.md (not opened: order-acceptance, ePBG and invoice-creation screens). Original text: Live read-only tour of his GeM account (he logs in himself, human speed, no
   submit/accept/pay/OTP clicks): orders, invoices, PRC/CRAC, payment, ePBG screen, incidents. Plan in
   `docs/live-tour-plan.md`, then he picks a date. Also finish HANDOFF §4a "Still not checked"
   (Payment Escalation SOP, current penalty policy, Revenue Policy v1.5, minimum delivery days, vendor check fee).
