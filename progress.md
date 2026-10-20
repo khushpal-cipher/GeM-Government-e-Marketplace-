@@ -28,6 +28,7 @@ Details live in `docs/HANDOFF.md`; this file only says what is done, what is nex
 | 20 Oct 2026 | Decided: **no logging in or scraping GeM with a bot** (grave-penalty risk). A later live tour is read-only, the owner logs in himself, human speed, no submit/accept/pay clicks | — |
 | 20 Oct 2026 | Full build plan for everything on top of the current app (below, "Build plan") | progress.md |
 | 20 Oct 2026 | Live read-only tour of the seller's own GeM account (step 8.0): owner logged in himself in his Chrome; dashboard, orders, shipment/CRAC/payment, participated bids, clarification history, incidents. New steps 4.5, 5.0, 7.6 added | docs/live-tour.md |
+| 20 Oct 2026 | **Step 0.1** chat run against real Groq (3 of the 4 guide sentences; bid search skipped, needs D2). Fixed: it said "₹5 lakh" for 50 lakh; Hinglish got Devanagari replies. Prompt-only fixes. Still: the line beside a Confirm card is sometimes English for Hinglish input (model habit); "Bid 1" on an empty database gives a confused answer | COMMIT0.1 |
 | 20 Oct 2026 | FINAL build plan from videos + live tour (replaces the first plan; Phase 1 = paste-in daily check, shortfall helper, order tracker) | progress.md |
 
 ## Which model to use (owner switches it in the app's model picker)
@@ -47,8 +48,7 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 State: code unchanged since `ca5a4b1`; `cd backend && uv run pytest -q` → **398 passed** (20 Oct 2026).
 **FINAL build plan written 20 Oct 2026 (below, commit 356ce01). Owner said start building (20 Oct 2026).** Nothing in it is started yet.
 
-**Next exact action:** start **step 0.1** (chat against real Groq: the key is already in
-`~/Library/Application Support/GeM Assistant/.env`), then **1.0**. Steps 0.2/0.3 wait for D2 (contact email).
+**Next exact action:** step **1.0** (Opus · High: wording rules; switch the model first). 0.1 is done. Steps 0.2/0.3 wait for D2 (contact email).
 
 ## Build plan (FINAL, written 20 Oct 2026, approved by the owner 20 Oct 2026, nothing started)
 
@@ -269,4 +269,4 @@ and `select='gt(scene,0.08)'`, keeping the last frame of each burst less than 3 
 
 ## Not verified yet
 
-Chat never run against real Groq; website mode never deployed (HANDOFF.md §1).
+Chat run against real Groq only for profile + refusal (20 Oct 2026); bid search and "what does bid N need" with a real bid not tried; website mode never deployed (HANDOFF.md §1).

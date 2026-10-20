@@ -121,7 +121,7 @@ class ChatTools:
             return ToolResult({"error": f"That change isn't possible: {error.errors()[0]['msg']}"})
         self._proposed = True
         return ToolResult(
-            {"status": "Shown to him with a Confirm button. Nothing is saved or searched yet: tell him that "
+            {"status": "Shown to him with a Confirm button. Nothing is saved or searched yet: tell him, in the language of his message, that "
                        "pressing Confirm saves it" + (" and starts the search." if add_products else "."),
              "changes": changes},
             {"type": "profile_proposal", "changes": changes,
