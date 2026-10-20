@@ -33,12 +33,12 @@ Details live in `docs/HANDOFF.md`; this file only says what is done, what is nex
 ## Continue from here (written 20 Oct 2026)
 
 State: code unchanged since `ca5a4b1`; `cd backend && uv run pytest -q` → **398 passed** (20 Oct 2026).
-**FINAL build plan written 20 Oct 2026 (below), waiting for the owner's OK.** Nothing in it is started.
+**FINAL build plan written 20 Oct 2026 (below, commit 356ce01). Owner said start building (20 Oct 2026).** Nothing in it is started yet.
 
-**Next exact action:** owner says OK → start **step 0.1** (chat against real Groq: the key is already in
+**Next exact action:** start **step 0.1** (chat against real Groq: the key is already in
 `~/Library/Application Support/GeM Assistant/.env`), then **1.0**. Steps 0.2/0.3 wait for D2 (contact email).
 
-## Build plan (FINAL, written 20 Oct 2026, nothing started)
+## Build plan (FINAL, written 20 Oct 2026, approved by the owner 20 Oct 2026, nothing started)
 
 **Goal:** the app does everything in HANDOFF §2 "fully automated" and "AI prepares", sharpened by
 `docs/gem-videos.md` and `docs/live-tour.md`. Still never: login, captcha, OTP, submitting, paying, accepting.
