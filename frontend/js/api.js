@@ -49,6 +49,7 @@ export class ApiClient {
 
   // ---- seller profile ----
   getProfile() { return this.#request("/profile"); }
+  getProfileWarnings() { return this.#request("/profile/warnings"); }
   saveProfile(profile) { return this.#json("PUT", "/profile", profile); }
 
   // ---- login (website mode) ----

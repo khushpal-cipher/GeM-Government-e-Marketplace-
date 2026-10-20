@@ -30,6 +30,7 @@ Details live in `docs/HANDOFF.md`; this file only says what is done, what is nex
 | 20 Oct 2026 | Live read-only tour of the seller's own GeM account (step 8.0): owner logged in himself in his Chrome; dashboard, orders, shipment/CRAC/payment, participated bids, clarification history, incidents. New steps 4.5, 5.0, 7.6 added | docs/live-tour.md |
 | 20 Oct 2026 | **Step 0.1** chat run against real Groq (3 of the 4 guide sentences; bid search skipped, needs D2). Fixed: it said "₹5 lakh" for 50 lakh; Hinglish got Devanagari replies. Prompt-only fixes. Still: the line beside a Confirm card is sometimes English for Hinglish input (model habit); "Bid 1" on an empty database gives a confused answer | 8f625b0 |
 | 20 Oct 2026 | **Step 1.0** wording rules: `domain/wording.py` (`DRAFT_NOTE`, `deadline()` in Indian time with days/hours left, `check_draft()` blocks "for you / the app sent / eligible / guaranteed", PAN, IFSC) + chat prompt line for AI drafts; 420 tests pass | c00be05, docs/wording-rules.md |
+| 20 Oct 2026 | **Step 1.1** profile details: GeM registration date, ITR filed on GeM (yes/no/don't know), PFMS bank, OEM products, self-made items (new `details_json` column, migration 6); chat can propose them; warnings (over 24 months without ITR, bank not verified, MSE with nothing self-made) in chat and on the profile page (`GET /api/profile/warnings`). Not added: states/certificates (already existed) | COMMIT11 |
 | 20 Oct 2026 | FINAL build plan from videos + live tour (replaces the first plan; Phase 1 = paste-in daily check, shortfall helper, order tracker) | progress.md |
 
 ## Which model to use (owner switches it in the app's model picker)
@@ -46,10 +47,10 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 
 ## Continue from here (written 20 Oct 2026)
 
-State: code unchanged since `ca5a4b1`; `cd backend && uv run pytest -q` → **420 passed** (20 Oct 2026, after 1.0).
+State: code unchanged since `ca5a4b1`; `cd backend && uv run pytest -q` → **429 passed** (20 Oct 2026, after 1.1).
 **FINAL build plan written 20 Oct 2026 (below, commit 356ce01). Owner said start building (20 Oct 2026).** Nothing in it is started yet.
 
-**Next exact action:** step **1.1** (Sonnet · Medium: switch back to Sonnet) profile additions. Every later draft/reminder must use `domain/wording.py`. Steps 0.2/0.3 wait for D2 (contact email).
+**Next exact action:** step **1.2** (Sonnet · Medium) daily GeM check card + alerts. Every later draft/reminder must use `domain/wording.py`. Steps 0.2/0.3 wait for D2 (contact email).
 
 ## Build plan (FINAL, written 20 Oct 2026, approved by the owner 20 Oct 2026, nothing started)
 

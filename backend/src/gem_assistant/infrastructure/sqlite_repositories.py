@@ -32,6 +32,10 @@ def _dt(value: str | None) -> datetime | None:
     return datetime.fromisoformat(value) if value else None
 
 
+PROFILE_DETAILS = ("gem_registered_on", "itr_filed_on_gem", "pfms_bank_verified",
+                   "oem_products", "own_made_products")
+
+
 class SqliteProfileRepository:
     def __init__(self, db: Database):
         self._db = db
@@ -54,6 +58,7 @@ class SqliteProfileRepository:
             ignore_words=json.loads(row["ignore_json"]),
             bid_order=row["bid_order"],
             updated_at=_dt(row["updated_at"]),
+            **json.loads(row["details_json"]),
         )
 
     def save(self, profile: SellerProfile) -> SellerProfile:
@@ -62,8 +67,8 @@ class SqliteProfileRepository:
                 """
                 INSERT INTO seller_profile (id, business_name, is_mse, is_startup, is_oem,
                     annual_turnover_rupees, years_experience, categories_json,
-                    certifications_json, states_json, ignore_json, bid_order, updated_at)
-                VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    certifications_json, states_json, ignore_json, bid_order, updated_at, details_json)
+                VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(id) DO UPDATE SET
                     business_name = excluded.business_name,
                     is_mse = excluded.is_mse,
@@ -76,7 +81,8 @@ class SqliteProfileRepository:
                     states_json = excluded.states_json,
                     ignore_json = excluded.ignore_json,
                     bid_order = excluded.bid_order,
-                    updated_at = excluded.updated_at
+                    updated_at = excluded.updated_at,
+                    details_json = excluded.details_json
                 """,
                 (
                     profile.business_name,
@@ -91,6 +97,7 @@ class SqliteProfileRepository:
                     json.dumps(profile.ignore_words),
                     profile.bid_order,
                     _iso(profile.updated_at),
+                    profile.model_dump_json(include=set(PROFILE_DETAILS)),
                 ),
             )
         return profile

@@ -38,7 +38,7 @@ def check_draft(text: str) -> list[str]:
     return problems
 
 
-def _day(d: date) -> str:
+def day(d: date) -> str:
     return f"{d:%a} {d.day} {d:%b %Y}"
 
 
@@ -56,22 +56,22 @@ def deadline(due: date | datetime, now: datetime) -> str:
     if not isinstance(due, datetime):
         days = (due - today).days
         if days < 0:
-            return f"missed: was due {_day(due)} ({_n(-days, 'day')} ago)"
+            return f"missed: was due {day(due)} ({_n(-days, 'day')} ago)"
         if days <= 1:
-            return f"by {'today' if days == 0 else 'tomorrow'}, {_day(due)}"
-        return f"by {_day(due)} ({_n(days, 'day')} left)"
+            return f"by {'today' if days == 0 else 'tomorrow'}, {day(due)}"
+        return f"by {day(due)} ({_n(days, 'day')} left)"
 
     if due.tzinfo is None:
         raise ValueError("a deadline time needs its time zone")
     local = due.astimezone(IST)
     days = (local.date() - today).days
     if due <= now:
-        when = "today" if days == 0 else _day(local.date())
+        when = "today" if days == 0 else day(local.date())
         ago = "" if days == 0 else f" ({_n(-days, 'day')} ago)"
         return f"missed: was due {when}, {_time(local)}{ago}"
     if days >= 2:
-        return f"by {_day(local.date())}, {_time(local)} ({_n(days, 'day')} left)"
+        return f"by {day(local.date())}, {_time(local)} ({_n(days, 'day')} left)"
     hours = int((due - now).total_seconds() // 3600)
     left = "less than 1 hour left" if hours < 1 else f"{_n(hours, 'hour')} left"
-    when = "today" if days == 0 else f"tomorrow, {_day(local.date())}"
+    when = "today" if days == 0 else f"tomorrow, {day(local.date())}"
     return f"by {when}, {_time(local)} ({left})"

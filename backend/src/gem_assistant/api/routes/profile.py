@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+from datetime import date
+
 from fastapi import APIRouter, Request
 
 from ...domain.models import SellerProfile
+from ...domain.profile_warnings import profile_warnings
 
 router = APIRouter(prefix="/api/profile", tags=["profile"])
 
@@ -15,3 +18,9 @@ def get_profile(request: Request) -> SellerProfile | None:
 @router.put("", response_model=SellerProfile)
 def save_profile(profile: SellerProfile, request: Request) -> SellerProfile:
     return request.app.state.container.profiles.save(profile)
+
+
+@router.get("/warnings", response_model=list[str])
+def get_warnings(request: Request) -> list[str]:
+    profile = request.app.state.container.profiles.get()
+    return profile_warnings(profile, date.today()) if profile else []

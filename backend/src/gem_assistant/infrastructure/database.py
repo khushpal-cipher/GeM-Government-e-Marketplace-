@@ -137,6 +137,11 @@ MIGRATIONS: list[str] = [
     ALTER TABLE seller_profile ADD COLUMN ignore_json TEXT NOT NULL DEFAULT '[]';
     ALTER TABLE seller_profile ADD COLUMN bid_order TEXT NOT NULL DEFAULT 'match';
     """,
+    # 6 — profile details for the checks and drafts (registration date, ITR on GeM, PFMS bank,
+    # OEM / self-made products), kept as one JSON document so the next detail needs no migration.
+    """
+    ALTER TABLE seller_profile ADD COLUMN details_json TEXT NOT NULL DEFAULT '{}';
+    """,
 ]
 
 

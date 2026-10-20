@@ -13,11 +13,13 @@ there is no tool to reset the safety stop or change the contact email.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import date
 from typing import TYPE_CHECKING, Any
 
 from pydantic import ValidationError
 
 from ..domain.models import FieldStatus, SellerProfile, Verdict
+from ..domain.profile_warnings import profile_warnings
 from ..infrastructure.pypdf_extractor import InvalidPdf
 from ..safety.errors import SafetyError, UrlNotAllowed
 from .bid_fetch_service import BadBidLink
@@ -53,6 +55,11 @@ DEFINITIONS = [
            "years_experience": {"type": "integer"},
            "is_mse": {"type": "boolean"}, "is_startup": {"type": "boolean"}, "is_oem": {"type": "boolean"},
            "business_name": {"type": "string"},
+           "gem_registered_on": {"type": "string", "description": "Date he registered on GeM, YYYY-MM-DD"},
+           "itr_filed_on_gem": {"type": "boolean", "description": "Income tax return filed on GeM"},
+           "pfms_bank_verified": {"type": "boolean", "description": "Bank account verified through PFMS on GeM"},
+           "oem_products": {**_LIST, "description": "Products where he is the OEM (manufacturer), not a reseller"},
+           "own_made_products": {**_LIST, "description": "Items he makes himself (MSE EMD exemption)"},
            "bid_order": {"type": "string", "enum": ["match", "closing"],
                          "description": "Download first: bids made mostly of his products, or closing soonest"}}),
     _tool("search_gem", "Start one search of GeM's public bid list for the products saved in his profile, and "
@@ -73,7 +80,10 @@ DEFINITIONS = [
 _PROFILE_FIELDS = {"ignore_words": "ignore_words",
                    "annual_turnover_rupees": "annual_turnover_rupees", "years_experience": "years_experience",
                    "is_mse": "is_mse", "is_startup": "is_startup", "is_oem": "is_oem",
-                   "business_name": "business_name", "bid_order": "bid_order"}
+                   "business_name": "business_name", "bid_order": "bid_order",
+                   "gem_registered_on": "gem_registered_on", "itr_filed_on_gem": "itr_filed_on_gem",
+                   "pfms_bank_verified": "pfms_bank_verified", "oem_products": "oem_products",
+                   "own_made_products": "own_made_products"}
 
 
 class ChatTools:
@@ -98,7 +108,8 @@ class ChatTools:
         profile = self._c.profiles.get()
         if profile is None:
             return {"profile": None, "note": "No profile saved yet."}
-        return {"profile": profile.model_dump(mode="json", exclude={"updated_at"})}
+        return {"profile": profile.model_dump(mode="json", exclude={"updated_at"}),
+                "warnings": profile_warnings(profile, date.today())}
 
     def _propose_profile_update(self, add_products: Any = (), remove_products: Any = (),
                                 **changes: Any) -> ToolResult:

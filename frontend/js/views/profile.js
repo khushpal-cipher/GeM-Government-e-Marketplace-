@@ -12,6 +12,11 @@ export const EMPTY_PROFILE = {
   states: [],
   ignore_words: [],
   bid_order: "match",
+  gem_registered_on: null,
+  itr_filed_on_gem: null,
+  pfms_bank_verified: null,
+  oem_products: [],
+  own_made_products: [],
 };
 
 function field(labelText, input, hint) {
@@ -35,8 +40,17 @@ export function parseRupees(text) {
 
 export const inr = (rupees) => `₹${rupees.toLocaleString("en-IN")}`;
 
+// A yes / no / "I don't know" box: unknown is saved as null, never as "no".
+function triState(id, value) {
+  const select = el("select", { id },
+    el("option", { value: "" }, "I don't know"), el("option", { value: "yes" }, "Yes"), el("option", { value: "no" }, "No"));
+  select.value = value == null ? "" : value ? "yes" : "no";
+  return { select, get: () => (select.value === "" ? null : select.value === "yes") };
+}
+
 export async function renderProfile(container, _params, api) {
-  const profile = (await api.getProfile()) || EMPTY_PROFILE;
+  const profile = { ...EMPTY_PROFILE, ...((await api.getProfile()) || {}) };
+  const warnings = (await api.getProfileWarnings()) || [];
 
   const name = el("input", { type: "text", id: "business_name", value: profile.business_name });
   const turnover = el("input", { type: "text", inputmode: "decimal", id: "turnover",
@@ -52,6 +66,11 @@ export async function renderProfile(container, _params, api) {
   const categories = el("textarea", { id: "categories" }); categories.value = profile.categories.join(", ");
   const certs = el("textarea", { id: "certs" }); certs.value = profile.certifications.join(", ");
   const states = el("textarea", { id: "states" }); states.value = profile.states.join(", ");
+  const registered = el("input", { type: "date", id: "registered", value: profile.gem_registered_on || "" });
+  const itr = triState("itr", profile.itr_filed_on_gem);
+  const pfms = triState("pfms", profile.pfms_bank_verified);
+  const oemProducts = el("textarea", { id: "oem_products" }); oemProducts.value = profile.oem_products.join(", ");
+  const ownMade = el("textarea", { id: "own_made" }); ownMade.value = profile.own_made_products.join(", ");
   const mse = checkbox("is_mse", "Registered MSE (Udyam)", profile.is_mse);
   const startup = checkbox("is_startup", "DPIIT-recognised startup", profile.is_startup);
   const oem = checkbox("is_oem", "We are the OEM (manufacturer), not a reseller", profile.is_oem);
@@ -68,6 +87,11 @@ export async function renderProfile(container, _params, api) {
       field("Products you sell", categories, "Comma-separated, as GeM names them. Also on the Find bids page."),
       field("Certifications held", certs, "For example: ISO 9001, BIS"),
       field("States you can deliver to", states, "Comma-separated."),
+      field("Date you registered on GeM", registered),
+      field("Income tax return (ITR) filed on GeM?", itr.select),
+      field("Bank account PFMS-verified on GeM?", pfms.select),
+      field("Products where you are the OEM", oemProducts, "Comma-separated. The rest count as resold."),
+      field("Items you make yourself", ownMade, "MSE EMD exemption applies only to these."),
     ),
     el("div", { class: "row", style: "margin-top:16px" }, save),
     status,
@@ -97,6 +121,11 @@ export async function renderProfile(container, _params, api) {
         categories: splitList(categories.value),
         certifications: splitList(certs.value),
         states: splitList(states.value),
+        gem_registered_on: registered.value || null,
+        itr_filed_on_gem: itr.get(),
+        pfms_bank_verified: pfms.get(),
+        oem_products: splitList(oemProducts.value),
+        own_made_products: splitList(ownMade.value),
       });
       status.replaceChildren(notice("ok", "Saved. Bid verdicts now use this profile."));
     } catch (error) {
@@ -110,6 +139,7 @@ export async function renderProfile(container, _params, api) {
     el("h1", {}, "Seller profile"),
     el("div", { class: "subtle" },
       "Used to check each bid. Stored only on this computer and never sent to GeM or to the AI."),
+    ...warnings.map((text) => notice("bad", text)),
     form,
   );
 }

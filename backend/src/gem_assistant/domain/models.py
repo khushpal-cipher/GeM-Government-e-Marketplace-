@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from datetime import datetime
+from datetime import date, datetime
 from enum import Enum
 from typing import Literal, Sequence
 
@@ -177,6 +177,12 @@ class SellerProfile(BaseModel):
     # and which bids a search downloads first.
     ignore_words: list[str] = Field(default_factory=list)
     bid_order: Literal["match", "closing"] = "match"
+    # Details the checks and drafts need. None = he hasn't said (never treated as "no").
+    gem_registered_on: date | None = None
+    itr_filed_on_gem: bool | None = None
+    pfms_bank_verified: bool | None = None
+    oem_products: list[str] = Field(default_factory=list)       # products where he is the OEM
+    own_made_products: list[str] = Field(default_factory=list)  # items he makes himself (MSE EMD exemption)
     updated_at: datetime | None = None
 
 
