@@ -35,7 +35,7 @@ State: code unchanged since `ca5a4b1`; `cd backend && uv run pytest -q` → **39
 The owner chose: **plan first, then build the whole thing** (20 Oct 2026). The plan is below; nothing
 in it is started.
 
-**Tour done 20 Oct 2026 (docs/live-tour.md).** **Next exact action:** get the owner's answers to "Decisions for the owner" (below; each has a
+**Tour done 20 Oct 2026 (docs/live-tour.md).** **Next exact action:** make the FINAL plan (videos + live tour), show it to the owner, wait for his OK. Then: get the owner's answers to "Decisions for the owner" (below; each has a
 default, so building may start without them). Then start **step 1.1** (bid-PDF fields, test-first with
 the 4 fixtures already in `backend/tests/fixtures/`). Steps 0.1 and 0.2 run as soon as the owner gives
 the Groq key and the contact email.
