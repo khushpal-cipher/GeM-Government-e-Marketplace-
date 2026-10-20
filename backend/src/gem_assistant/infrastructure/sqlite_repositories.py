@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from typing import Sequence
+
+from ..domain.order_tracker import TrackedOrder
 
 from ..domain.models import (
     BidAnalysis,
@@ -26,6 +28,10 @@ from .database import Database
 
 def _iso(value: datetime | None) -> str | None:
     return value.astimezone(timezone.utc).isoformat() if value else None
+
+
+def _iso_d(value: date | None) -> str | None:
+    return value.isoformat() if value else None
 
 
 def _dt(value: str | None) -> datetime | None:
@@ -457,3 +463,94 @@ class SqliteAlertRepository:
         with self._db.connect() as conn:
             return conn.execute("UPDATE alert SET done_at = ? WHERE id = ? AND done_at IS NULL",
                                 (_iso(now), alert_id)).rowcount == 1
+
+
+class SqliteOrderRepository:
+    def __init__(self, db: Database):
+        self._db = db
+
+    def save(self, order: TrackedOrder, now: datetime) -> int:
+        with self._db.connect() as conn:
+            existing = conn.execute(
+                "SELECT id FROM gem_order WHERE contract_number = ?", (order.contract_number,)
+            ).fetchone()
+            iso_now = _iso(now)
+            if existing:
+                order_id = existing["id"]
+                conn.execute(
+                    """UPDATE gem_order SET
+                           contract_date = ?, order_value_rupees = ?, expected_delivery_date = ?,
+                           epbg_percent = ?, epbg_submitted_at = ?, dispatched_at = ?,
+                           proof_of_delivery_at = ?, crac_at = ?, payment_at = ?,
+                           buyer_request_at = ?, buyer_department = ?, updated_at = ?
+                       WHERE id = ?""",
+                    (_iso_d(order.contract_date), order.order_value_rupees,
+                     _iso_d(order.expected_delivery_date), order.epbg_percent,
+                     _iso_d(order.epbg_submitted_at), _iso_d(order.dispatched_at),
+                     _iso_d(order.proof_of_delivery_at), _iso_d(order.crac_at),
+                     _iso_d(order.payment_at), _iso_d(order.buyer_request_at),
+                     order.buyer_department, iso_now, order_id),
+                )
+                return order_id
+            cursor = conn.execute(
+                """INSERT INTO gem_order (
+                       contract_number, contract_date, order_value_rupees, expected_delivery_date,
+                       epbg_percent, epbg_submitted_at, dispatched_at, proof_of_delivery_at,
+                       crac_at, payment_at, buyer_request_at, buyer_department, created_at, updated_at
+                   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (order.contract_number, _iso_d(order.contract_date), order.order_value_rupees,
+                 _iso_d(order.expected_delivery_date), order.epbg_percent,
+                 _iso_d(order.epbg_submitted_at), _iso_d(order.dispatched_at),
+                 _iso_d(order.proof_of_delivery_at), _iso_d(order.crac_at),
+                 _iso_d(order.payment_at), _iso_d(order.buyer_request_at),
+                 order.buyer_department, iso_now, iso_now),
+            )
+            return cursor.lastrowid
+
+    def update_stage(self, order_id: int, updates: dict, now: datetime) -> bool:
+        allowed = {"epbg_submitted_at", "dispatched_at", "proof_of_delivery_at",
+                   "crac_at", "payment_at", "buyer_request_at", "buyer_department"}
+        fields = {k: v for k, v in updates.items() if k in allowed}
+        if not fields:
+            return False
+        set_clauses = [f"{k} = ?" for k in fields]
+        set_clauses.append("updated_at = ?")
+        params = [v.isoformat() if isinstance(v, (date, datetime)) else v for v in fields.values()]
+        params.append(_iso(now))
+        params.append(order_id)
+        with self._db.connect() as conn:
+            res = conn.execute(f"UPDATE gem_order SET {', '.join(set_clauses)} WHERE id = ?", params)
+            return res.rowcount == 1
+
+    def get(self, order_id: int) -> TrackedOrder | None:
+        with self._db.connect() as conn:
+            row = conn.execute("SELECT * FROM gem_order WHERE id = ?", (order_id,)).fetchone()
+        return self._to_order(row) if row else None
+
+    def list(self) -> list[TrackedOrder]:
+        with self._db.connect() as conn:
+            rows = conn.execute("SELECT * FROM gem_order ORDER BY contract_date DESC, id DESC").fetchall()
+        return [self._to_order(r) for r in rows]
+
+    def cumulative_sales(self) -> int:
+        with self._db.connect() as conn:
+            row = conn.execute("SELECT COALESCE(SUM(order_value_rupees), 0) FROM gem_order").fetchone()
+            return int(row[0]) if row else 0
+
+    @staticmethod
+    def _to_order(row) -> TrackedOrder:
+        return TrackedOrder(
+            id=row["id"],
+            contract_number=row["contract_number"],
+            contract_date=date.fromisoformat(row["contract_date"]),
+            order_value_rupees=row["order_value_rupees"],
+            expected_delivery_date=date.fromisoformat(row["expected_delivery_date"]),
+            epbg_percent=row["epbg_percent"],
+            epbg_submitted_at=date.fromisoformat(row["epbg_submitted_at"]) if row["epbg_submitted_at"] else None,
+            dispatched_at=date.fromisoformat(row["dispatched_at"]) if row["dispatched_at"] else None,
+            proof_of_delivery_at=date.fromisoformat(row["proof_of_delivery_at"]) if row["proof_of_delivery_at"] else None,
+            crac_at=date.fromisoformat(row["crac_at"]) if row["crac_at"] else None,
+            payment_at=date.fromisoformat(row["payment_at"]) if row["payment_at"] else None,
+            buyer_request_at=date.fromisoformat(row["buyer_request_at"]) if row["buyer_request_at"] else None,
+            buyer_department=row["buyer_department"],
+        )

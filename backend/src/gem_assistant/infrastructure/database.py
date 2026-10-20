@@ -154,6 +154,26 @@ MIGRATIONS: list[str] = [
         done_at TEXT
     );
     """,
+    # 8 — order tracker (stages, delivery, CRAC, payment, and ePBG tracking).
+    """
+    CREATE TABLE gem_order (
+        id                     INTEGER PRIMARY KEY AUTOINCREMENT,
+        contract_number        TEXT NOT NULL UNIQUE,
+        contract_date          TEXT NOT NULL,
+        order_value_rupees     INTEGER NOT NULL,
+        expected_delivery_date TEXT NOT NULL,
+        epbg_percent           REAL,
+        epbg_submitted_at      TEXT,
+        dispatched_at          TEXT,
+        proof_of_delivery_at   TEXT,
+        crac_at                TEXT,
+        payment_at             TEXT,
+        buyer_request_at       TEXT,
+        buyer_department       TEXT,
+        created_at             TEXT NOT NULL,
+        updated_at             TEXT NOT NULL
+    );
+    """,
 ]
 
 

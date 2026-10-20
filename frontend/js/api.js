@@ -60,6 +60,14 @@ export class ApiClient {
     return this.#json("POST", "/shortfall/reply", { text, bid_number: bidNumber, due });
   }
 
+  // ---- order tracker ----
+  getOrders() { return this.#request("/orders"); }
+  getOrder(id) { return this.#request(`/orders/${encodeURIComponent(id)}`); }
+  saveOrder(order) { return this.#json("POST", "/orders", order); }
+  updateOrder(id, updates) { return this.#json("PUT", `/orders/${encodeURIComponent(id)}`, updates); }
+  getOrderIncidentDraft(id) { return this.#request(`/orders/${encodeURIComponent(id)}/incident-draft`); }
+  parseOrderPaste(text) { return this.#json("POST", "/orders/parse", { text }); }
+
   // ---- login (website mode) ----
   getSession() { return this.#request("/session"); }
   login(password) { return this.#json("POST", "/login", { password }); }

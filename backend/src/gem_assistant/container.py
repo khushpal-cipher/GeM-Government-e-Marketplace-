@@ -27,6 +27,7 @@ from .infrastructure.sqlite_repositories import (
     SqliteBreakerStateStore,
     SqliteDiscoveryRunStore,
     SqliteListingRepository,
+    SqliteOrderRepository,
     SqliteProfileRepository,
     SqliteRequestLog,
 )
@@ -47,6 +48,7 @@ from .services.bid_query_service import BidQueryService
 from .services.chat_service import ChatModel
 from .services.corpus_service import CorpusService
 from .services.discovery_service import DiscoveryService
+from .services.order_service import OrderService
 from .services.profile_service import ProfileService
 from .services.safety_service import SafetyService
 from .services.shortfall_service import ShortfallService
@@ -66,6 +68,7 @@ class Container:
     chat_model: ChatModel
     alerts: AlertService
     shortfall: ShortfallService
+    orders: OrderService
 
     @classmethod
     def build(cls, settings: Settings, clock: Clock | None = None,
@@ -178,6 +181,7 @@ class Container:
             corpus=corpus,
             alerts=AlertService(SqliteAlertRepository(db), clock),
             shortfall=ShortfallService(profile_repo, clock),
+            orders=OrderService(SqliteOrderRepository(db), profile_repo, clock),
             chat_model=chat_model or GroqChatModel(lambda: _groq_key(settings), settings.groq_model),
         )
 
