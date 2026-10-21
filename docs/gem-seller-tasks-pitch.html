@@ -104,7 +104,7 @@ tr.stage td { background: var(--surface); font-family: var(--display); font-weig
 <script>
 // [stage, task, sub, level, what AI does]
 const S = "Registration and profile", C = "Catalogue (listing products and services)", F = "Finding bids",
-      R = "Reading and checking a bid", B = "Bidding", D = "Direct purchase and quick buys", A = "After the bid closes",
+      R = "Reading and checking a bid", B = "Bidding", D = "Direct purchase and L1 purchase", A = "After the bid closes",
       O = "Orders, delivery and payment";
 const rows = [
  [S,"Sign up as a seller","Aadhaar/PAN + OTP, email OTP","you","Gives the exact document checklist for his business type before he starts."],
@@ -144,7 +144,10 @@ const rows = [
  [B,"Pay EMD","","you","Says the exact EMD amount, or that he is exempt."],
  [B,"Withdraw or change a bid","Up to 3 times before the deadline","you","Warns what withdrawing would cost him before he decides."],
 
- [D,"Win a direct order from a known buyer","Up to ₹50,000; ₹50k–₹10 lakh = lowest of 3","full","Checks if anyone lists lower for the buyer's location and the lowest price he can list."],
+ [D,"Win a direct purchase order","Up to ₹50,000: buyer orders straight from a listing","full","Takes the buyer's item, spec, district and quantity; checks every seller's price for that location and tells him the lowest valid price (at least 10% under MRP) that puts his listing first. He then sends the buyer his product link."],
+ [D,"Win an L1 purchase","₹50,000–₹10 lakh: buyer compares at least 3 sellers and must buy the lowest","full","Shows where he ranks against other sellers of the same spec for that location, the price he needs to be L1, and whether that price still leaves him a profit."],
+ [D,"Keep listings ready for direct and L1 buys","Stock, price, delivery area","full","Watches his listings every day: warns when a competitor undercuts him in his states, when stock runs low, or when a listing is about to expire."],
+ [D,"Handle a direct or L1 order","Auto-accepted; red-flag buyers: 120 hours to decide","prep","Alerts him the moment an order lands, shows the buyer's payment record, and sets the delivery deadline and reminders."],
  [D,"Offer on a Push Button Procurement notice","","you","Prepares his offer details; he submits."],
 
  [A,"Check his bid results","Qualified, rank, reasons","full","Reads every result: who bid, who qualified, and at what price."],
