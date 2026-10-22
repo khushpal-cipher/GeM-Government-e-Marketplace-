@@ -49,7 +49,8 @@ def save(body: SaveIn, request: Request) -> dict:
 
 @router.get("")
 def open_alerts(request: Request) -> list[dict]:
-    return request.app.state.container.alerts.open()
+    container = request.app.state.container
+    return container.bid_alerts.list() + container.alerts.open()
 
 
 @router.post("/{alert_id}/done")

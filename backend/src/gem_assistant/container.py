@@ -48,6 +48,7 @@ from .services.alert_service import AlertService
 from .services.invited_bid_service import InvitedBidService
 from .services.bid_fetch_service import BidFetchService
 from .services.bid_import_service import BidImportService
+from .services.bid_alerts import BidAlerts
 from .services.bid_query_service import BidQueryService
 from .services.chat_service import ChatModel
 from .services.attachment_service import MAX_PAGES, AttachmentService
@@ -76,6 +77,7 @@ class Container:
     corpus: CorpusService
     chat_model: ChatModel
     alerts: AlertService
+    bid_alerts: BidAlerts
     invited_bids: InvitedBidService
     shortfall: ShortfallService
     categories: CategoryService
@@ -211,6 +213,7 @@ class Container:
                 lambda: source_for(settings.recon_dir / "last-listing-response.json", settings.recon_dir / "corrigenda"),
                 clock),
             alerts=AlertService(SqliteAlertRepository(db), clock),
+            bid_alerts=BidAlerts(bid_query, discovery, clock),
             shortfall=ShortfallService(profile_repo, clock),
             categories=CategoryService(fetcher),
             orders=OrderService(SqliteOrderRepository(db), profile_repo, clock),

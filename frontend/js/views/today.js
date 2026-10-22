@@ -88,9 +88,12 @@ export async function renderToday(container, _params, api) {
 
   function alertCard(a) {
     const card = el("div", { class: "card" });
-    const done = el("button", { type: "button", class: "secondary" }, "Done");
-    done.addEventListener("click", async () => { await api.finishAlert(a.id); refresh(); });
-    const actions = [done];
+    const actions = [];
+    if (a.id !== null) {  // alerts worked out from bids have no Done: they go away by themselves
+      const done = el("button", { type: "button", class: "secondary" }, "Done");
+      done.addEventListener("click", async () => { await api.finishAlert(a.id); refresh(); });
+      actions.push(done);
+    }
     if (a.kind === "clarification") {
       const draft = el("button", { type: "button", class: "secondary" }, "Draft reply");
       draft.addEventListener("click", async () => {
