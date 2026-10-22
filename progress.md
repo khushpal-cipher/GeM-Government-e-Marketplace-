@@ -33,12 +33,13 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 
 ## Continue from here (written 22 Oct 2026)
 
-State: `cd backend && uv run pytest -q` → **629 passed** (22 Oct 2026, after 3.5). Phases 0 and 1, steps 2.1-2.7 and 3.0-3.5, 3.7-3.9 are
-done: about 26 of 45 plan steps (~58%). D1 (Groq key) and D2 (contact email) are set; D4 = yes; D9 default: Phase 3 checks never block. Build only in Claude Code.
+State: `cd backend && uv run pytest -q` → **632 passed** (22 Oct 2026, after 3.6). Phases 0, 1 and 3 and steps 2.1-2.7 are
+done: about 27 of 45 plan steps (~60%). D1 (Groq key) and D2 (contact email) are set; D4 = yes; D9 default: Phase 3 checks never block. Build only in Claude Code.
 
-**Next exact action:** 3.6 is the only Phase 3 step left and needs an item-wise bid first (none in the 30): find one through the app
-(one discovery search, one listing page, one PDF; fetching must not be stopped) and save it as a fixture, then build. If that is not
-possible, go to **Phase 4**, step 4.1 (category names from `mkp.gem.gov.in/search?q=`, recon §8: not a captcha; read `docs/build-plan.md` Phase 4).
+**Next exact action:** **Phase 4**, step 4.1 (read `docs/build-plan.md` Phase 4 and its model line first): category names from `mkp.gem.gov.in/search?q=`
+(recon §8: not a captcha; the classifier must judge that page by shape, not by the word "captcha").
+Left from 3.8: the sample clause "within 07 days of receipt of supply order" (bid 9939006) is flagged as a forbidden term but is post-award: a false alarm to tighten
+(exclude "supply order|receipt of|after award" in `forbidden_sample`).
 Left from 3.5: tables are not tied to item numbers; no "not compared" list; he has not entered any products.
 Left from 3.9: the chat cannot propose products yet; spec names are free text; he has not entered any products.
 Left from 3.8: the patterns were never seen on a real forbidden term (none in the 30 bids); items 1, 3, 5, 6, 9, 12-14 not checked.
