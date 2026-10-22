@@ -31,10 +31,10 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 | 2.7, 4.3, 5.3 | Haiku · Low (or just stay on Sonnet) |
 | everything else | Sonnet · Medium |
 
-## Continue from here (written 22 Oct 2026)
+## Continue from here (written 23 Oct 2026)
 
-State: `cd backend && uv run pytest -q` → **662 passed** (23 Oct 2026, after 5.3). Phases 0, 1 and 3 and steps 2.1-2.7 are
-done: about 27 of 45 plan steps (~60%). D1 (Groq key) and D2 (contact email) are set; D4 = yes; D9 default: Phase 3 checks never block. Build only in Claude Code.
+State: `cd backend && uv run pytest -q` → **662 passed** (23 Oct 2026, after 5.3). Phases 0, 1, 3, 4 (4.6 dropped), 5 and steps 2.1-2.7 are
+done: about 34 of 45 plan steps (~75%). Left: Phase 6 (6.1-6.3), Phase 7, Phase 8, plus 2.8/2.x leftovers listed below. D1 (Groq key) and D2 (contact email) are set; D4 = yes; D9 default: Phase 3 checks never block. Build only in Claude Code.
 
 **Next exact action:** Phase 6 (prices and competitors), step 6.1: finished bids with his products, read from the public result page (needs a look at one in his Chrome first; ≤ 10 a day; `view_contracts` has a captcha: never). Read 6.1 in `docs/build-plan.md` and recon §3/§9 first. Phases 0-5 are done. Left from 5.3: not opened in real Excel; no filters.
 Left from 4.3: only the latest run counts as "new"; no New mark on the analysed-bids list.

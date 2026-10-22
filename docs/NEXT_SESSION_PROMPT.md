@@ -1,6 +1,6 @@
 # Next session prompt
 
-Updated 22 Oct 2026. The box below does not change from step to step: the next step lives in
+Updated 23 Oct 2026. The box below does not change from step to step: the next step lives in
 progress.md. When the owner types "give me a prompt", update progress.md, commit locally, and reply with this box.
 
 ## Prompt to paste
