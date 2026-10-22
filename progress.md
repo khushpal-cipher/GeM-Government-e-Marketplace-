@@ -37,6 +37,7 @@ Details live in `docs/HANDOFF.md`; this file only says what is done, what is nex
 | 20 Oct 2026 | **Step 1.4** Order tracker: stages Contract Placed → Dispatched → Received (CRAC) → Payment; deadlines (ePBG 15d, invoice before delivery date, LD 0.5%/wk up to 5%/10%, buyer request 5d, CRAC 10d after delivery, payment 10d after CRAC with delay-in-payment draft); GeM charges calculator (₹10k+GST at ₹20L/yr, 0.30% over ₹10L up to ₹3L); sqlite persistence + API + `#/orders` page; 476 tests pass | 331d1eb, domain/order_tracker.py |
 | 20 Oct 2026 | **Step 1.5** Rejection reason reader + challenge draft: identifies missing documents / technical grounds (OEM auth, turnover, experience, MSE/EMD, MII, specs), checks against profile for rebuttal points, computes strict 48h one-time challenge deadline, drafts formal representation meeting 1.0 wording rules (`DRAFT_NOTE`, no PAN/IFSC), remembers past rejections in SQLite (table `past_rejection`, migration 9) so future checklists warn earlier; integrated in `#/today` and dedicated `#/rejections` page; 490 tests pass | d03fb8d, domain/rejection.py |
 | 22 Oct 2026 | **Step 1.6** invited bids: paste GeM invitation lines on the Daily check page → bid numbers + "extended to" dates; known bids link straight to their check; unknown ones (≤ 10 per click) are looked up with one public listing search through a discovery run's guards, and **only the card with exactly that bid number is downloaded** (Gemini's draft took the first loose match: removed). Needs D2 (contact email) to fetch; refuses cleanly without it | 2647f0f |
+| 22 Oct 2026 | **Step 0.2** `corpus laptop manpower pump "office chair" printer`: 30 bid PDFs saved in `<data folder>/corpus/20261022-0920/` (52 GeM requests, 10 corrigendum checks, no block). `probe`: robots.txt ok, buyer spec file and ATC file both **public** (no login). Found: "Delivery Days" appears as `/Delivery | Days` across lines (20 of 30 bids); services/manpower/custom bids have no consignee delivery table. No item-wise-evaluation or bid-to-RA bid was in the 30 (all "Total value wise"). Fixtures for Phases 2-3 picked (below); PDFs stay outside the repo (D7), 2.1 copies only the ones its tests need | this commit |
 | 20 Oct 2026 | FINAL build plan from videos + live tour (replaces the first plan; Phase 1 = paste-in daily check, shortfall helper, order tracker) | progress.md |
 
 ## Which model to use (owner switches it in the app's model picker)
@@ -56,9 +57,15 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 State: `cd backend && uv run pytest -q` → **498 passed** (22 Oct 2026, after 1.6). Phase 1 (1.0–1.6) is done:
 about 8 of 45 plan steps (~18%). D1 (Groq key) and D2 (contact email) are set. Build only in Claude Code.
 
-**Next exact action:** step **0.2** (Sonnet · Medium): one guarded `corpus` run (30 varied bid PDFs: product,
-service, custom, BOQ, PAC, item-wise, bid-to-RA) + `probe`, then pick the fixtures for Phases 2–3 (one that
-shows "Delivery Days" in plain text). Then **0.3** recon (**Opus · High**, switch model first), then **2.1**.
+**Next exact action:** step **0.3** recon (**Opus · High**: owner switches the model first, then Claude waits
+for him). Then **2.1** (Sonnet · High). Do not run another `corpus` today (15-min gap and request budget: 54 used).
+
+Fixtures picked in step 0.2 (doc ids in `<data folder>/corpus/20261022-0920/pdf/`, bid no. in `manifest.json`):
+- 9971825 simple product bid, 1 consignee, Delivery Days 15 (6 pages) - first test for 2.1
+- 9913333 two-packet product bid, 4 consignees (12 p); 9941378 6 consignees; 9998303 9 consignees
+- 9974983 and 9781965: 53 and 69 consignee rows (stress the quantity-sum check); 9974983 has 58 links
+- 9885141 custom bid for services; 9748067 transport service (two-packet); 9995535 manpower (no inspection)
+- 10009049 manpower, 26 pages. Missing from the set: item-wise evaluation, bid-to-RA (look for them in 2.1)
 
 The owner's Chrome may be logged in to GeM (he logged in himself). Claude may LOOK there read-only if a
 step needs his account (Claude in Chrome tools): open menus/tabs/"view" windows only; never click submit,
