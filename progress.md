@@ -35,6 +35,7 @@ Details live in `docs/HANDOFF.md`; this file only says what is done, what is nex
 | 20 Oct 2026 | **Step 1.3** Shortfall-reply helper: `domain/shortfall.py` (detects OEM turnover, OEM authorisation, GST, ITR, Udyam, experience, ISO/certifications, undertakings), checks against profile (OEM vs reseller, MSE, turnover, certs), drafts covering note meeting 1.0 wording rules (`DRAFT_NOTE`, quotes buyer, placeholders, no PAN/IFSC), API endpoint `POST /api/shortfall/reply`, integration in `#/today`; 462 tests pass | eb934fa, domain/shortfall.py |
 | 20 Oct 2026 | **Step 1.4** Order tracker: stages Contract Placed → Dispatched → Received (CRAC) → Payment; deadlines (ePBG 15d, invoice before delivery date, LD 0.5%/wk up to 5%/10%, buyer request 5d, CRAC 10d after delivery, payment 10d after CRAC with delay-in-payment draft); GeM charges calculator (₹10k+GST at ₹20L/yr, 0.30% over ₹10L up to ₹3L); sqlite persistence + API + `#/orders` page; 476 tests pass | 331d1eb, domain/order_tracker.py |
 | 20 Oct 2026 | **Step 1.5** Rejection reason reader + challenge draft: identifies missing documents / technical grounds (OEM auth, turnover, experience, MSE/EMD, MII, specs), checks against profile for rebuttal points, computes strict 48h one-time challenge deadline, drafts formal representation meeting 1.0 wording rules (`DRAFT_NOTE`, no PAN/IFSC), remembers past rejections in SQLite (table `past_rejection`, migration 9) so future checklists warn earlier; integrated in `#/today` and dedicated `#/rejections` page; 490 tests pass | d03fb8d, domain/rejection.py |
+| 22 Oct 2026 | **Step 1.6** invited bids: paste GeM invitation lines on the Daily check page → bid numbers + "extended to" dates; known bids link straight to their check; unknown ones (≤ 10 per click) are looked up with one public listing search through a discovery run's guards, and **only the card with exactly that bid number is downloaded** (Gemini's draft took the first loose match: removed). Needs D2 (contact email) to fetch; refuses cleanly without it | COMMIT16 |
 | 20 Oct 2026 | FINAL build plan from videos + live tour (replaces the first plan; Phase 1 = paste-in daily check, shortfall helper, order tracker) | progress.md |
 
 ## Which model to use (owner switches it in the app's model picker)
@@ -53,7 +54,7 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 
 State: `cd backend && uv run pytest -q` → **490 passed** (20 Oct 2026, after 1.5).
 
-**Next exact action:** step **1.6** (Sonnet · Medium) **Import invited bids** (old 4.5): he pastes "You are invited to participate in bid (GEM/…)" lines; the app finds each bid's document id with one listing search per bid number (existing guards, ≤ 10 a day) and analyses it. Needs D2 only for the lookup; the paste/parse part is built first.
+**Next exact action:** Phase 1 is done. Next: ask the owner for **D2 (contact email)**, then **0.2** (corpus of 30 real bid PDFs) and **0.3** recon (Opus · High); without D2, start **2.1** (Sonnet · High) on the 4 existing fixtures.
 
 ## Build plan (FINAL, written 20 Oct 2026, approved by the owner 20 Oct 2026, nothing started)
 
@@ -273,6 +274,8 @@ re-download that one video at 480p (size check first). Frames were made with the
 and `select='gt(scene,0.08)'`, keeping the last frame of each burst less than 3 s apart.
 
 ## Not verified yet
+
+Whether GeM's public listing search finds a bid by its bid number (1.6 lookup) is untested against real GeM: no contact email yet. Steps 1.3–1.5 were built by Gemini and reviewed only for test results and rule scans, not line by line.
 
 Pasted-text parser (1.2) and shortfall helper (1.3) are tested only on invented text; no real GeM clarification was available.
 

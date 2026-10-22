@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException, Request, UploadFile
+from pydantic import BaseModel
 
 from ...infrastructure.pypdf_extractor import InvalidPdf
 from ...safety.errors import SafetyError, UnexpectedResponse, UrlNotAllowed
@@ -54,3 +55,24 @@ def fetch_bid(body: FetchIn, request: Request) -> FetchOut:
         raise HTTPException(status_code=502, detail=f"Could not reach GeM: {type(error).__name__}") from error
     return FetchOut(id=result.import_result.id, already_imported=result.import_result.already_imported,
                     downloaded=result.downloaded)
+
+
+class InvitedPasteIn(BaseModel):
+    text: str
+
+
+class InvitedImportIn(BaseModel):
+    bid_numbers: list[str]
+
+
+@router.post("/invited/parse")
+def parse_invited(body: InvitedPasteIn, request: Request) -> dict:
+    return {"items": request.app.state.container.invited_bids.parse(body.text)}
+
+
+@router.post("/invited/import")
+def import_invited(body: InvitedImportIn, request: Request) -> dict:
+    try:
+        return {"items": request.app.state.container.invited_bids.import_bids(body.bid_numbers)}
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error)) from error

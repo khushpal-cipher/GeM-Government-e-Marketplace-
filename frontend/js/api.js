@@ -49,6 +49,8 @@ export class ApiClient {
 
   // ---- seller profile ----
   getProfile() { return this.#request("/profile"); }
+  parseInvited(text) { return this.#json("POST", "/bids/invited/parse", { text }); }
+  importInvited(bidNumbers) { return this.#json("POST", "/bids/invited/import", { bid_numbers: bidNumbers }); }
   getAlertKinds() { return this.#request("/alerts/kinds"); }
   previewAlerts(kind, text) { return this.#json("POST", "/alerts/preview", { kind, text }); }
   saveAlerts(kind, items) { return this.#json("POST", "/alerts", { kind, items }); }

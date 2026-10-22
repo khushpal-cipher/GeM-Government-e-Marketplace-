@@ -177,6 +177,37 @@ export async function renderToday(container, _params, api) {
 
   container.append(el("h1", {}, "Daily GeM check"),
     el("div", { class: "subtle" }, "Log in to GeM yourself, copy what is waiting for you, paste it here. I never log in."),
-    form, el("h2", {}, "Waiting for you"), list);
+    form, invitedCard(api), el("h2", {}, "Waiting for you"), list);
   await refresh();
+}
+
+const INVITED_STATUS = { ANALYSED: "Checked", LISTED: "Found on GeM, not checked yet", NEEDS_LOOKUP: "Not looked up yet",
+  NOT_FOUND: "Not on GeM's public list", NOT_STARTED: "Not started", FAILED: "Failed" };
+
+// Bids GeM invited him to (dashboard → Notifications). Looking one up costs GeM requests, so at most 10.
+function invitedCard(api) {
+  const paste = el("textarea", { id: "invited", rows: "4",
+    placeholder: "You are invited to participate in bid (GEM/2026/B/...)" });
+  const out = el("div");
+  const show = (items) => out.replaceChildren(...items.map((i) => el("div", { class: "row" },
+    i.bid_id ? el("a", { href: `#/bids/${i.bid_id}` }, i.bid_number) : el("strong", {}, i.bid_number),
+    el("span", { class: "hint" }, INVITED_STATUS[i.status] || i.status),
+    i.message ? el("span", { class: "hint" }, i.message) : null)));
+  const read = el("button", { type: "button" }, "Read numbers");
+  read.addEventListener("click", async () => {
+    const { items } = await api.parseInvited(paste.value);
+    if (!items.length) { out.replaceChildren(notice("bad", "No bid number (GEM/…) found.")); return; }
+    show(items);
+    const todo = items.filter((i) => i.status !== "ANALYSED").slice(0, 10).map((i) => i.bid_number);
+    if (!todo.length) return;
+    const check = el("button", { type: "button" }, `Look up and check ${todo.length} on GeM`);
+    check.addEventListener("click", async () => {
+      check.disabled = true; check.textContent = "Checking… (a few minutes)";
+      try { show((await api.importInvited(todo)).items); } catch (error) { out.append(notice("bad", error.message)); }
+    });
+    out.append(check);
+  });
+  return el("div", { class: "card" },
+    el("label", { for: "invited" }, "Bids GeM invited you to (Dashboard → Notifications)"), paste,
+    el("div", { class: "row", style: "margin-top:12px" }, read), out);
 }

@@ -123,6 +123,11 @@ class SqliteBidRepository:
             row = conn.execute("SELECT id FROM bid WHERE doc_id = ?", (doc_id,)).fetchone()
         return row["id"] if row else None
 
+    def find_id_by_bid_number(self, bid_number: str) -> int | None:
+        with self._db.connect() as conn:
+            row = conn.execute("SELECT id FROM bid WHERE bid_number = ?", (bid_number,)).fetchone()
+        return row["id"] if row else None
+
     def save(self, analysis: BidAnalysis) -> int:
         with self._db.connect() as conn:
             if analysis.id is not None:  # re-analysis: replace in place, keeping the id
@@ -371,6 +376,14 @@ class SqliteListingRepository:
                 "SELECT * FROM listing_bid ORDER BY last_seen_at DESC, ends_at LIMIT ?", (limit,)
             ).fetchall()
         return [self._entry(r) for r in rows]
+
+    def find_by_bid_number(self, bid_number: str) -> ListingEntry | None:
+        with self._db.connect() as conn:
+            row = conn.execute(
+                "SELECT * FROM listing_bid WHERE bid_number = ? ORDER BY last_seen_at DESC LIMIT 1",
+                (bid_number,),
+            ).fetchone()
+        return self._entry(row) if row else None
 
     @staticmethod
     def _entry(r) -> ListingEntry:

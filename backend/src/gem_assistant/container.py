@@ -43,6 +43,7 @@ from .safety.response_classifier import ResponseClassifier
 from .safety.safe_fetcher import SafeFetcher
 from .safety.url_policy import UrlPolicy
 from .services.alert_service import AlertService
+from .services.invited_bid_service import InvitedBidService
 from .services.bid_fetch_service import BidFetchService
 from .services.bid_import_service import BidImportService
 from .services.bid_query_service import BidQueryService
@@ -69,6 +70,7 @@ class Container:
     corpus: CorpusService
     chat_model: ChatModel
     alerts: AlertService
+    invited_bids: InvitedBidService
     shortfall: ShortfallService
     orders: OrderService
     rejections: RejectionService
@@ -186,6 +188,10 @@ class Container:
             bid_fetch=bid_fetch,
             discovery=discovery,
             corpus=corpus,
+            invited_bids=InvitedBidService(
+                bid_repo, listing_repo, bid_fetch, discovery,
+                lambda: source_for(settings.recon_dir / "last-listing-response.json", settings.recon_dir / "corrigenda"),
+                clock),
             alerts=AlertService(SqliteAlertRepository(db), clock),
             shortfall=ShortfallService(profile_repo, clock),
             orders=OrderService(SqliteOrderRepository(db), profile_repo, clock),
