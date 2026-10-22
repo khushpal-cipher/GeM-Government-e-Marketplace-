@@ -14,6 +14,7 @@ from ..infrastructure.pypdf_extractor import InvalidPdf
 from ..parsing.evidence import quote_is_on_page
 from ..parsing.consignee_table import check_quantity, read_consignees
 from ..parsing.field_rules import PARSER_VERSION
+from ..parsing.spec_table import read_specifications
 
 
 class EvidenceMismatch(RuntimeError):
@@ -98,6 +99,7 @@ class BidImportService:
         fields = self._reconciler.reconcile(self._fields.extract(pages), flags)
         consignees = read_consignees(pages)
         fields = check_quantity(fields, consignees)
+        specifications = read_specifications(pdf_bytes, pages)
 
         for item in [*(f.evidence for f in fields if f.evidence), *(f.evidence for f in flags),
                      *(c.evidence for c in consignees)]:
@@ -117,5 +119,6 @@ class BidImportService:
             fields=fields,
             flags=flags,
             consignees=consignees,
+            specifications=specifications,
             parser_version=PARSER_VERSION,
         )

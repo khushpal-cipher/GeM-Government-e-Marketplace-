@@ -202,6 +202,20 @@ MIGRATIONS: list[str] = [
         PRIMARY KEY (bid_id, position)
     );
     """,
+    # 11 — rows of the specification table, with the quote. Existing bids get theirs on re-read (parser version 5).
+    """
+    CREATE TABLE bid_spec (
+        bid_id    INTEGER NOT NULL REFERENCES bid(id) ON DELETE CASCADE,
+        position  INTEGER NOT NULL,
+        grp       TEXT NOT NULL,
+        name      TEXT NOT NULL,
+        value     TEXT NOT NULL,
+        page      INTEGER NOT NULL,
+        quote     TEXT NOT NULL,
+        method    TEXT NOT NULL,
+        PRIMARY KEY (bid_id, position)
+    );
+    """,
 ]
 
 

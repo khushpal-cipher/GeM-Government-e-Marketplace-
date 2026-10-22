@@ -23,6 +23,7 @@ from ..domain.models import (
     ExtractedField,
     RequestRecord,
     SellerProfile,
+    SpecRow,
 )
 from .database import Database
 
@@ -197,6 +198,15 @@ class SqliteBidRepository:
                     for i, c in enumerate(analysis.consignees)
                 ],
             )
+            conn.executemany(
+                """INSERT INTO bid_spec (bid_id, position, grp, name, value, page, quote, method)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                [
+                    (bid_id, i, s.group, s.name, s.value, s.evidence.page, s.evidence.quote,
+                     s.evidence.method.value)
+                    for i, s in enumerate(analysis.specifications)
+                ],
+            )
         return int(bid_id)
 
     def list(self) -> list[BidAnalysis]:
@@ -217,6 +227,9 @@ class SqliteBidRepository:
             ).fetchall()
             consignee_rows = conn.execute(
                 "SELECT * FROM bid_consignee WHERE bid_id = ? ORDER BY position", (bid_id,)
+            ).fetchall()
+            spec_rows = conn.execute(
+                "SELECT * FROM bid_spec WHERE bid_id = ? ORDER BY position", (bid_id,)
             ).fetchall()
             listed = conn.execute(
                 """SELECT ends_at FROM listing_bid WHERE bid_id = ? OR bid_number = ?
@@ -260,6 +273,11 @@ class SqliteBidRepository:
                     evidence=Evidence(page=r["page"], quote=r["quote"], method=r["method"]),
                 )
                 for r in consignee_rows
+            ],
+            specifications=[
+                SpecRow(group=r["grp"], name=r["name"], value=r["value"],
+                        evidence=Evidence(page=r["page"], quote=r["quote"], method=r["method"]))
+                for r in spec_rows
             ],
             parser_version=row["parser_version"],
             listed_end=_dt(listed["ends_at"]) if listed else None,

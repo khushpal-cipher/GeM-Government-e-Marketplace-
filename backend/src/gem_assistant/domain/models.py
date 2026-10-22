@@ -109,6 +109,19 @@ class Consignee(BaseModel):
     evidence: Evidence
 
 
+class SpecRow(BaseModel):
+    """One row of a bid's "Technical Specifications" table. The same table can repeat per item/page."""
+
+    group: str  # the heading above it (e.g. "MATERIAL"); empty when the table has none
+    name: str
+    value: str  # the allowed value(s), as the buyer wrote them
+    evidence: Evidence
+
+    @property
+    def page(self) -> int:
+        return self.evidence.page
+
+
 class CorrigendumStatus(str, Enum):
     NOT_CHECKED = "NOT_CHECKED"  # no doc_id, or the check hasn't run yet
     NONE = "NONE"                # GeM answered "0": this bid has no corrigendum
@@ -155,6 +168,7 @@ class BidAnalysis(BaseModel):
     flags: list[ClauseFlag]
     corrigendum: Corrigendum = Field(default_factory=Corrigendum)
     consignees: list[Consignee] = Field(default_factory=list)
+    specifications: list[SpecRow] = Field(default_factory=list)
     parser_version: int = 0  # which version of the field rules produced `fields`
     # GeM's bid list's closing time, read on the latest search. Not stored with the bid:
     # it is GeM's own current value and reflects any extension the PDF can't.
