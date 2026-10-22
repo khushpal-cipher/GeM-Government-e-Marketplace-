@@ -51,13 +51,21 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 | 2.7, 4.3, 5.3 | Haiku · Low (or just stay on Sonnet) |
 | everything else | Sonnet · Medium |
 
-## Continue from here (written 20 Oct 2026)
+## Continue from here (written 22 Oct 2026)
 
-State: `cd backend && uv run pytest -q` → **490 passed** (20 Oct 2026, after 1.5).
+State: `cd backend && uv run pytest -q` → **498 passed** (22 Oct 2026, after 1.6). Phase 1 (1.0–1.6) is done:
+about 8 of 45 plan steps (~18%). D1 (Groq key) and D2 (contact email) are set. Build only in Claude Code.
 
-**Next exact action:** Phase 1 is done. D2 is set. Next: **0.2** (corpus of 30 real bid PDFs) and **0.3** recon (Opus · High); without D2, start **2.1** (Sonnet · High) on the 4 existing fixtures.
+**Next exact action:** step **0.2** (Sonnet · Medium): one guarded `corpus` run (30 varied bid PDFs: product,
+service, custom, BOQ, PAC, item-wise, bid-to-RA) + `probe`, then pick the fixtures for Phases 2–3 (one that
+shows "Delivery Days" in plain text). Then **0.3** recon (**Opus · High**, switch model first), then **2.1**.
 
-## Build plan (FINAL, written 20 Oct 2026, approved by the owner 20 Oct 2026, nothing started)
+The owner's Chrome may be logged in to GeM (he logged in himself). Claude may LOOK there read-only if a
+step needs his account (Claude in Chrome tools): open menus/tabs/"view" windows only; never click submit,
+accept, upload, pay, "+ New" or anything that changes data; never copy names, phones, PAN or bank data.
+0.2 and 0.3 use public pages only, through the app (SafeFetcher), not his logged-in browser.
+
+## Build plan (FINAL, written 20 Oct 2026, approved by the owner 20 Oct 2026; Phase 1 done 22 Oct 2026)
 
 **Goal:** the app does everything in HANDOFF §2 "fully automated" and "AI prepares", sharpened by
 `docs/gem-videos.md` and `docs/live-tour.md`. Still never: login, captcha, OTP, submitting, paying, accepting.

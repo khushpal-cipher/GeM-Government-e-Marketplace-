@@ -1,33 +1,33 @@
 # Next session prompt
 
-Updated 20 Oct 2026 (final plan approved, building starts). Keep this file current: when the owner
+Updated 22 Oct 2026 (Phase 1 done; next 0.2). Keep this file current: when the owner
 types "give me a prompt", update progress.md and this file, commit locally, and reply with the box below.
 
 ## Prompt to paste
 
 ```
 Continue GeM Assistant in ~/Documents/startup/GEM/GeM (branch docs/hinglish-testing-guide).
-The FINAL build plan in progress.md is approved: start BUILDING now.
+Phase 1 is DONE (steps 0.1, 1.0-1.6). Keep BUILDING from progress.md "Next exact action" (step 0.2).
 
 1. Read FULLY first, in this order: progress.md (the "Build plan" is the work list),
-   docs/NEXT_SESSION_PROMPT.md (follow its "Full instructions"), docs/HANDOFF.md (§1 code gaps,
-   §4a GeM rules = the deadline numbers), docs/live-tour.md. Read docs/gem-videos.md and
-   README.md sections only when a step needs them. Skim the code the current step touches.
-   Run `git log --oneline -5`, `git status`, `cd backend && uv run pytest -q` (expect 398 passed).
-2. Do progress.md "Next exact action", then the plan's steps in order (0.1, then 1.0 to 1.6, then
-   Phase 2...). One step at a time: failing test on a saved real fixture -> make it pass -> full suite
-   -> commit locally -> update progress.md (Done row with commit hash, next exact action).
-   Don't redo anything under "Done". BEFORE each step, tell me in one line if I must switch model
-   (see "Which model to use" in progress.md), and wait for me if it's an Opus step.
+   docs/NEXT_SESSION_PROMPT.md ("Full instructions"), docs/HANDOFF.md (§1 code gaps, §4a GeM rules),
+   docs/live-tour.md, docs/wording-rules.md. Read docs/gem-videos.md and README.md only when a step
+   needs them. Skim the code the current step touches.
+   Run `git log --oneline -5`, `git status`, `cd backend && uv run pytest -q` (expect 498 passed).
+2. One step at a time: failing test on a saved real fixture -> make it pass -> full suite -> commit
+   locally -> update progress.md (Done row with commit hash, next exact action). Don't redo "Done".
+   BEFORE each step, tell me in one line if I must switch model ("Which model to use" in progress.md),
+   and wait for me if it's an Opus step (0.3 is next after 0.2).
 3. Commit only on this computer. Never push, never open a PR: my friend is changing the GitHub repo.
-4. The app and you never log in to GeM, never solve or bypass a captcha, never submit anything on
-   GeM. Public GeM pages only, read-only, through SafeFetcher. If you need to see inside my account,
-   ask me: I log in myself in my Chrome and you only look.
-5. Ask me only about product decisions, money or accounts (D2-D7 in progress.md; use the default if
+4. The app and you never log in to GeM, never solve or bypass a captcha, never submit anything on GeM.
+   Public GeM pages go only through the app's SafeFetcher (contact email is set). My Chrome may be
+   logged in to GeM (I logged in myself): you may LOOK there read-only if a step needs my account;
+   never click submit/accept/upload/pay/"+ New", never copy names, phones, PAN or bank data.
+5. Ask me only about product decisions, money or accounts (D3-D7 in progress.md; use the default if
    I haven't answered). Explain things to me in simple words.
-6. Keep progress.md accurate as you go (done / next exact action / not verified, dates, hashes).
-7. When I type "give me a prompt": update progress.md and docs/NEXT_SESSION_PROMPT.md, commit locally,
-   and reply with the "Prompt to paste" box from that file.
+6. Build only in Claude Code. Keep progress.md accurate (done / next / not verified, dates, hashes).
+7. When I type "give me a prompt": update progress.md and this file, commit locally, and reply with
+   this "Prompt to paste" box.
 ```
 
 ## For a different AI tool (not Claude)
