@@ -33,15 +33,15 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 
 ## Continue from here (written 22 Oct 2026)
 
-State: `cd backend && uv run pytest -q` → **514 passed** (22 Oct 2026, after 2.1). Phases 0 and 1 and step 2.1 are done:
-about 11 of 45 plan steps (~24%). D1 (Groq key) and D2 (contact email) are set. Build only in Claude Code.
+State: `cd backend && uv run pytest -q` → **519 passed** (22 Oct 2026, after 2.2). Phases 0 and 1 and steps 2.1, 2.2 are done:
+about 12 of 45 plan steps (~24%). D1 (Groq key) and D2 (contact email) are set. Build only in Claude Code.
 
-**Next exact action:** step **2.2** (model now Sonnet, set 22 Oct 2026; Medium effort): specification table per item ("Specification / Bid
-Requirement (Allowed Values)") as rows with page + quote. Real examples: corpus 9913333 (office tables),
-10014519 (cartridges; the same table repeats on several pages). Read the text with
-`PypdfTextExtractor` first; the table comes as label line, then value line(s). 2.1 left for later:
-item-wise schedules ("Schedule N / item / quantity", fixture 7922876), PAC items (no real PAC bid in the
-set yet: find one before coding), file links (2.3).
+**Next exact action:** step **2.3** (Sonnet · Medium): download the files the bid PDF links to (buyer ATC file, spec PDF,
+BOQ detail), only those links, via `SafeFetcher`, size/page caps, stored by hash, <= 3 per bid; PDF text only, scanned or
+non-PDF -> "open it yourself". `pdf_links()` in `infrastructure/pypdf_extractor.py` already lists the links; recon §
+"buyer ATC file" says they are public but scanned. **Needs fetching un-stopped** (check `container.safety.status()` first;
+the owner resets it). Left from 2.1/2.2 for later: item-wise schedules (fixture 7922876), PAC items (no real PAC bid yet),
+spec table has no screen yet (API only), spec rows are not matched to item names (page only).
 
 **Owner to do (safety stop, 22 Oct 2026 09:45):** fetching may still be **stopped**. He opened
 `mkp.gem.gov.in/search?q=laptop` in his Chrome: it is a normal page (category names with Q2/Q3 tags, **no
@@ -89,5 +89,7 @@ Whether GeM's public listing search finds a bid by its bid number (1.6 lookup) i
 Pasted-text parser (1.2) and shortfall helper (1.3) are tested only on invented text; no real GeM clarification was available.
 
 Chat run against real Groq only for profile + refusal (20 Oct 2026); bid search and "what does bid N need" with a real bid not tried; website mode never deployed (HANDOFF.md §1).
+
+Step 2.2 (22 Oct 2026): spec rows were checked on 30 corpus PDFs by code (quote on page), not by a person against the GeM screen; a table whose columns sit at other x-positions than 24 / 162 / 366 would be misread (none seen). Bids stored earlier get spec rows only when re-read at start-up.
 
 Step 2.1 (22 Oct 2026): the new fields and consignee rows were checked against 34 real PDFs, but not by a person against the GeM screen. A consignee row split in an unusual way is left out and then shows as a CONFLICTING total, not as a wrong number. Past performance, ePBG months and inspection were seen in 12-27 of the 30 corpus bids; bids that lack a label simply show NOT_FOUND. Estimated value drops paise. The consignee table has no screen yet (API only). Bids stored before this step get their consignees only when re-read at start-up from the kept PDF.
