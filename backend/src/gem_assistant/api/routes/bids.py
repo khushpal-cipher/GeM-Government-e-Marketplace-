@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import asdict
 from typing import Literal
 
+from ...domain.cities import delivers_to_cities
 from fastapi import APIRouter, HTTPException, Request, UploadFile
 from pydantic import BaseModel
 
@@ -18,7 +19,12 @@ router = APIRouter(prefix="/api/bids", tags=["bids"])
 
 @router.get("", response_model=list[BidSummaryOut])
 def list_bids(request: Request) -> list[BidSummaryOut]:
-    return [BidSummaryOut.from_assessed(b) for b in request.app.state.container.bid_query.list()]
+    container = request.app.state.container
+    profile = container.profiles.get()
+    cities = profile.cities if profile else []
+    return [BidSummaryOut.from_assessed(b).model_copy(
+        update={"in_your_cities": delivers_to_cities(b.bid.consignees, cities)})
+        for b in container.bid_query.list()]
 
 
 @router.get("/{bid_id}", response_model=BidDetailOut)

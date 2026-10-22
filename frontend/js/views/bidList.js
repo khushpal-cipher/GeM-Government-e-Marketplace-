@@ -82,20 +82,24 @@ export async function renderBidList(container, _params, api) {
     el("option", { value: "verdict" }, "Best verdict first"),
     el("option", { value: "added" }, "Recently added"));
   const showClosed = el("input", { type: "checkbox", id: "show-closed" });
+  const showOther = el("input", { type: "checkbox", id: "show-other-cities" });
   const table = el("div");
 
   const draw = () => {
     const now = Date.now();
-    const open = bids.filter((bid) => closesAt(bid) > now);
-    const shown = showClosed.checked ? [...bids] : open;
+    const mine = showOther.checked ? bids : bids.filter((bid) => bid.in_your_cities !== false);
+    const otherCities = bids.length - mine.length;
+    const open = mine.filter((bid) => closesAt(bid) > now);
+    const shown = showClosed.checked ? [...mine] : open;
     const byClosing = (a, b) => closesAt(a) - closesAt(b);
     shown.sort({
       closing: byClosing,
       verdict: (a, b) => (VERDICT_RANK[a.verdict] ?? 9) - (VERDICT_RANK[b.verdict] ?? 9) || byClosing(a, b),
       added: (a, b) => b.id - a.id,
     }[sort.value]);
-    const hidden = bids.length - open.length;
+    const hidden = mine.length - open.length;
     table.replaceChildren(
+      otherCities ? el("div", { class: "hint" }, `${otherCities} bid${otherCities === 1 ? "" : "s"} deliver${otherCities === 1 ? "s" : ""} outside your cities (hidden).`) : "",
       !showClosed.checked && hidden ? el("div", { class: "hint" }, `${hidden} closed bid${hidden === 1 ? "" : "s"} hidden.`) : "",
       el("div", { class: "table-wrap" },
         el("table", {},
@@ -116,10 +120,13 @@ export async function renderBidList(container, _params, api) {
   };
   sort.addEventListener("change", draw);
   showClosed.addEventListener("change", draw);
+  showOther.addEventListener("change", draw);
   container.append(
     el("div", { class: "row", style: "margin-top:16px" },
       el("label", { for: "bid-sort", style: "margin:0" }, "Sort"), sort,
-      el("label", { class: "check", for: "show-closed" }, showClosed, "Show closed bids")),
+      el("label", { class: "check", for: "show-closed" }, showClosed, "Show closed bids"),
+      bids.some((bid) => bid.in_your_cities === false)
+        ? el("label", { class: "check", for: "show-other-cities" }, showOther, "Show bids for other cities") : ""),
     table,
   );
   draw();

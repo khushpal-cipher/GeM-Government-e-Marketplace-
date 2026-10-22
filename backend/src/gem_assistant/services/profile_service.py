@@ -19,6 +19,7 @@ class ProfileService:
             "categories": _unique(profile.categories),
             "certifications": _unique(profile.certifications),
             "states": _unique(profile.states),
+            "cities": _unique(profile.cities),
             "ignore_words": _unique(profile.ignore_words),
             "oem_products": _unique(profile.oem_products),
             "own_made_products": _unique(profile.own_made_products),

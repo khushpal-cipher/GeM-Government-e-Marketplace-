@@ -15,6 +15,7 @@ from ..domain.models import (
     BidAnalysis, Consignee, Evidence, SpecRow, CorrigendumStatus, FieldStatus, RuleResult, SellerProfile, Verdict, item_match,
 )
 from ..domain.wording import day, deadline
+from ..domain.cities import delivers_to_cities
 from ..domain.india_states import normalise_states, states_for_pin
 from ..parsing.clause_patterns import DEFAULT_CLAUSE_PATTERNS
 
@@ -295,6 +296,19 @@ class DeliveryStateRule:
         return results
 
 
+class CityRule:
+    """He works in some cities; a bid delivering to none of them is worth a look, never a block."""
+
+    name = "delivery_city"
+
+    def evaluate(self, bid: BidAnalysis, profile: SellerProfile | None, now: datetime) -> list[RuleResult]:
+        if not profile or delivers_to_cities(bid.consignees, profile.cities) is not False:
+            return []
+        places = "; ".join(dict.fromkeys(" ".join(c.address.split())[:60] for c in bid.consignees))[:150]
+        return [RuleResult(rule=self.name, outcome=Verdict.NEEDS_REVIEW, evidence=bid.consignees[0].evidence,
+                           reason=f"Delivery to {places}: none of the cities you work in ({', '.join(profile.cities)}).")]
+
+
 _STANDARD = re.compile(r"\b(ISO(?:\s*/\s*IEC)?\s*(\d{3,5})(?::\d{4})?|I\s?S\s*:?\s*(\d{2,5})|(BIS)|(NABL))\b",
                        re.IGNORECASE)
 
@@ -555,6 +569,7 @@ DEFAULT_RULES = (
     EmdRule(),
     TurnoverExperienceRule(),
     DeliveryStateRule(),
+    CityRule(),
     CertificateRule(),
     OemRule(),
     PacRule(),

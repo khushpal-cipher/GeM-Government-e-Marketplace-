@@ -222,6 +222,7 @@ class SellerProfile(BaseModel):
     categories: list[str] = Field(default_factory=list)
     certifications: list[str] = Field(default_factory=list)
     states: list[str] = Field(default_factory=list)
+    cities: list[str] = Field(default_factory=list)  # cities he works in; empty = no city filter
     # What to look for on GeM: items naming any of these words never count as his products,
     # and which bids a search downloads first.
     ignore_words: list[str] = Field(default_factory=list)

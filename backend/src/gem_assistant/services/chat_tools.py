@@ -20,6 +20,7 @@ from typing import TYPE_CHECKING, Any
 
 from pydantic import ValidationError
 
+from ..domain.cities import delivers_to_cities
 from ..domain.models import FieldStatus, SellerProfile, Verdict
 from ..domain.profile_warnings import profile_warnings
 from ..infrastructure.pypdf_extractor import InvalidPdf
@@ -60,6 +61,7 @@ DEFINITIONS = [
            "gem_registered_on": {"type": "string", "description": "Date he registered on GeM, YYYY-MM-DD"},
            "itr_filed_on_gem": {"type": "boolean", "description": "Income tax return filed on GeM"},
            "pfms_bank_verified": {"type": "boolean", "description": "Bank account verified through PFMS on GeM"},
+           "cities": {**_LIST, "description": "Cities he works in (one or many); the bid list then hides bids that deliver elsewhere"},
            "oem_products": {**_LIST, "description": "Products where he is the OEM (manufacturer), not a reseller"},
            "own_made_products": {**_LIST, "description": "Items he makes himself (MSE EMD exemption)"},
            "bid_order": {"type": "string", "enum": ["match", "closing"],
@@ -101,7 +103,7 @@ _PROFILE_FIELDS = {"ignore_words": "ignore_words",
                    "business_name": "business_name", "bid_order": "bid_order",
                    "gem_registered_on": "gem_registered_on", "itr_filed_on_gem": "itr_filed_on_gem",
                    "pfms_bank_verified": "pfms_bank_verified", "oem_products": "oem_products",
-                   "own_made_products": "own_made_products"}
+                   "own_made_products": "own_made_products", "cities": "cities"}
 
 
 class ChatTools:
@@ -187,13 +189,22 @@ class ChatTools:
 
     # ---- bids ----
     def _list_bids(self) -> ToolResult:
+        profile = self._c.profiles.get()
+        cities = profile.cities if profile else []
+        every = self._c.bid_query.list()
+        # Only bids that deliver to a city he works in; a bid whose place cannot be read is kept.
+        kept = [b for b in every if delivers_to_cities(b.bid.consignees, cities) is not False]
+        hidden = len(every) - len(kept)
         bids = [{"id": b.bid.id, "bid_number": b.bid.bid_number,
                  "items": (b.bid.found_value("item_category") or "")[:200],
                  "buyer": b.bid.found_value("organisation") or b.bid.found_value("ministry"),
                  "closes_at": b.bid.deadline().isoformat() if b.bid.deadline() else None,
                  "verdict": b.assessment.verdict.value, "things_to_check": b.assessment.review_count}
-                for b in self._c.bid_query.list()][:30]
-        return ToolResult({"bids": bids}, {"type": "bid_list", "bids": bids} if bids else None)
+                for b in kept][:30]
+        note = (f"{hidden} more bid(s) deliver only outside his cities ({', '.join(cities)}); say so if he asks, "
+                "and he can change the cities on his profile.") if hidden else None
+        return ToolResult({"bids": bids, **({"hidden_other_cities": note} if note else {})},
+                          {"type": "bid_list", "bids": bids} if bids else None)
 
     def _get_bid(self, bid_id: int) -> ToolResult:
         item = self._c.bid_query.get(bid_id)

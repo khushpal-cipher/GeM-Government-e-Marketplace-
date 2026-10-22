@@ -25,6 +25,7 @@ class BidSummaryOut(BaseModel):
     verdict: Verdict
     review_count: int
     imported_at: datetime
+    in_your_cities: bool | None = None  # None: no cities set, or the delivery place cannot be read
 
     @classmethod
     def from_assessed(cls, item: AssessedBid) -> "BidSummaryOut":

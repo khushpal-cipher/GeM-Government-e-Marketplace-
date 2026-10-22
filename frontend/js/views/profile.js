@@ -15,6 +15,7 @@ export const EMPTY_PROFILE = {
   gem_registered_on: null,
   itr_filed_on_gem: null,
   pfms_bank_verified: null,
+  cities: [],
   oem_products: [],
   own_made_products: [],
   products: [],
@@ -93,6 +94,7 @@ export async function renderProfile(container, _params, api) {
   const registered = el("input", { type: "date", id: "registered", value: profile.gem_registered_on || "" });
   const itr = triState("itr", profile.itr_filed_on_gem);
   const pfms = triState("pfms", profile.pfms_bank_verified);
+  const cities = el("textarea", { id: "cities" }); cities.value = (profile.cities || []).join(", ");
   const oemProducts = el("textarea", { id: "oem_products" }); oemProducts.value = profile.oem_products.join(", ");
   const ownMade = el("textarea", { id: "own_made" }); ownMade.value = profile.own_made_products.join(", ");
   const products = el("textarea", { id: "products", rows: 5 }); products.value = formatProducts(profile.products);
@@ -112,6 +114,7 @@ export async function renderProfile(container, _params, api) {
       field("Products you sell", categories, "Comma-separated, as GeM names them. Also on the Find bids page."),
       field("Certifications held", certs, "For example: ISO 9001, BIS"),
       field("States you can deliver to", states, "Comma-separated."),
+      field("Cities you work in", cities, "Comma-separated. Bids that deliver elsewhere are hidden from the list (leave empty to see all)."),
       field("Date you registered on GeM", registered),
       field("Income tax return (ITR) filed on GeM?", itr.select),
       field("Bank account PFMS-verified on GeM?", pfms.select),
@@ -149,6 +152,7 @@ export async function renderProfile(container, _params, api) {
         categories: splitList(categories.value),
         certifications: splitList(certs.value),
         states: splitList(states.value),
+        cities: splitList(cities.value),
         gem_registered_on: registered.value || null,
         itr_filed_on_gem: itr.get(),
         pfms_bank_verified: pfms.get(),

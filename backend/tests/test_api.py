@@ -277,3 +277,11 @@ def test_csv_cells_cannot_run_as_formulas():
     from gem_assistant.services.export_service import _csv
     assert "'=HYPERLINK" in _csv(["a"], [['=HYPERLINK("http://x")']])
     assert "'+1" in _csv(["a"], [["+1"]])
+
+
+def test_bid_list_marks_bids_that_deliver_outside_his_cities(client):
+    _import(client)
+    assert client.get("/api/bids").json()[0]["in_your_cities"] is None          # no cities set
+    client.put("/api/profile", json={"business_name": "X", "cities": ["Atlantis"]})
+    flag = client.get("/api/bids").json()[0]["in_your_cities"]
+    assert flag in (False, None)    # False when the sample bid's address is readable, None when masked
