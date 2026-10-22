@@ -3,6 +3,9 @@ from __future__ import annotations
 from decimal import Decimal, InvalidOperation
 
 from fastapi import APIRouter, HTTPException, Request
+from pydantic import BaseModel, Field
+
+from ...domain.listing_check import check_listing
 
 from ...safety.errors import SafetyError
 from ...services.result_service import ResultLimitReached
@@ -23,6 +26,20 @@ def result(doc_id: str, request: Request, packets: str = "") -> dict:
         raise HTTPException(400, str(error))
     except (SafetyError, ResultLimitReached) as error:
         raise HTTPException(409, str(error))
+
+
+class ListingIn(BaseModel):
+    price: Decimal
+    mrp: Decimal
+    photos: int = Field(ge=0)
+    brand: str = ""
+    model: str = ""
+    mrp_proof_text: str = ""
+
+
+@router.post("/listing/precheck")
+def listing_precheck(body: ListingIn) -> list[dict]:
+    return check_listing(**body.model_dump())
 
 
 @router.get("/direct-order/check")

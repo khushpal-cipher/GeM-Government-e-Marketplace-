@@ -21,6 +21,7 @@ from typing import TYPE_CHECKING, Any
 from pydantic import ValidationError
 
 from ..domain.cities import delivers_to_cities
+from ..domain.listing_check import check_listing
 from ..domain.models import FieldStatus, SellerProfile, Verdict
 from ..domain.profile_warnings import profile_warnings
 from ..infrastructure.pypdf_extractor import InvalidPdf
@@ -100,6 +101,12 @@ DEFINITIONS = [
     _tool("make_model_hsn", "A draft Make / Model / HSN list for a checked bid, one row per item, for the purchase order. "
                             "He fills the blanks and keeps it himself.",
           {"bid_id": {"type": "integer"}}, ("bid_id",)),
+    _tool("listing_precheck", "Before he lists a new product on GeM: checks price at least 10% below MRP, 3 photos, "
+                              "brand and model filled, and that the MRP proof text names this product and the MRP. "
+                              "Only from values he gives; nothing is fetched.",
+          {"price_rupees": {"type": "number"}, "mrp_rupees": {"type": "number"}, "photos": {"type": "integer"},
+           "brand": {"type": "string"}, "model": {"type": "string"}, "mrp_proof_text": {"type": "string"}},
+          ("price_rupees", "mrp_rupees", "photos")),
     _tool("safety_status", "Whether fetching from GeM is stopped for safety, and today's request count."),
 ]
 
@@ -289,6 +296,12 @@ class ChatTools:
 
     def _make_model_hsn(self, bid_id: int) -> ToolResult:
         return ToolResult(self._c.compliance.make_model_hsn(bid_id) or {"error": f"No checked bid with id {bid_id}."})
+
+    def _listing_precheck(self, price_rupees: float, mrp_rupees: float, photos: int, brand: str = "",
+                          model: str = "", mrp_proof_text: str = "") -> ToolResult:
+        return ToolResult({"checks": check_listing(price=Decimal(str(price_rupees)), mrp=Decimal(str(mrp_rupees)),
+                                                   photos=photos, brand=brand, model=model,
+                                                   mrp_proof_text=mrp_proof_text)})
 
     def _safety_status(self) -> ToolResult:
         s = self._c.safety.status()
