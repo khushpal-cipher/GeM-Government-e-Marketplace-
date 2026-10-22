@@ -28,6 +28,9 @@ class Expect(str, Enum):
     # Plain text such as robots.txt. Like a fragment, judged by shape: a robots file may
     # legitimately list a path like /captcha/.
     TEXT = "text"
+    # GeM's category search page. A whole page whose scripts mention "captcha", so it is judged
+    # by its shape (the results heading), not by that word. See docs/02-RECON-FINDINGS.md §8.
+    CATEGORY_PAGE = "category_page"
 
 
 @dataclass(frozen=True)
@@ -105,6 +108,11 @@ class ResponseClassifier:
                                       "Expected a snippet of a page but got a whole page "
                                       "(possible challenge or block page)")
             return Classification(ResponseKind.OK, "fragment")
+
+        if expect is Expect.CATEGORY_PAGE:
+            if "category results for" in response.body.decode("utf-8", errors="ignore").lower():
+                return Classification(ResponseKind.OK, "category page")
+            return Classification(ResponseKind.BLOCK, "Expected the category results page but got something else")
 
         marker = _challenge_marker(response)
         if marker:

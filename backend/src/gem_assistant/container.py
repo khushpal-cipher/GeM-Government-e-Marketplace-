@@ -59,6 +59,7 @@ from .services.order_service import OrderService
 from .services.profile_service import ProfileService
 from .services.rejection_service import RejectionService
 from .services.safety_service import SafetyService
+from .services.category_service import CategoryService
 from .services.shortfall_service import ShortfallService
 
 
@@ -77,6 +78,7 @@ class Container:
     alerts: AlertService
     invited_bids: InvitedBidService
     shortfall: ShortfallService
+    categories: CategoryService
     orders: OrderService
     rejections: RejectionService
     attachments: AttachmentService
@@ -210,6 +212,7 @@ class Container:
                 clock),
             alerts=AlertService(SqliteAlertRepository(db), clock),
             shortfall=ShortfallService(profile_repo, clock),
+            categories=CategoryService(fetcher),
             orders=OrderService(SqliteOrderRepository(db), profile_repo, clock),
             rejections=rejections,
             attachments=attachments,
