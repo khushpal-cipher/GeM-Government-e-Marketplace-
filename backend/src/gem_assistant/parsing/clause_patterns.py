@@ -49,6 +49,27 @@ DEFAULT_CLAUSE_PATTERNS: tuple[ClausePattern, ...] = (
     # Reviewed by PacRule only (no blocking_hint). The bid form's own "based on PAC mode" line is the
     # `pac_mode` field, because the form lies outside the buyer section this scans.
     clause("pac", "PAC bid: one named make", r"\bPAC\s+(mode|bidding)\b|\bproprietary article certificate\b"),
+    # Terms GeM's own list (printed after "/Disclaimer") says a buyer may not add. Reviewed by ForbiddenTermRule.
+    # Kept narrow: broad words ("hard copy", links) fire on payment, billing and grievance text in real bids.
+    clause("forbidden_brand", "A make or brand may be mandated",
+           r"^(?!.*\bauthori[sz]\w*).*\b(of|from|only)\s+(\w+\s+)?(make|brand)\b[^.]{0,30}\bonly\b"
+           r"|^(?!.*\bauthori[sz]\w*).*\b(make|brand)\s+\w+\s+only\b"),
+    clause("forbidden_physical", "Paper documents may be asked before qualifying",
+           r"^(?!.*\b(EMD|earnest|DD|demand draft|PBG|performance|integrity pact|invoices?|bills?|billing|payment"
+           r"|award\w*)\b).*\b(hard\s?cop(y|ies)|physical (copy|copies|form)|sealed (envelope|cover)"
+           r"|by (post|courier))\b"),
+    clause("forbidden_sample", "A sample may be asked with the bid",
+           r"\bsamples?\b[^.]{0,80}\b(submit\w*|along with|before|approval|with the bid)\b"
+           r"|\b(submit\w*|along with|before|approval)\b[^.]{0,80}\bsamples?\b"),
+    clause("forbidden_experience", "Experience may be limited to named organisations",
+           r"\bexperience\b[^.]{0,80}\b(only|exclusively)\b[^.]{0,60}\b(department|organi[sz]ation|ministry|PSU"
+           r"|government|govt)\b|\b(export|foreign|overseas)\s+experience\b"),
+    clause("forbidden_external", "Terms may sit on an outside website",
+           r"\b(terms|conditions|specifications?|requirements?|scope)\b[^.]{0,100}"
+           r"\b(available|given|published|uploaded|refer\w*|visit)\b[^.]{0,60}"
+           r"(website|https?://(?!\S*gem\.gov\.in)|www\.(?!\S*gem\.gov\.in))"),
+    clause("forbidden_fee", "A tender or participation fee may be asked",
+           r"\b(tender|bid|document|participation|processing)\s+(fee|cost)s?\b"),
     clause("penalty", "Penalty or extra charges", r"\b(penalty|liquidated damages|demurrage)\b"),
 )
 

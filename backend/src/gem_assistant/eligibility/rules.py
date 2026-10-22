@@ -8,13 +8,13 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import date, datetime, time, timedelta, timezone
 from typing import Callable
 
 from ..domain.models import (
     BidAnalysis, Consignee, Evidence, CorrigendumStatus, FieldStatus, RuleResult, SellerProfile, Verdict, item_match,
 )
-from ..domain.wording import deadline
+from ..domain.wording import day, deadline
 from ..domain.india_states import normalise_states, states_for_pin
 from ..parsing.clause_patterns import DEFAULT_CLAUSE_PATTERNS
 
@@ -400,6 +400,58 @@ class PacRule:
                 for ev in evidence]
 
 
+# GeM's list of buyer terms that make a bid "null & void": item number and its words in the list.
+_FORBIDDEN = {
+    "forbidden_brand": (2, "Mandating procurement of / from specific Brand / Make / Model / Manufacturer / Dealer"),
+    "forbidden_physical": (4, "Mandating submission of documents in physical form as a pre-requisite to qualify bidders"),
+    "forbidden_sample": (7, "Seeking sample with bid or approval of samples during bid evaluation process"),
+    "forbidden_experience": (8, "Seeking experience from specific organization / department / institute only or from "
+                                "foreign / export experience"),
+    "forbidden_external": (10, "Reference of conditions published on any external site or reference to external documents"),
+    "forbidden_fee": (11, "Asking for any Tender fee / Bid Participation fee"),
+}
+_IST = timezone(timedelta(hours=5, minutes=30))
+
+
+def representation_deadline(dated: date, end: datetime) -> datetime | None:
+    """Last moment to ask the buyer (GeM SFAQ): open 10+ days -> start + 4 days, 6-9 -> +2, 3-5 -> +1, to the end
+    of that day. None when the bid is open under 3 days."""
+    open_days = (end.astimezone(_IST).date() - dated).days
+    extra = 4 if open_days >= 10 else 2 if open_days >= 6 else 1 if open_days >= 3 else None
+    return None if extra is None else datetime.combine(dated + timedelta(days=extra), time(23, 59, 59), _IST)
+
+
+class ForbiddenTermRule:
+    """A buyer term GeM's list says may not be added is the buyer's mistake, not his: a look, never a block."""
+
+    name = "forbidden_terms"
+
+    def evaluate(self, bid: BidAnalysis, profile: SellerProfile | None, now: datetime) -> list[RuleResult]:
+        flags = [f for f in bid.flags if f.category in _FORBIDDEN]
+        if not flags:
+            return []
+        dated, end = bid.found_value("bid_dated"), bid.deadline()
+        last = representation_deadline(date.fromisoformat(dated), end) if dated and end else None
+        if last is None and dated and end:
+            tail = "The time to ask the buyer has passed (the bid was open under 3 days); bid on the terms as written, or skip."
+        elif last is None:
+            tail = "The bid's start date is unknown; check on GeM how long you have to ask the buyer."
+        elif last < now:
+            tail = f"The time to ask the buyer has passed ({day(last.date())}); bid on the terms as written, or skip."
+        else:
+            tail = f"You can ask the buyer to remove it with the Representation window in the bid details, {deadline(last, now)}."
+        if last is None and not dated:
+            tail = tail.replace("The bid's start date is unknown", "The bid's start date is unknown (date unknown; check on GeM)")
+        results = []
+        for flag in flags:
+            number, words = _FORBIDDEN[flag.category]
+            results.append(RuleResult(
+                rule=self.name, outcome=Verdict.NEEDS_REVIEW, evidence=flag.evidence,
+                reason=f"This term may be one GeM does not let buyers add (GeM's list in this bid, item {number}: "
+                       f"“{words}”): “{flag.evidence.quote}”. {tail} Only one representation per bid."))
+        return results
+
+
 class CategoryMatchRule:
     name = "category_match"
 
@@ -438,5 +490,6 @@ DEFAULT_RULES = (
     CertificateRule(),
     OemRule(),
     PacRule(),
+    ForbiddenTermRule(),
     CategoryMatchRule(),
 )
