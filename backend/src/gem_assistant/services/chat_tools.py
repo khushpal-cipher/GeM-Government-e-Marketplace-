@@ -12,6 +12,8 @@ there is no tool to reset the safety stop or change the contact email.
 
 from __future__ import annotations
 
+from decimal import Decimal
+
 from dataclasses import asdict, dataclass
 from datetime import date
 from typing import TYPE_CHECKING, Any
@@ -83,6 +85,10 @@ DEFINITIONS = [
     _tool("past_prices", "What similar items won for in finished bids already read (L1 prices, advice only; no GeM "
                          "request). Empty when no finished bid of that item has been read yet.",
           {"item": {"type": "string", "description": "Item words, e.g. 'office chair'"}}, ("item",)),
+    _tool("direct_order_check", "For a direct order: reads a GeM product page and its Other Sellers summary (2 GeM "
+                                "requests) and says whether his target price is above the MRP-10% floor and below "
+                                "every listing. Only when he gives a product link and a price.",
+          {"link": {"type": "string"}, "target_price_rupees": {"type": "number"}}, ("link", "target_price_rupees")),
     _tool("safety_status", "Whether fetching from GeM is stopped for safety, and today's request count."),
 ]
 
@@ -248,6 +254,12 @@ class ChatTools:
     # ---- safety ----
     def _past_prices(self, item: str) -> ToolResult:
         return ToolResult(self._c.past_prices.similar(item))
+
+    def _direct_order_check(self, link: str, target_price_rupees: float) -> ToolResult:
+        try:
+            return ToolResult(self._c.direct_order.check(link, Decimal(str(target_price_rupees))))
+        except ValueError as error:
+            return ToolResult({"error": str(error)})
 
     def _safety_status(self) -> ToolResult:
         s = self._c.safety.status()

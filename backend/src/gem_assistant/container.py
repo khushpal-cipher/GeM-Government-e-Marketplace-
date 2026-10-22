@@ -63,6 +63,7 @@ from .services.profile_service import ProfileService
 from .services.rejection_service import RejectionService
 from .services.safety_service import SafetyService
 from .services.category_service import CategoryService
+from .services.direct_order_service import DirectOrderService
 from .services.past_price_service import PastPriceService
 from .services.result_service import ResultService
 from .services.shortfall_service import ShortfallService
@@ -88,6 +89,7 @@ class Container:
     categories: CategoryService
     results: ResultService
     past_prices: PastPriceService
+    direct_order: DirectOrderService
     orders: OrderService
     rejections: RejectionService
     attachments: AttachmentService
@@ -229,6 +231,7 @@ class Container:
             categories=CategoryService(fetcher),
             results=ResultService(fetcher, result_repo, clock),
             past_prices=PastPriceService(result_repo),
+            direct_order=DirectOrderService(fetcher),
             orders=orders,
             rejections=rejections,
             attachments=attachments,

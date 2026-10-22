@@ -34,6 +34,8 @@ class Expect(str, Enum):
     # GeM's public bid result page. Its scripts also mention "captcha", so it is judged by its
     # headings. See docs/02-RECON-FINDINGS.md §5.
     RESULT_PAGE = "result_page"
+    # A marketplace product page or its "Other Sellers" summary; judged by its "Seller Details" heading.
+    PRODUCT_PAGE = "product_page"
 
 
 @dataclass(frozen=True)
@@ -116,6 +118,11 @@ class ResponseClassifier:
             if "category results for" in response.body.decode("utf-8", errors="ignore").lower():
                 return Classification(ResponseKind.OK, "category page")
             return Classification(ResponseKind.BLOCK, "Expected the category results page but got something else")
+
+        if expect is Expect.PRODUCT_PAGE:
+            if "seller details" in head:
+                return Classification(ResponseKind.OK, "product page")
+            return Classification(ResponseKind.BLOCK, "Expected a product page but got something else")
 
         if expect is Expect.RESULT_PAGE:
             if "bid details" in head and "technical evaluation" in head:
