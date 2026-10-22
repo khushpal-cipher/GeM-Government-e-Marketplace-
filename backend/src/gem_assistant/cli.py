@@ -86,9 +86,13 @@ def main(argv: list[str] | None = None) -> int:
         import uvicorn
 
         from .api.app import create_app
+        from .services.search_scheduler import SearchScheduler, parse_times
 
         if not args.no_open:
             _open_browser_later(f"http://127.0.0.1:{args.port}/")
+        times = parse_times(container.settings.discovery.schedule_times)
+        if times:
+            SearchScheduler(container.discovery, container.clock, times).start()
         # By default 127.0.0.1 only: never reachable from other machines. As a website, every
         # API call needs a login.
         uvicorn.run(create_app(container, login=login), host=args.host, port=args.port)

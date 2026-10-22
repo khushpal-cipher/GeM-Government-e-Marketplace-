@@ -93,6 +93,7 @@ class DiscoverySettings:
     max_corrigendum_checks_per_run: int = 5
     browser_timeout_seconds: float = 60.0
     browser_executable_path: str | None = None  # default: Playwright's own Chromium
+    schedule_times: str = ""             # e.g. "09:00,15:00" (IST); empty = no scheduled search
 
 
 @dataclass(frozen=True)
@@ -145,6 +146,7 @@ class Settings:
             max_corrigendum_checks_per_run=min(defaults.max_corrigendum_checks_per_run,
                                               _env_int("GEM_MAX_CORRIGENDUM_CHECKS_PER_RUN", 5)),
             browser_executable_path=os.environ.get("GEM_CHROMIUM_PATH") or None,
+            schedule_times=os.environ.get("GEM_SCHEDULE_TIMES", "").strip(),
         )
         return cls(
             data_dir=data_dir,
