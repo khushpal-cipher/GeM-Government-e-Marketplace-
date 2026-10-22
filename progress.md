@@ -64,7 +64,7 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 State: `cd backend && uv run pytest -q` → **514 passed** (22 Oct 2026, after 2.1). Phases 0 and 1 and step 2.1 are done:
 about 11 of 45 plan steps (~24%). D1 (Groq key) and D2 (contact email) are set. Build only in Claude Code.
 
-**Next exact action:** step **2.2** (Sonnet · Medium): specification table per item ("Specification / Bid
+**Next exact action:** step **2.2** (model now Sonnet, set 22 Oct 2026; Medium effort): specification table per item ("Specification / Bid
 Requirement (Allowed Values)") as rows with page + quote. Real examples: corpus 9913333 (office tables),
 10014519 (cartridges; the same table repeats on several pages). Read the text with
 `PypdfTextExtractor` first; the table comes as label line, then value line(s). 2.1 left for later:
@@ -75,7 +75,7 @@ set yet: find one before coding), file links (2.3).
 `mkp.gem.gov.in/search?q=laptop` in his Chrome: it is a normal page (category names with Q2/Q3 tags, **no
 captcha**), so the stop was a false alarm (the word "captcha" is in the page's code). He still has to press
 reset on the app's **Safety** page (type "page looked normal, no captcha"). Check `container.safety.status()`
-first; do not reset it for him. Step 2.1 and 2.2 need no GeM requests, so building goes on meanwhile.
+first; do not reset it for him. Steps 2.2-2.4 need no GeM requests, so building goes on meanwhile (2.3 fetches files: it needs fetching un-stopped).
 
 **D8 answered 22 Oct 2026: YES to both POST searches** (not built yet): (1) Advance Search `/search-bids`
 (exact bid number, delivery state, BOQ title), (2) `getReason` (why a seller was disqualified). Build later,
@@ -329,3 +329,5 @@ Whether GeM's public listing search finds a bid by its bid number (1.6 lookup) i
 Pasted-text parser (1.2) and shortfall helper (1.3) are tested only on invented text; no real GeM clarification was available.
 
 Chat run against real Groq only for profile + refusal (20 Oct 2026); bid search and "what does bid N need" with a real bid not tried; website mode never deployed (HANDOFF.md §1).
+
+Step 2.1 (22 Oct 2026): the new fields and consignee rows were checked against 34 real PDFs, but not by a person against the GeM screen. A consignee row split in an unusual way is left out and then shows as a CONFLICTING total, not as a wrong number. Past performance, ePBG months and inspection were seen in 12-27 of the 30 corpus bids; bids that lack a label simply show NOT_FOUND. Estimated value drops paise. The consignee table has no screen yet (API only). Bids stored before this step get their consignees only when re-read at start-up from the kept PDF.
