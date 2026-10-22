@@ -13,6 +13,7 @@ Details live in `docs/HANDOFF.md`; this file only says what is done, what is nex
   submit/accept/upload/pay/download/"+ New"; never log in, enter an OTP or solve a captcha (stop and tell him);
   never copy names, phones, PAN or bank data. Write what was seen, with the date, in `docs/live-tour.md` or
   `docs/02-RECON-FINDINGS.md`. Don't ask him to look, paste or click.
+- **When EVERYTHING in the build plan is done, remind the owner about the `.env`** (owner, 23 Oct 2026): in the data folder's `.env` he must add `GEM_SMTP_USER=` and `GEM_SMTP_APP_PASSWORD=` (Gmail app password) for email alerts, and optionally `GEM_SCHEDULE_TIMES="09:00,15:00"` for the scheduled search and `GEM_NOTIFY_TO=`. Also remind him to reset the Safety page if fetching is stopped.
 - **Build only in Claude Code** (owner, 22 Oct 2026). No Kimi / Gemini / other tools for now.
 - **Update this file before the session ends**: add a row to `docs/done-log.md`, rewrite "Continue from here",
   add the date. Then commit it locally.
