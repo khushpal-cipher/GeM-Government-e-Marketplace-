@@ -38,6 +38,7 @@ Details live in `docs/HANDOFF.md`; this file only says what is done, what is nex
 | 20 Oct 2026 | **Step 1.5** Rejection reason reader + challenge draft: identifies missing documents / technical grounds (OEM auth, turnover, experience, MSE/EMD, MII, specs), checks against profile for rebuttal points, computes strict 48h one-time challenge deadline, drafts formal representation meeting 1.0 wording rules (`DRAFT_NOTE`, no PAN/IFSC), remembers past rejections in SQLite (table `past_rejection`, migration 9) so future checklists warn earlier; integrated in `#/today` and dedicated `#/rejections` page; 490 tests pass | d03fb8d, domain/rejection.py |
 | 22 Oct 2026 | **Step 1.6** invited bids: paste GeM invitation lines on the Daily check page → bid numbers + "extended to" dates; known bids link straight to their check; unknown ones (≤ 10 per click) are looked up with one public listing search through a discovery run's guards, and **only the card with exactly that bid number is downloaded** (Gemini's draft took the first loose match: removed). Needs D2 (contact email) to fetch; refuses cleanly without it | 2647f0f |
 | 22 Oct 2026 | **Step 0.2** `corpus laptop manpower pump "office chair" printer`: 30 bid PDFs saved in `<data folder>/corpus/20261022-0920/` (52 GeM requests, 10 corrigendum checks, no block). `probe`: robots.txt ok, buyer spec file and ATC file both **public** (no login). Found: "Delivery Days" appears as `/Delivery | Days` across lines (20 of 30 bids); services/manpower/custom bids have no consignee delivery table. No item-wise-evaluation or bid-to-RA bid was in the 30 (all "Total value wise"). Fixtures for Phases 2-3 picked (below); PDFs stay outside the repo (D7), 2.1 copies only the ones its tests need | 3e8822c |
+| 22 Oct 2026 | **Step 0.3** recon (Opus): new `gem-assistant recon URL` (URL rules → robots.txt → one GET through SafeFetcher, saved to `<data folder>/recon/`; 5 tests). Findings in `docs/02-RECON-FINDINGS.md`: bid **result pages are public** with sellers, qualified/disqualified, prices and L1 (6.1 buildable); `/all-bids` filters for type/status/high value/end date; Advance Search has exact bid-number, consignee state and BOQ title search but only via new POST `/search-bids`; BOQ line-items CSV on mkp is public (item, qty, consignee, delivery days); buyer ATC file public but scanned; `/resources/` links (35) never; first **real corrigenda** captured (4); no public buyer Red/Orange flag or PBP notice. **mkp search page tripped the breaker** ("captcha" on the page): 4.1 and 6.3 not checked. 70 GeM requests today | 4cb328e + this commit |
 | 20 Oct 2026 | FINAL build plan from videos + live tour (replaces the first plan; Phase 1 = paste-in daily check, shortfall helper, order tracker) | progress.md |
 
 ## Which model to use (owner switches it in the app's model picker)
@@ -57,8 +58,14 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 State: `cd backend && uv run pytest -q` → **498 passed** (22 Oct 2026, after 1.6). Phase 1 (1.0–1.6) is done:
 about 8 of 45 plan steps (~18%). D1 (Groq key) and D2 (contact email) are set. Build only in Claude Code.
 
-**Next exact action:** step **0.3** recon (**Opus · High**: owner switches the model first, then Claude waits
-for him). Then **2.1** (Sonnet · High). Do not run another `corpus` today (15-min gap and request budget: 54 used).
+**Next exact action:** step **2.1** (switch back to **Sonnet · High**): new fields from the bid PDF, first test
+on corpus doc 9971825 (1 consignee, Delivery Days 15); labels split over lines (recon §2); use the BOQ CSV
+shape (recon §7) only from 2.3 on. Read `docs/02-RECON-FINDINGS.md` §2, §7, §10 first.
+
+**Owner to do (safety stop, 22 Oct 2026 09:45):** fetching is **stopped**: `mkp.gem.gov.in/search?q=laptop` had
+the word "captcha" in it. Open that link in your normal browser. If you see no captcha, reset on the app's
+Safety page and say what you saw; if you see one, tell Claude (then 4.1 and 6.3 need another way). 2.1 and
+2.2 need no GeM requests, so building goes on meanwhile.
 
 Fixtures picked in step 0.2 (doc ids in `<data folder>/corpus/20261022-0920/pdf/`, bid no. in `manifest.json`):
 - 9971825 simple product bid, 1 consignee, Delivery Days 15 (6 pages) - first test for 2.1
@@ -125,6 +132,7 @@ Annotation per step (owner's rule): `→ Model · Effort · Why`.
 | D5 | One seller (his father) or several (a pilot)? | One seller until the pilot |
 | D6 | Put the website online (Fly.io Mumbai, card needed, ~₹0–500/month) or stay on the Mac app? | Mac app until Phase 5 is done |
 | D7 | New real bid PDFs as test fixtures hold officers' names/phones. Commit them? | Commit only the few each test needs |
+| D8 | Allow two new read-only POST searches the GeM pages themselves make: Advance Search `/search-bids` (exact bid number for 1.6, consignee state, BOQ title for 4.2) and result details `getReason` (why others were disqualified, 6.1)? (recon §5, §6) | No until he says yes; 1.6 keeps the listing search, 4.2 uses `/all-bids` filters only |
 
 ### Phase 0 — Prove what exists, collect real documents
 

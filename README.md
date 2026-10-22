@@ -242,9 +242,10 @@ merely listed. The request has to go through the page because it carries a CSRF 
 only the rendered page has.
 
 GeM answers `0` for "no corrigendum", or an HTML fragment. **The fragment is shown to you
-as plain text and is never parsed.** Nobody has yet captured a real one
-(`docs/02-RECON-FINDINGS.md` §4), so guessing where a revised deadline sits inside it
-would risk exactly the silent wrong answer this tool exists to avoid. The bid's own fields
+as plain text and is never parsed.** The first real ones were captured on 22 Oct 2026
+(`docs/02-RECON-FINDINGS.md` §4); reading a revised deadline from them is build step 2.6,
+with tests on those real fragments, because a guess would be exactly the silent wrong
+answer this tool exists to avoid. The bid's own fields
 keep showing what the original PDF said, and the corrigendum sits above them so you can
 see both.
 
@@ -254,7 +255,7 @@ import by hand, since those have no GeM document id to check against.
 ## How the corpus command works
 
 The parser was written against one real bid PDF, and new field labels may only come from
-real documents (`../docs/02-RECON-FINDINGS.md`). `corpus` collects them:
+real documents (`docs/02-RECON-FINDINGS.md`). `corpus` collects them:
 
 - It is a discovery run with trigger `corpus`, so it shares the same guard rails: one run
   at a time, 15 minutes between runs, at most 5 keywords × 2 pages, the safety pre-check,
