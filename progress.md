@@ -33,11 +33,12 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 
 ## Continue from here (written 22 Oct 2026)
 
-State: `cd backend && uv run pytest -q` → **596 passed** (22 Oct 2026, after 3.7). Phases 0 and 1, steps 2.1-2.7, 3.0-3.4 and 3.7 are
-done: about 23 of 45 plan steps (~51%). D1 (Groq key) and D2 (contact email) are set; D9 default: Phase 3 checks never block. Build only in Claude Code.
+State: `cd backend && uv run pytest -q` → **612 passed** (22 Oct 2026, after 3.8). Phases 0 and 1, steps 2.1-2.7 and 3.0-3.4, 3.7, 3.8 are
+done: about 24 of 45 plan steps (~53%). D1 (Groq key) and D2 (contact email) are set; D9 default: Phase 3 checks never block. Build only in Claude Code.
 
-**Next exact action:** step **3.8** terms GeM does not allow (Sonnet · Medium), built exactly to `docs/checks-design.md` §3.8
-(GeM's list of 14 terms is printed after "/Disclaimer", outside the scanned section). Then 3.9 before 3.5; 3.6 needs an item-wise bid first.
+**Next exact action:** step **3.9** main products with key specs (profile; only if D4 = yes, check `docs/build-plan.md` Decisions; if no, skip to 3.5/3.6 notes),
+then 3.5 (needs 3.9); 3.6 needs an item-wise bid first. Phase 4 starts after.
+Left from 3.8: the patterns were never seen on a real forbidden term (none in the 30 bids); items 1, 3, 5, 6, 9, 12-14 not checked.
 Left from 3.7: only one real PAC bid seen; other PAC wordings may be missed.
 Left from 3.4: 9940677 still also shows "Couldn't find EMD required" (break right after "/EMD Detail"); `emd_state_limit` untested on a real sentence.
 Left from 3.3: no real Q1 bid yet; Q tags are read from the whole item list, not per item.
