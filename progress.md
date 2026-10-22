@@ -33,12 +33,13 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 
 ## Continue from here (written 22 Oct 2026)
 
-State: `cd backend && uv run pytest -q` → **551 passed** (22 Oct 2026, after 2.5b). Phases 0 and 1 and steps 2.1-2.5b are
-done: about 15 of 45 plan steps (~33%). D1 (Groq key) and D2 (contact email) are set. Build only in Claude Code.
+State: `cd backend && uv run pytest -q` → **552 passed** (22 Oct 2026, after 2.6). Phases 0 and 1 and steps 2.1-2.6 are
+done: about 16 of 45 plan steps (~33%). D1 (Groq key) and D2 (contact email) are set. Build only in Claude Code.
 
-**Next exact action:** step **2.6** (**switch back to Sonnet · Medium**): corrigendum: keep the verbatim text, add an AI
-summary under the same quote rule, reusing `domain/atc_reading.py` (check_reply / quote check, `AtcReadingService` cache and
-daily cap; read `docs/llm-atc-design.md` first). Real corrigenda were captured in 0.3: `docs/02-RECON-FINDINGS.md` §4 and the 2.6 note near its end (saved in `<data folder>/corpus/20261022-0920/corrigenda/`).
+**Next exact action:** step **2.7** (Haiku · Low, or stay on Sonnet): buyer payment flag. Recon found no public flag, so
+it becomes "he notes it from the participation page and it shows on the bid" (`docs/02-RECON-FINDINGS.md` §8 note for 2.7/4.6).
+Left from 2.6: the corrigendum is summarised by the AI only when he asks (`read_terms`); a new deadline is not read by code into
+DeadlineRule (the quote is only shown); changed-document corrigenda (`showcorrigendumpdf`) not fetched; not run on real Groq.
 Left from 2.5b: no button on the bid page and the chat card ignores `ai_terms` (API + chat model only); AI clauses are not in
 the bid's clause flags; Groq limits used are the documented base ones (8K tokens/min, 200K/day), not his key's limits page;
 the AI may miss clauses (13 vs 23 items on the same text), so pattern flags always stay; a real sentence next to an injection
