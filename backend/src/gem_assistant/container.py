@@ -24,6 +24,7 @@ from .infrastructure.pypdf_extractor import PypdfTextExtractor, pdf_links
 from .infrastructure.sqlite_repositories import (
     SqliteAlertRepository,
     SqliteAtcReadingRepository,
+    SqliteBuyerFlagRepository,
     SqliteBidRepository,
     SqliteBreakerStateStore,
     SqliteDiscoveryRunStore,
@@ -80,6 +81,8 @@ class Container:
     rejections: RejectionService
     attachments: AttachmentService
     checklists: ChecklistService
+    buyer_flags: SqliteBuyerFlagRepository
+    clock: Clock
 
     @property
     def rejection_service(self) -> RejectionService:
@@ -213,6 +216,8 @@ class Container:
             checklists=ChecklistService(bid_query, documents, attachments, profile_repo, rejections,
                                         PypdfTextExtractor(settings.max_pdf_pages), terms),
             chat_model=model,
+            buyer_flags=SqliteBuyerFlagRepository(db),
+            clock=clock,
         )
 
 

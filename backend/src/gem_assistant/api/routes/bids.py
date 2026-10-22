@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict
+from typing import Literal
 
 from fastapi import APIRouter, HTTPException, Request, UploadFile
 from pydantic import BaseModel
@@ -24,7 +25,24 @@ def get_bid(bid_id: int, request: Request) -> BidDetailOut:
     item = request.app.state.container.bid_query.get(bid_id)
     if item is None:
         raise HTTPException(status_code=404, detail="Bid not found")
-    return BidDetailOut.from_assessed(item)
+    return BidDetailOut.from_assessed(item).model_copy(
+        update={"buyer_flag": request.app.state.container.buyer_flags.get(bid_id)})
+
+
+class BuyerFlagIn(BaseModel):
+    flag: Literal["none", "orange", "red", "unknown"]  # "unknown" clears the note
+
+
+@router.put("/{bid_id}/buyer-flag")
+def set_buyer_flag(bid_id: int, body: BuyerFlagIn, request: Request) -> dict:
+    """The buyer's payment flag as he read it on GeM's bid page. GeM shows it only to a logged-in seller,
+    so the app never fetches it."""
+    container = request.app.state.container
+    if container.bid_query.get(bid_id) is None:
+        raise HTTPException(status_code=404, detail="Bid not found")
+    flag = None if body.flag == "unknown" else body.flag
+    container.buyer_flags.set(bid_id, flag, container.clock.now())
+    return {"buyer_flag": flag}
 
 
 class ChecklistIn(BaseModel):

@@ -55,6 +55,7 @@ class BidDetailOut(BaseModel):
     corrigendum: Corrigendum
     consignees: list[Consignee] = []
     specifications: list[SpecRow] = []
+    buyer_flag: str | None = None  # noted by him (step 2.7)
 
     @classmethod
     def from_assessed(cls, item: AssessedBid) -> "BidDetailOut":

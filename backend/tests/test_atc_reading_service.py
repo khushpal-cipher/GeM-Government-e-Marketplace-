@@ -104,3 +104,17 @@ def test_corrigendum_text_is_read_with_the_same_quote_rule(tmp_path, clock):
         ("Date or deadline change", "corrigendum", 1, real)]
     assert reading.dropped == 2
     assert "corrigendum page 1" in model.bodies[0]["messages"][1]["content"]
+
+
+def test_buyer_flag_is_noted_by_him_shown_and_cleared(settings, clock, transport):
+    """Step 2.7: GeM shows the buyer's payment flag only to a logged-in seller, so he notes it."""
+    client = TestClient(create_app(Container.build(settings, clock=clock, transport=transport),
+                                   allowed_hosts=frozenset({"testserver"})))
+    bid_id = client.post("/api/bids/import", files={"file": ("bid.pdf", BID.read_bytes(), "application/pdf")}).json()["id"]
+    assert client.get(f"/api/bids/{bid_id}").json()["buyer_flag"] is None
+    assert client.put(f"/api/bids/{bid_id}/buyer-flag", json={"flag": "red"}).status_code == 200
+    assert client.get(f"/api/bids/{bid_id}").json()["buyer_flag"] == "red"
+    client.put(f"/api/bids/{bid_id}/buyer-flag", json={"flag": "unknown"})
+    assert client.get(f"/api/bids/{bid_id}").json()["buyer_flag"] is None
+    assert client.put(f"/api/bids/{bid_id}/buyer-flag", json={"flag": "blue"}).status_code == 422
+    assert client.put("/api/bids/999/buyer-flag", json={"flag": "red"}).status_code == 404

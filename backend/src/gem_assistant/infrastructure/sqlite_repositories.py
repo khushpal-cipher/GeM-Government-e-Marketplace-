@@ -675,3 +675,23 @@ class SqliteAtcReadingRepository:
     def count_since(self, since: datetime) -> int:
         with self._db.connect() as conn:
             return conn.execute("SELECT COUNT(*) FROM atc_reading WHERE created_at >= ?", (_iso(since),)).fetchone()[0]
+
+
+class SqliteBuyerFlagRepository:
+    """Step 2.7: "none" | "orange" | "red" as he read it on GeM; no row means not noted."""
+
+    def __init__(self, db: Database):
+        self._db = db
+
+    def get(self, bid_id: int) -> str | None:
+        with self._db.connect() as conn:
+            row = conn.execute("SELECT flag FROM bid_buyer_flag WHERE bid_id = ?", (bid_id,)).fetchone()
+        return row["flag"] if row else None
+
+    def set(self, bid_id: int, flag: str | None, now: datetime) -> None:
+        with self._db.connect() as conn:
+            if flag is None:
+                conn.execute("DELETE FROM bid_buyer_flag WHERE bid_id = ?", (bid_id,))
+            else:
+                conn.execute("INSERT OR REPLACE INTO bid_buyer_flag (bid_id, flag, noted_at) VALUES (?, ?, ?)",
+                             (bid_id, flag, _iso(now)))

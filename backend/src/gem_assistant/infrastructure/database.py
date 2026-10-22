@@ -226,6 +226,14 @@ MIGRATIONS: list[str] = [
     );
     CREATE INDEX atc_reading_key ON atc_reading (key);
     """,
+    # 13 — the buyer's payment flag that he noted himself from GeM (step 2.7; GeM shows it only to a logged-in seller).
+    """
+    CREATE TABLE bid_buyer_flag (
+        bid_id    INTEGER PRIMARY KEY REFERENCES bid(id) ON DELETE CASCADE,
+        flag      TEXT NOT NULL,
+        noted_at  TEXT NOT NULL
+    );
+    """,
 ]
 
 
