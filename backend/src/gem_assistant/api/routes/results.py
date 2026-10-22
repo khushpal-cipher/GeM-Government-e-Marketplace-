@@ -8,6 +8,11 @@ from ...services.result_service import ResultLimitReached
 router = APIRouter(prefix="/api/results", tags=["results"])
 
 
+@router.get("/similar")
+def similar(item: str, request: Request) -> dict:
+    return request.app.state.container.past_prices.similar(item)
+
+
 @router.get("/{doc_id}")
 def result(doc_id: str, request: Request, packets: str = "") -> dict:
     try:

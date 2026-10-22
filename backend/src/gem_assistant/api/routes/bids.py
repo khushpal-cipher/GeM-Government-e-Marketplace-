@@ -35,6 +35,17 @@ def get_bid(bid_id: int, request: Request) -> BidDetailOut:
         "item_count": item_match(text, [])[1]})
 
 
+@router.get("/{bid_id}/past-prices")
+def past_prices(bid_id: int, request: Request) -> list[dict]:
+    """For each item of this bid: what similar items won for before (from result pages already kept)."""
+    container = request.app.state.container
+    item = container.bid_query.get(bid_id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Bid not found")
+    names = [i.strip() for i in (item.bid.found_value("item_category") or "").split(",") if i.strip()]
+    return [container.past_prices.similar(n) for n in names[:10]]
+
+
 class BuyerFlagIn(BaseModel):
     flag: Literal["none", "orange", "red", "unknown"]  # "unknown" clears the note
 

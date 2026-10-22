@@ -63,6 +63,7 @@ from .services.profile_service import ProfileService
 from .services.rejection_service import RejectionService
 from .services.safety_service import SafetyService
 from .services.category_service import CategoryService
+from .services.past_price_service import PastPriceService
 from .services.result_service import ResultService
 from .services.shortfall_service import ShortfallService
 
@@ -86,6 +87,7 @@ class Container:
     shortfall: ShortfallService
     categories: CategoryService
     results: ResultService
+    past_prices: PastPriceService
     orders: OrderService
     rejections: RejectionService
     attachments: AttachmentService
@@ -197,6 +199,7 @@ class Container:
         )
 
         bid_query = BidQueryService(bid_repo, profile_repo, EligibilityEvaluator(), clock)
+        result_repo = SqliteBidResultRepository(db)
         rejections = RejectionService(SqliteRejectionRepository(db), profile_repo)
         attachments = AttachmentService(fetcher, documents, PypdfTextExtractor(MAX_PAGES))
         model = chat_model or GroqChatModel(lambda: _groq_key(settings), settings.groq_model)
@@ -224,7 +227,8 @@ class Container:
             bid_alerts=BidAlerts(bid_query, discovery, clock),
             shortfall=ShortfallService(profile_repo, clock),
             categories=CategoryService(fetcher),
-            results=ResultService(fetcher, SqliteBidResultRepository(db), clock),
+            results=ResultService(fetcher, result_repo, clock),
+            past_prices=PastPriceService(result_repo),
             orders=orders,
             rejections=rejections,
             attachments=attachments,

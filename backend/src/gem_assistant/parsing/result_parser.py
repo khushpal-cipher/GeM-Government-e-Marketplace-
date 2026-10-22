@@ -20,6 +20,7 @@ class RankedPrice:
     seller: str
     total_price: Decimal  # rupees
     rank: str             # "L1", "L2", ...
+    item: str = ""        # what the price is for, as GeM shows it
 
 
 @dataclass(frozen=True)
@@ -98,6 +99,7 @@ def parse_result(html: str) -> BidResult:
                 amount = re.search(r"[\d,]+(?:\.\d+)?", cells["total price"])
                 if amount:
                     prices.append(RankedPrice(_firm(cells["seller name"]),
-                                              Decimal(amount.group().replace(",", "")), cells["rank"]))
+                                              Decimal(amount.group().replace(",", "")), cells["rank"],
+                                              re.sub(r"^Item Categories\s*:\s*", "", cells["offered item"])))
     return BidResult(grab(r"Bid Number:\s*(GEM/\d{4}/\w/\d+)"), grab(r"Bid Status:\s*(\w[\w ]*?)\s+Quantity"),
                      int(quantity.replace(",", "")) if quantity else None, bidders, prices)

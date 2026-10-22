@@ -712,14 +712,20 @@ class SqliteBidResultRepository:
                 (doc_id, result.bid_number, result.status, result.quantity, l1.seller if l1 else None,
                  str(l1.total_price) if l1 else None,
                  json.dumps([{"seller": b.seller, "offered": b.offered, "qualified": b.qualified} for b in result.bidders]),
-                 json.dumps([{"seller": p.seller, "total_price": str(p.total_price), "rank": p.rank} for p in result.prices]),
+                 json.dumps([{"seller": p.seller, "total_price": str(p.total_price), "rank": p.rank, "item": p.item} for p in result.prices]),
                  _iso(now)))
 
     def get(self, doc_id: str) -> dict | None:
         with self._db.connect() as conn:
             row = conn.execute("SELECT * FROM bid_result WHERE doc_id = ?", (doc_id,)).fetchone()
-        if row is None:
-            return None
+        return self._row(row) if row else None
+
+    def all(self) -> list[dict]:
+        with self._db.connect() as conn:
+            return [self._row(r) for r in conn.execute("SELECT * FROM bid_result ORDER BY read_at DESC")]
+
+    @staticmethod
+    def _row(row) -> dict:
         return {"doc_id": row["doc_id"], "bid_number": row["bid_number"], "status": row["status"],
                 "quantity": row["quantity"], "l1_seller": row["l1_seller"], "l1_price": row["l1_price"],
                 "bidders": json.loads(row["bidders"]), "prices": json.loads(row["prices"]), "read_at": row["read_at"]}

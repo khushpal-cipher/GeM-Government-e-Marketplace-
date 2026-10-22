@@ -98,3 +98,34 @@ def test_daily_limit(service):
     with pytest.raises(ResultLimitReached):
         svc.read("999")
     assert len(fetcher.urls) == MAX_PER_DAY
+
+
+# ---- step 6.2: past prices ----
+
+def _saved(tmp_path):
+    from gem_assistant.services.past_price_service import PastPriceService
+    db = Database(tmp_path / "p.db")
+    db.migrate()
+    repo = SqliteBidResultRepository(db)
+    repo.save("1", parse_result(HTML), _Clock().now())
+    return PastPriceService(repo)
+
+
+def test_similar_finds_l1_price_of_matching_item(tmp_path):
+    found = _saved(tmp_path).similar("clip assy")["matches"]
+    assert [(m["bid_number"], m["l1_total"], m["per_piece"]) for m in found] == [("GEM/2025/B/6819518", "817024.00", "128.00")]
+    assert "CLIP ASSY" in found[0]["item"]
+
+
+def test_similar_ignores_other_items_and_needs_every_word(tmp_path):
+    svc = _saved(tmp_path)
+    assert svc.similar("office chair")["matches"] == []
+    assert svc.similar("clip bolt")["matches"] == []
+
+
+def test_chat_tool_and_route_answer(tmp_path):
+    from gem_assistant.services.chat_tools import ChatTools
+
+    class C:
+        past_prices = _saved(tmp_path)
+    assert ChatTools(C()).call("past_prices", {"item": "clip assy"}).data["matches"][0]["l1_total"] == "817024.00"

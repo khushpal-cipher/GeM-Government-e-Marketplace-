@@ -80,6 +80,9 @@ DEFINITIONS = [
     _tool("add_bid_from_link", "Download and check one bid from its GeM link "
                                "(https://bidplus.gem.gov.in/showbidDocument/<number>).",
           {"link": {"type": "string"}}, ("link",)),
+    _tool("past_prices", "What similar items won for in finished bids already read (L1 prices, advice only; no GeM "
+                         "request). Empty when no finished bid of that item has been read yet.",
+          {"item": {"type": "string", "description": "Item words, e.g. 'office chair'"}}, ("item",)),
     _tool("safety_status", "Whether fetching from GeM is stopped for safety, and today's request count."),
 ]
 
@@ -243,6 +246,9 @@ class ChatTools:
         return self._get_bid(result.import_result.id)
 
     # ---- safety ----
+    def _past_prices(self, item: str) -> ToolResult:
+        return ToolResult(self._c.past_prices.similar(item))
+
     def _safety_status(self) -> ToolResult:
         s = self._c.safety.status()
         data = {"fetching_stopped": s.breaker.open, "stop_reason": s.breaker.reason,
