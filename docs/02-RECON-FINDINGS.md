@@ -146,6 +146,13 @@ just a script on the page (blocked bodies are not saved). Category names/quadran
 normal browser; if no captcha shows, he resets the breaker on the Safety page. Whatever it is,
 `mkp.../search` must not be fetched again without a decision.
 
+## 8a. Product page and "Other Sellers" (23 Oct 2026, his Chrome, read-only, 3 pages, not logged in on mkp)
+
+- Category page `mkp.gem.gov.in/<category>/search` is server-rendered after a few seconds: 12 product cards, each with links `/<category>/<slug>/p-<id>-<id>-cat.html` and `.../p-<id>-<id>-cat/all_sellers.html`.
+- Product page shows MRP/Unit, Offer Price/Unit, stock, min qty per consignee, OEM-verified lines.
+- `all_sellers.html` today shows ONLY a summary: number of seller offerings (623), price range (₹170-₹360), discount range, quantity range. **No per-seller rows and no delivery locations** (the 2024 video showed them). So "does anyone list lower for the buyer's location" cannot be answered from public data; step 6.3 compares his price with the MRP floor and the price range only.
+- Both pages' scripts contain "captcha": judged by `Expect.PRODUCT_PAGE` (the "Seller Details" heading). Fixtures: `tests/fixtures/mkp-product_2026-10-23.html`, `mkp-all-sellers_2026-10-23.html` (reduced copies).
+
 ## 9. Not checked yet
 
 - mkp search, category quadrant, a product's "Other Sellers" page (§8).
