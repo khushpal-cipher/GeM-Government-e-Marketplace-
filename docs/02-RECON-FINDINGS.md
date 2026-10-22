@@ -119,7 +119,11 @@ route for the 1.6 invited-bid lookup than the full-text listing (owner OK needed
 
 The "text ATC page `contract/terms.jsp?bidra=`" from the plan **does not appear** in any of the 30 PDFs.
 
-## 8. Marketplace search `mkp.gem.gov.in/search?q=` — stopped
+## 8. Marketplace search `mkp.gem.gov.in/search?q=` — NOT a captcha (22 Oct 2026, 11:50 pm, his Chrome, read-only)
+
+Checked again by looking: normal page, results `li.bn-group > strong` (group) with `li.bn-link > a[href=/<category>/search#/?q=..]` and `<i>(Q2)</i>`; extra items are `more-bns hide`. The word "captcha" is only in its scripts. Fixture: `tests/fixtures/mkp-search-laptop_2026-10-22.html`. The older note below is kept for history.
+
+(old) 22 Oct 2026, 09:45 IST:
 
 22 Oct 2026, 09:45 IST: HTTP 200, but the page contains the word "captcha", so the classifier called it
 a block and the **breaker tripped** (fetching stopped). Unknown whether it is a real challenge or

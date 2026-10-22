@@ -33,11 +33,11 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 
 ## Continue from here (written 22 Oct 2026)
 
-State: `cd backend && uv run pytest -q` → **632 passed** (22 Oct 2026, after 3.6). Phases 0, 1 and 3 and steps 2.1-2.7 are
+State: `cd backend && uv run pytest -q` → **640 passed** (22 Oct 2026, after 4.1). Phases 0, 1 and 3 and steps 2.1-2.7 are
 done: about 27 of 45 plan steps (~60%). D1 (Groq key) and D2 (contact email) are set; D4 = yes; D9 default: Phase 3 checks never block. Build only in Claude Code.
 
-**Next exact action:** **Phase 4**, step 4.1 (read `docs/build-plan.md` Phase 4 and its model line first): category names from `mkp.gem.gov.in/search?q=`
-(recon §8: not a captcha; the classifier must judge that page by shape, not by the word "captcha").
+**Next exact action:** **Phase 4**, step 4.2 (read `docs/build-plan.md` Phase 4 first; Sonnet · Medium; needs D8 Advance Search POST: check the CSRF token on `/advance-search` first).
+Left from 4.1: `GET /api/categories?q=` only (no screen/chat card, no "he confirms", no saving extra words); a no-result page would count as a block (never seen).
 Left from 3.8: the sample clause "within 07 days of receipt of supply order" (bid 9939006) is flagged as a forbidden term but is post-award: a false alarm to tighten
 (exclude "supply order|receipt of|after award" in `forbidden_sample`).
 Left from 3.5: tables are not tied to item numbers; no "not compared" list; he has not entered any products.
