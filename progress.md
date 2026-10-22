@@ -33,21 +33,18 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 
 ## Continue from here (written 22 Oct 2026)
 
-State: `cd backend && uv run pytest -q` → **530 passed, 1 skipped** (22 Oct 2026, after 2.5a; the skip is the 2.5a
-injection test set). Phases 0 and 1 and steps 2.1-2.5a are done: about 14 of 45 plan steps (~31%). D1 (Groq key) and
-D2 (contact email) are set. Build only in Claude Code.
+State: `cd backend && uv run pytest -q` → **551 passed** (22 Oct 2026, after 2.5b). Phases 0 and 1 and steps 2.1-2.5b are
+done: about 15 of 45 plan steps (~33%). D1 (Groq key) and D2 (contact email) are set. Build only in Claude Code.
 
-**Next exact action:** step **2.5b** (**stay on / switch to Opus · High**): build `docs/llm-atc-design.md` exactly.
-First re-read the design and `backend/tests/test_atc_injection.py` and fix the design if a test is wrong; then add
-`domain/atc_reading.py` (prepare, new_boundary, build_request, check_reply, SCHEMA, MAX_CHARS, MAX_ITEMS, PROMPT_VERSION),
-replace the `importorskip` line with a plain import, make all 16 test cases pass, then the Groq call (second method in
-`infrastructure/groq_chat.py`), cache table + 15/day cap (`services/atc_reading_service.py`), and add the items to the
-clause flags / 2.4 checklist. Only on request (button / chat tool), never in discovery.
-Left from 2.5a: Groq limits (8K tokens/min, 200K/day) are the documented base limits, not checked on his key's limits
-page; the test set has never run against code; the AI may still copy a real sentence that sits next to an injection
-(shown as "Other clause to read" beside the injection flag, no verdict change).
-Left from 2.4: checklist has no screen on the bid page (API + chat card only); text patterns on long ATC pages are
-high-recall (may over-list); attached-file results are cached per app run only; not run against live GeM.
+**Next exact action:** step **2.6** (**switch back to Sonnet · Medium**): corrigendum: keep the verbatim text, add an AI
+summary under the same quote rule, reusing `domain/atc_reading.py` (check_reply / quote check, `AtcReadingService` cache and
+daily cap; read `docs/llm-atc-design.md` first). Real corrigenda were captured in 0.3: `docs/02-RECON-FINDINGS.md` §4 and the 2.6 note near its end (saved in `<data folder>/corpus/20261022-0920/corrigenda/`).
+Left from 2.5b: no button on the bid page and the chat card ignores `ai_terms` (API + chat model only); AI clauses are not in
+the bid's clause flags; Groq limits used are the documented base ones (8K tokens/min, 200K/day), not his key's limits page;
+the AI may miss clauses (13 vs 23 items on the same text), so pattern flags always stay; a real sentence next to an injection
+can still be listed as "Other clause to read".
+Left from 2.4: text patterns on long ATC pages are high-recall (may over-list); attached-file results are cached per app run
+only; not run against live GeM.
 
 **Owner to do (safety stop, 22 Oct 2026 09:45):** fetching may still be **stopped**. He opened
 `mkp.gem.gov.in/search?q=laptop` in his Chrome: it is a normal page (category names with Q2/Q3 tags, **no
