@@ -14,6 +14,7 @@ from typing import Callable
 from ..domain.models import (
     BidAnalysis, Consignee, Evidence, CorrigendumStatus, FieldStatus, RuleResult, SellerProfile, Verdict, item_match,
 )
+from ..domain.wording import deadline
 from ..domain.india_states import normalise_states, states_for_pin
 from ..parsing.clause_patterns import DEFAULT_CLAUSE_PATTERNS
 
@@ -109,7 +110,7 @@ class RestrictiveClauseRule:
                        reason=f"{flag.label}: read this clause and confirm you qualify.",
                        evidence=flag.evidence)
             for flag in bid.flags
-            if flag.category in _BLOCKING_CATEGORIES
+            if flag.category in _BLOCKING_CATEGORIES and flag.category != "oem_authorisation"
         ]
 
 
@@ -317,6 +318,49 @@ class CertificateRule:
                 for s, ev in missing.items()]
 
 
+_QUADRANT = re.compile(r"\(Q([12])\)")
+
+
+class OemRule:
+    """A reseller (not the maker of this bid's item) needs the maker's authorisation, and sometimes the
+    maker's turnover. He is the maker when `is_oem` and his `oem_products` are empty or name the item.
+    `is_oem` cannot tell "no" from "not answered", so this never blocks."""
+
+    name = "oem"
+
+    def evaluate(self, bid: BidAnalysis, profile: SellerProfile | None, now: datetime) -> list[RuleResult]:
+        if profile is None:
+            return []
+        item = bid.field("item_category")
+        item_text = bid.found_value("item_category")
+        if profile.is_oem and (not profile.oem_products or item_match(
+                item_text, profile.oem_products, profile.ignore_words)[0]):
+            return []
+        docs = bid.field("documents_required")
+        entries = (bid.found_value("documents_required") or "").lower()
+        auth = next((f.evidence for f in bid.flags if f.category == "oem_authorisation"), None)
+        if auth is None and "oem authori" in entries:
+            auth = docs.evidence
+        turnover = docs.evidence if "oem annual turnover" in entries else None
+        tags = set(_QUADRANT.findall(item_text or ""))
+        if auth is None and "2" in tags:
+            auth = item.evidence
+        due = bid.deadline()
+        when = f" before the bid closes ({deadline(due, now)})" if due else ""
+        if auth is not None or turnover is not None:
+            wants = ["an OEM authorisation certificate"] * (auth is not None) + \
+                    ["the maker's turnover certificate (CA certified)"] * (turnover is not None)
+            ev = auth or turnover
+            return [RuleResult(rule=self.name, outcome=Verdict.NEEDS_REVIEW, evidence=ev,
+                               reason=f"The bid asks for {' and '.join(wants)} (page {ev.page}: “{ev.quote}”). "
+                                      f"As a reseller, get them from the maker of the product you offer{when}.")]
+        if "1" in tags:
+            return [RuleResult(rule=self.name, outcome=Verdict.NEEDS_REVIEW, evidence=item.evidence,
+                               reason="GeM lists this item in Q1: only its maker (OEM) can offer it. Your profile "
+                                      "says you are not the OEM of it. (GeM rule not confirmed; check on GeM)")]
+        return []
+
+
 class CategoryMatchRule:
     name = "category_match"
 
@@ -353,5 +397,6 @@ DEFAULT_RULES = (
     TurnoverExperienceRule(),
     DeliveryStateRule(),
     CertificateRule(),
+    OemRule(),
     CategoryMatchRule(),
 )
