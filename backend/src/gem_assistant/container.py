@@ -48,6 +48,7 @@ from .services.bid_fetch_service import BidFetchService
 from .services.bid_import_service import BidImportService
 from .services.bid_query_service import BidQueryService
 from .services.chat_service import ChatModel
+from .services.attachment_service import MAX_PAGES, AttachmentService
 from .services.corpus_service import CorpusService
 from .services.discovery_service import DiscoveryService
 from .services.order_service import OrderService
@@ -74,6 +75,7 @@ class Container:
     shortfall: ShortfallService
     orders: OrderService
     rejections: RejectionService
+    attachments: AttachmentService
 
     @property
     def rejection_service(self) -> RejectionService:
@@ -118,6 +120,7 @@ class Container:
             max_bytes=settings.safety.max_download_bytes,
         )
 
+        documents = FileDocumentStore(settings.data_dir / "documents")
         bid_import = BidImportService(
             text_extractor=PypdfTextExtractor(settings.max_pdf_pages),
             field_extractor=LabelFieldExtractor(),
@@ -126,7 +129,7 @@ class Container:
             bids=bid_repo,
             clock=clock,
             max_bytes=settings.safety.max_download_bytes,
-            documents=FileDocumentStore(settings.data_dir / "documents"),
+            documents=documents,
             bid_reader=bid_repo,
         )
         listing_repo = SqliteListingRepository(db)
@@ -196,6 +199,7 @@ class Container:
             shortfall=ShortfallService(profile_repo, clock),
             orders=OrderService(SqliteOrderRepository(db), profile_repo, clock),
             rejections=RejectionService(SqliteRejectionRepository(db), profile_repo),
+            attachments=AttachmentService(fetcher, documents, PypdfTextExtractor(MAX_PAGES)),
             chat_model=chat_model or GroqChatModel(lambda: _groq_key(settings), settings.groq_model),
         )
 
