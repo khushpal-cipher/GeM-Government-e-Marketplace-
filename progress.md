@@ -33,15 +33,13 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 
 ## Continue from here (written 22 Oct 2026)
 
-State: `cd backend && uv run pytest -q` → **526 passed** (22 Oct 2026, after 2.3). Phases 0 and 1 and steps 2.1-2.3 are done:
+State: `cd backend && uv run pytest -q` → **530 passed** (22 Oct 2026, after 2.4). Phases 0 and 1 and steps 2.1-2.4 are done:
 about 13 of 45 plan steps (~24%). D1 (Groq key) and D2 (contact email) are set. Build only in Claude Code.
 
-**Next exact action:** step **2.4** (Sonnet · Medium): per-bid document checklist from the bid text + `container.attachments.fetch_for(pdf)`
-(step 2.3, done: text of the spec PDF / readable ATC; scanned ones come back as "open it yourself"). Each required document with
-page + quote, plus "PDF <=10 MB, <=100 pages each", marks what his profile says he has. Deterministic patterns first; chat card.
-Nothing calls `fetch_for` yet: 2.4 decides when (once per bid, <=3 requests, in the budget) and must stop on a safety stop.
-Left from 2.1-2.3 for later: item-wise schedules (fixture 7922876), PAC items (no real PAC bid yet), no screen for spec/consignee
-tables (API only), spec rows not matched to item names, BOQ CSV (item/qty/consignee) not fetched.
+**Next exact action:** step **2.5a** (**switch to Opus · High**): design the LLM reading of ATC (JSON schema, prompt, quote check,
+what goes to Groq, cost cap, failure -> "not read, check yourself"; injection test set first). Step 2.4 is done (checklist, 55af8d3).
+Left from 2.4: checklist has no screen on the bid page (API + chat card only); text patterns on long ATC pages are high-recall (may
+over-list); attached-file results are cached per app run only; not run against live GeM.
 
 **Owner to do (safety stop, 22 Oct 2026 09:45):** fetching may still be **stopped**. He opened
 `mkp.gem.gov.in/search?q=laptop` in his Chrome: it is a normal page (category names with Q2/Q3 tags, **no
