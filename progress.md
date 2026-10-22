@@ -34,10 +34,11 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 
 ## Continue from here (written 23 Oct 2026)
 
-State: `cd backend && uv run pytest -q` → **688 passed** (23 Oct 2026, after 7.1). Phases 0, 1, 3, 4 (4.6 dropped), 5 and steps 2.1-2.7 are
+State: `cd backend && uv run pytest -q` → **692 passed** (23 Oct 2026, after 7.1). Phases 0, 1, 3, 4 (4.6 dropped), 5 and steps 2.1-2.7 are
 done: about 35 of 45 plan steps. Left: Phase 6 done;, Phase 7, Phase 8, plus 2.8/2.x leftovers listed below. D1 (Groq key) and D2 (contact email) are set; D4 = yes; D9 default: Phase 3 checks never block. Build only in Claude Code.
 
 **Next exact action:** step 7.2 (compliance sheet for custom bids: buyer's spec line → his offer → yes/no; Sonnet · Medium). Read 7.2 in `docs/build-plan.md` and the spec-table code (2.2, `bid_spec`, 3.5) first. 7.1 done. Left from 7.1: forbidden-term flags only (no PAC / experience / turnover representations); no screen/chat card; GeM's Representation form length limit unknown. Left from 6.3: no screen/chat card; the public Other Sellers page has no locations (recon §8a); no category scan. Left from 6.2: no screen/chat card; per-piece wrong for multi-item bids; nothing fills the saved results yet (6.1 has no finder of finished bids). Left from 6.1: no finder of finished bids, no screen/chat card, `getReason` not built, not run on live GeM through the app, fixture rebuilt from seen text. Left from 5.3: not opened in real Excel; no filters.
+Left from 4.7 (cities): only read bids are judged by city; Discover list is all-India; city spellings must be listed by him; search by city/state (4.2 Advance Search) not connected yet.
 Left from 4.3: only the latest run counts as "new"; no New mark on the analysed-bids list.
 Left from 4.2 rest: `advance_search` / `advance_lists` exist on `PlaywrightListingSource` but are not on any API route, screen or discovery run, and were never run on live GeM (first live run must save a real `/search-bids` answer as a fixture and check the real page works with our script stubs).
 Left from 4.2: no "service" bid type, no screen for the filters.
