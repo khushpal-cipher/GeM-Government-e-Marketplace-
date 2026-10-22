@@ -33,10 +33,11 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 
 ## Continue from here (written 22 Oct 2026)
 
-State: `cd backend && uv run pytest -q` → **647 passed** (23 Oct 2026, after 4.2 rest). Phases 0, 1 and 3 and steps 2.1-2.7 are
+State: `cd backend && uv run pytest -q` → **648 passed** (23 Oct 2026, after 4.3). Phases 0, 1 and 3 and steps 2.1-2.7 are
 done: about 27 of 45 plan steps (~60%). D1 (Groq key) and D2 (contact email) are set; D4 = yes; D9 default: Phase 3 checks never block. Build only in Claude Code.
 
-**Next exact action:** step 4.3 ("new since last search", Haiku · Low or stay on Sonnet; first_seen_at is already stored). Then 4.4. Left from 4.2 rest: `advance_search` / `advance_lists` exist on `PlaywrightListingSource` but are not on any API route, screen or discovery run, and were never run on live GeM (first live run must save a real `/search-bids` answer as a fixture and check the real page works with our script stubs).
+**Next exact action:** step 4.4 (scheduled search inside the running server, Sonnet · Medium; read its entry in `docs/build-plan.md` Phase 4 first). 4.6 (PBP notices) may be dropped. Left from 4.3: only the latest run counts as "new"; no New mark on the analysed-bids list.
+Left from 4.2 rest: `advance_search` / `advance_lists` exist on `PlaywrightListingSource` but are not on any API route, screen or discovery run, and were never run on live GeM (first live run must save a real `/search-bids` answer as a fixture and check the real page works with our script stubs).
 Left from 4.2: no "service" bid type, no screen for the filters.
 Left from 4.1: `GET /api/categories?q=` only (no screen/chat card, no "he confirms", no saving extra words); a no-result page would count as a block (never seen).
 Left from 3.8: the sample clause "within 07 days of receipt of supply order" (bid 9939006) is flagged as a forbidden term but is post-award: a false alarm to tighten
