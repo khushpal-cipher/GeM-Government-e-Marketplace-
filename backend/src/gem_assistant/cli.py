@@ -86,10 +86,14 @@ def main(argv: list[str] | None = None) -> int:
         import uvicorn
 
         from .api.app import create_app
+        from .services.alert_notifier import AlertNotifier, channels_from_env
         from .services.search_scheduler import SearchScheduler, parse_times
 
         if not args.no_open:
             _open_browser_later(f"http://127.0.0.1:{args.port}/")
+        AlertNotifier(
+            [container.bid_alerts.list, container.alerts.open], channels_from_env(dict(os.environ)),
+            container.settings.data_dir / "alerts-announced.json").start()
         times = parse_times(container.settings.discovery.schedule_times)
         if times:
             SearchScheduler(container.discovery, container.clock, times).start()
