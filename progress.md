@@ -55,17 +55,33 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 
 ## Continue from here (written 22 Oct 2026)
 
-State: `cd backend && uv run pytest -q` → **498 passed** (22 Oct 2026, after 1.6). Phase 1 (1.0–1.6) is done:
-about 8 of 45 plan steps (~18%). D1 (Groq key) and D2 (contact email) are set. Build only in Claude Code.
+State: `cd backend && uv run pytest -q` → **503 passed** (22 Oct 2026, after 0.3). Phases 0 and 1 are done:
+about 10 of 45 plan steps (~22%). D1 (Groq key) and D2 (contact email) are set. Build only in Claude Code.
 
 **Next exact action:** step **2.1** (switch back to **Sonnet · High**): new fields from the bid PDF, first test
 on corpus doc 9971825 (1 consignee, Delivery Days 15); labels split over lines (recon §2); use the BOQ CSV
 shape (recon §7) only from 2.3 on. Read `docs/02-RECON-FINDINGS.md` §2, §7, §10 first.
 
-**Owner to do (safety stop, 22 Oct 2026 09:45):** fetching is **stopped**: `mkp.gem.gov.in/search?q=laptop` had
-the word "captcha" in it. Open that link in your normal browser. If you see no captcha, reset on the app's
-Safety page and say what you saw; if you see one, tell Claude (then 4.1 and 6.3 need another way). 2.1 and
-2.2 need no GeM requests, so building goes on meanwhile.
+**Owner to do (safety stop, 22 Oct 2026 09:45):** fetching may still be **stopped**. He opened
+`mkp.gem.gov.in/search?q=laptop` in his Chrome: it is a normal page (category names with Q2/Q3 tags, **no
+captcha**), so the stop was a false alarm (the word "captcha" is in the page's code). He still has to press
+reset on the app's **Safety** page (type "page looked normal, no captcha"). Check `container.safety.status()`
+first; do not reset it for him. Step 2.1 and 2.2 need no GeM requests, so building goes on meanwhile.
+
+**D8 answered 22 Oct 2026: YES to both POST searches** (not built yet): (1) Advance Search `/search-bids`
+(exact bid number, delivery state, BOQ title), (2) `getReason` (why a seller was disqualified). Build later,
+each as its own small step with tests, **never in the same step as 2.1**: allow the exact path in
+`SafetySettings.post_allowed_paths/prefixes` (same SafeFetcher guards, no other POST path), then use (1) for
+the 1.6 lookup instead of full-text search and for 4.2; use (2) in 6.1. They need the CSRF token the page
+itself carries, so they go through the headless-browser page like `/all-bids-data`, not plain `get()`.
+Not verified how that token is taken from `/advance-search` (recon §6): check before coding.
+
+**mkp search page (recon §8) is NOT a captcha**: steps 4.1 (category names + quadrant from
+`mkp.gem.gov.in/search?q=`) and 6.3 can proceed; the classifier must not call that page a block (the word
+"captcha" appears in its scripts, so judge it by shape, like `Expect.HTML_FRAGMENT`). Fix that when 4.1 starts.
+
+The owner's Chrome is logged in to GeM: Claude may LOOK there read-only (see rules below) if a step needs it.
+2.1 does not.
 
 Fixtures picked in step 0.2 (doc ids in `<data folder>/corpus/20261022-0920/pdf/`, bid no. in `manifest.json`):
 - 9971825 simple product bid, 1 consignee, Delivery Days 15 (6 pages) - first test for 2.1
@@ -132,7 +148,7 @@ Annotation per step (owner's rule): `→ Model · Effort · Why`.
 | D5 | One seller (his father) or several (a pilot)? | One seller until the pilot |
 | D6 | Put the website online (Fly.io Mumbai, card needed, ~₹0–500/month) or stay on the Mac app? | Mac app until Phase 5 is done |
 | D7 | New real bid PDFs as test fixtures hold officers' names/phones. Commit them? | Commit only the few each test needs |
-| D8 | Allow two new read-only POST searches the GeM pages themselves make: Advance Search `/search-bids` (exact bid number for 1.6, consignee state, BOQ title for 4.2) and result details `getReason` (why others were disqualified, 6.1)? (recon §5, §6) | No until he says yes; 1.6 keeps the listing search, 4.2 uses `/all-bids` filters only |
+| D8 | Allow two new read-only POST searches the GeM pages themselves make: Advance Search `/search-bids` (exact bid number for 1.6, consignee state, BOQ title for 4.2) and result details `getReason` (why others were disqualified, 6.1)? (recon §5, §6) | **YES to both (22 Oct 2026)**; not built yet, see "Continue from here" |
 
 ### Phase 0 — Prove what exists, collect real documents
 
