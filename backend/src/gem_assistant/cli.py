@@ -6,6 +6,7 @@
     gem-assistant discover           search GeM for your profile's categories (one run)
     gem-assistant corpus KEYWORD...  collect real bid documents for parser work (one run)
     gem-assistant probe FOLDER       after corpus: do buyer attachments open without login?
+    gem-assistant recon URL          one public GeM page not looked at before (robots.txt first)
     gem-assistant reanalyse          re-read stored bids with the current rules (serve does this too)
     gem-assistant install-app        macOS: a GeM Assistant app icon; the server runs from login
     gem-assistant set-groq-key       store the Groq API key the chat uses
@@ -54,6 +55,10 @@ def main(argv: list[str] | None = None) -> int:
 
     probe = sub.add_parser("probe", help="after corpus: check once whether buyer attachments open without login")
     probe.add_argument("folder", type=Path)
+
+    recon = sub.add_parser("recon", help="fetch one public GeM page once, after its robots.txt, and save it")
+    recon.add_argument("url")
+    recon.add_argument("--expect", default="html", choices=["html", "pdf", "json", "text", "html_fragment"])
 
     sub.add_parser("install-app", help="make a double-clickable GeM Assistant app in ~/Applications (macOS)")
     sub.add_parser("set-groq-key", help="store the Groq API key the chat uses (typed, not shown)")
@@ -140,6 +145,15 @@ def main(argv: list[str] | None = None) -> int:
         if container.safety.status().breaker.open:
             print("Fetching is now stopped. Check GeM in a normal browser, then reset it on the Safety page.")
         return 0
+
+    if args.command == "recon":
+        from .safety.response_classifier import Expect
+
+        entry = container.corpus.recon(args.url, Expect(args.expect))
+        print(entry["outcome"], entry.get("status", ""), entry.get("content_type", ""))
+        if "file" in entry:
+            print(f"Saved: {container.settings.data_dir / 'recon' / entry['file']}")
+        return 0 if entry["outcome"] == "ok" else 1
     return 1
 
 

@@ -11,6 +11,7 @@ import pytest
 from gem_assistant.container import Container
 from gem_assistant.domain.models import BidKind, DocStatus, ListingEntry, SellerProfile
 from gem_assistant.infrastructure.pypdf_extractor import pdf_links
+from gem_assistant.safety.response_classifier import Expect
 from gem_assistant.services.corpus_service import pick_varied
 from gem_assistant.services.discovery_service import DiscoveryNotAllowed
 
@@ -184,6 +185,47 @@ def test_probe_on_a_folder_without_a_manifest_says_so(monkeypatch, tmp_path, cap
     monkeypatch.setenv("GEM_DATA_DIR", str(tmp_path / "data"))
     assert main(["probe", str(tmp_path)]) == 2
     assert "manifest.json" in capsys.readouterr().out
+
+
+# ---------- recon (step 0.3: one new page type, by hand) ----------
+
+ADV_URL = "https://bidplus.gem.gov.in/advance-search"
+
+
+def test_recon_checks_robots_txt_first_and_never_requests_a_disallowed_page(container, transport):
+    transport.queue(body=b"User-agent: *\nDisallow: /advance-search\n")
+    entry = container.corpus.recon(ADV_URL, Expect.HTML)
+    assert entry["outcome"] == "robots_disallow"
+    assert [url for url, _ in transport.calls] == ["https://bidplus.gem.gov.in/robots.txt"]
+
+
+def test_recon_saves_one_allowed_page_in_the_recon_folder(container, transport, settings):
+    transport.queue(status=404, body=b"")
+    transport.queue(body=b"<html><body>Advance Search</body></html>")
+    entry = container.corpus.recon(ADV_URL, Expect.HTML)
+    assert entry["outcome"] == "ok" and len(transport.calls) == 2
+    saved = settings.data_dir / "recon" / entry["file"]
+    assert saved.read_bytes() == b"<html><body>Advance Search</body></html>"
+
+
+def test_recon_of_robots_txt_itself_is_one_request(container, transport, settings):
+    transport.queue(body=b"User-agent: *\nDisallow: /resources/\n")
+    entry = container.corpus.recon("https://bidplus.gem.gov.in/robots.txt", Expect.TEXT)
+    assert entry["outcome"] == "ok" and len(transport.calls) == 1
+    assert b"/resources/" in (settings.data_dir / "recon" / entry["file"]).read_bytes()
+
+
+def test_recon_stops_at_a_login_redirect(container, transport):
+    transport.queue(status=404, body=b"")
+    transport.queue(status=302, body=b"", headers={"location": "https://sso.gem.gov.in/ARXSSO/oauth/doLogin"})
+    entry = container.corpus.recon(ADV_URL, Expect.HTML)
+    assert entry["outcome"].startswith("stopped:")
+    assert container.safety.status().breaker.open
+
+
+def test_recon_refuses_a_url_the_policy_blocks_without_sending_anything(container, transport):
+    entry = container.corpus.recon("https://bidplus.gem.gov.in/resources/upload_nas/x.pdf", Expect.PDF)
+    assert entry["outcome"].startswith("refused:") and transport.calls == []
 
 
 def test_the_run_message_names_the_keywords_searched(app, transport):

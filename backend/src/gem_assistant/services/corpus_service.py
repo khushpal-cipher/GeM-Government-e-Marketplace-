@@ -23,7 +23,7 @@ from ..domain.ports import BidReader, Clock, ListingRepository, ListingSource
 from ..infrastructure.pypdf_extractor import PdfLink
 from ..parsing.normalizers import IST
 from ..safety.daily_budget import DailyBudget
-from ..safety.errors import SafetyError, UnexpectedResponse
+from ..safety.errors import SafetyError, UnexpectedResponse, UrlNotAllowed
 from ..safety.response_classifier import Expect
 from ..safety.safe_fetcher import SafeFetcher
 from .bid_fetch_service import BidFetchService
@@ -172,6 +172,39 @@ class CorpusService:
         finally:
             (folder / "probe.json").write_text(json.dumps(report, indent=1, ensure_ascii=False))
         return report
+
+    def recon(self, url: str, expect: Expect) -> dict:
+        """One request for a GeM page type not looked at before (build step 0.3), exactly as
+        given: URL rules first, then the host's robots.txt, then the page once. The answer is
+        saved in <data folder>/recon/ for docs/02-RECON-FINDINGS.md."""
+        entry: dict = {"url": url}
+        parts = urlsplit(url)
+        try:
+            self._fetcher.check_url(url)
+            if parts.path != "/robots.txt":  # robots.txt itself is always allowed
+                robots = self._robots(parts.hostname or "", {}, {})
+                if robots is not None and not robots.can_fetch(self._fetcher.user_agent, url):
+                    entry["outcome"] = "robots_disallow"
+                    return entry
+            response = self._fetcher.get(url, expect=expect)
+        except UrlNotAllowed as error:
+            entry["outcome"] = f"refused: {error}"
+            return entry
+        except UnexpectedResponse as error:
+            entry["outcome"] = f"not_found: {error}"
+            return entry
+        except SafetyError as error:
+            entry["outcome"] = f"stopped: {error}"
+            return entry
+        stamp = self._clock.now().astimezone(IST).strftime("%Y%m%d-%H%M%S")
+        name = re.sub(r"[^A-Za-z0-9._-]+", "_", f"{parts.hostname}{parts.path}")[:120]
+        entry["file"] = f"{stamp}-{name}"
+        folder = self._root.parent / "recon"
+        folder.mkdir(parents=True, exist_ok=True)
+        (folder / entry["file"]).write_bytes(response.body)
+        entry["outcome"], entry["status"] = "ok", response.status
+        entry["content_type"] = response.headers.get("content-type", "")
+        return entry
 
     def _probe_one(self, folder: Path, kind: str, url: str,
                    rules: dict[str, RobotFileParser | None], robots_report: dict[str, str]) -> dict:

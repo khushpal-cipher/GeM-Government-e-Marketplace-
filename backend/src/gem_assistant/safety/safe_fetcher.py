@@ -90,6 +90,10 @@ class SafeFetcher:
                 raise UnexpectedResponse(result.reason)
             return response
 
+    def check_url(self, url: str, method: str = "GET") -> None:
+        """Raises UrlNotAllowed now, before a caller spends a request (e.g. robots.txt) on it."""
+        self._policy.check(url, method)
+
     def ensure_ready(self) -> None:
         """Cheap pre-check before starting a run: contact set, breaker closed, budget left."""
         self._ensure_contact()
