@@ -20,6 +20,11 @@ def save_profile(profile: SellerProfile, request: Request) -> SellerProfile:
     return request.app.state.container.profiles.save(profile)
 
 
+@router.get("/spec-names", response_model=list[str])
+def get_spec_names(request: Request) -> list[str]:
+    return request.app.state.container.bid_query.spec_names()
+
+
 @router.get("/warnings", response_model=list[str])
 def get_warnings(request: Request) -> list[str]:
     profile = request.app.state.container.profiles.get()

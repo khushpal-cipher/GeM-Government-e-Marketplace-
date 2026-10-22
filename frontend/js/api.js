@@ -56,6 +56,7 @@ export class ApiClient {
   saveAlerts(kind, items) { return this.#json("POST", "/alerts", { kind, items }); }
   getAlerts() { return this.#request("/alerts"); }
   finishAlert(id) { return this.#request(`/alerts/${id}/done`, { method: "POST" }); }
+  getSpecNames() { return this.#request("/profile/spec-names"); }
   getProfileWarnings() { return this.#request("/profile/warnings"); }
   saveProfile(profile) { return this.#json("PUT", "/profile", profile); }
   getShortfallReply(text, bidNumber = null, due = null) {

@@ -188,6 +188,22 @@ class BidAnalysis(BaseModel):
         return f.value if f and f.status is FieldStatus.FOUND else None
 
 
+MAX_PRODUCTS, MAX_SPECS = 5, 15
+
+
+class ProductSpec(BaseModel):
+    """One of his main products and its key specs, in GeM's words ("GSM" = "80")."""
+
+    name: str
+    specs: dict[str, str] = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def _limits(self) -> "ProductSpec":
+        if len(self.specs) > MAX_SPECS:
+            raise ValueError(f"A product can hold at most {MAX_SPECS} specs.")
+        return self
+
+
 class SellerProfile(BaseModel):
     business_name: str = ""
     is_mse: bool = False
@@ -208,6 +224,7 @@ class SellerProfile(BaseModel):
     pfms_bank_verified: bool | None = None
     oem_products: list[str] = Field(default_factory=list)       # products where he is the OEM
     own_made_products: list[str] = Field(default_factory=list)  # items he makes himself (MSE EMD exemption)
+    products: list[ProductSpec] = Field(default_factory=list, max_length=MAX_PRODUCTS)  # step 3.9, used by 3.5
     updated_at: datetime | None = None
 
 

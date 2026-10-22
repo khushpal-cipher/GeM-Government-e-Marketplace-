@@ -22,6 +22,9 @@ class ProfileService:
             "ignore_words": _unique(profile.ignore_words),
             "oem_products": _unique(profile.oem_products),
             "own_made_products": _unique(profile.own_made_products),
+            "products": [p.model_copy(update={"name": p.name.strip(), "specs": {
+                k.strip(): v.strip() for k, v in p.specs.items() if k.strip() and v.strip()}})
+                for p in profile.products if p.name.strip()],
             "updated_at": self._clock.now(),
         })
         return self._writer.save(cleaned)

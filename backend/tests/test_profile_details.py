@@ -88,3 +88,27 @@ def test_the_api_lists_the_warnings(client):
     client.put("/api/profile", json={"gem_registered_on": "2020-01-01", "itr_filed_on_gem": False})
     assert any("ITR" in w for w in client.get("/api/profile/warnings").json())
     assert client.get("/api/profile").json()["itr_filed_on_gem"] is False
+
+
+def test_main_products_with_specs_survive_a_save_and_are_cleaned(container):
+    from gem_assistant.domain.models import ProductSpec
+    container.profiles.save(SellerProfile(products=[
+        ProductSpec(name=" A4 paper ", specs={" GSM ": " 80 ", "Empty": " "}), ProductSpec(name="  ")]))
+    (saved,) = container.profiles.get().products
+    assert (saved.name, saved.specs) == ("A4 paper", {"GSM": "80"})
+
+
+def test_at_most_5_products_and_15_specs(client):
+    base = SellerProfile().model_dump(mode="json")
+    too_many = {**base, "products": [{"name": str(i), "specs": {}} for i in range(6)]}
+    assert client.put("/api/profile", json=too_many).status_code == 422
+    too_long = {**base, "products": [{"name": "x", "specs": {str(i): "1" for i in range(16)}}]}
+    assert client.put("/api/profile", json=too_long).status_code == 422
+
+
+def test_spec_names_come_from_stored_bids_most_common_first(container, client):
+    from .conftest import FIXTURES
+    assert client.get("/api/profile/spec-names").json() == []
+    container.bid_import.import_pdf((FIXTURES / "GEM-2026-B-8054438_doc9913333.pdf").read_bytes(), "office.pdf")
+    names = client.get("/api/profile/spec-names").json()
+    assert names and len(names) == len(set(names))

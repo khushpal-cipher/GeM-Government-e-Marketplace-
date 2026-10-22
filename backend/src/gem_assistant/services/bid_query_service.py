@@ -5,6 +5,7 @@ Verdicts are computed on read, so editing the profile updates every bid.
 
 from __future__ import annotations
 
+from collections import Counter
 from dataclasses import dataclass
 
 from ..domain.models import Assessment, BidAnalysis
@@ -24,6 +25,11 @@ class BidQueryService:
         self._profiles = profiles
         self._evaluator = evaluator
         self._clock = clock
+
+    def spec_names(self, limit: int = 40) -> list[str]:
+        """Specification names seen in stored bids, most common first: GeM's own words for his product specs."""
+        counts = Counter(s.name for b in self._bids.list() for s in b.specifications)
+        return [name for name, _ in counts.most_common(limit)]
 
     def list(self) -> list[AssessedBid]:
         profile, now = self._profiles.get(), self._clock.now()

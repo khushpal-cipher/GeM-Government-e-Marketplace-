@@ -17,7 +17,30 @@ export const EMPTY_PROFILE = {
   pfms_bank_verified: null,
   oem_products: [],
   own_made_products: [],
+  products: [],
 };
+
+// "A4 paper: GSM = 80; Size = A4" per line <-> {name, specs}. Up to 5 products, 15 specs each (the server checks too).
+export function parseProducts(text) {
+  return text.split("\n").map((line) => line.trim()).filter(Boolean).map((line) => {
+    const cut = line.indexOf(":");
+    const specs = {};
+    if (cut >= 0) {
+      for (const pair of line.slice(cut + 1).split(";")) {
+        const eq = pair.indexOf("=");
+        if (eq > 0 && pair.slice(eq + 1).trim()) specs[pair.slice(0, eq).trim()] = pair.slice(eq + 1).trim();
+      }
+    }
+    return { name: (cut >= 0 ? line.slice(0, cut) : line).trim(), specs };
+  });
+}
+
+export function formatProducts(products) {
+  return products.map((p) => {
+    const pairs = Object.entries(p.specs).map(([k, v]) => `${k} = ${v}`).join("; ");
+    return pairs ? `${p.name}: ${pairs}` : p.name;
+  }).join("\n");
+}
 
 function field(labelText, input, hint) {
   return el("div", {}, el("label", { for: input.id }, labelText), input, hint ? el("div", { class: "hint" }, hint) : null);
@@ -51,6 +74,7 @@ function triState(id, value) {
 export async function renderProfile(container, _params, api) {
   const profile = { ...EMPTY_PROFILE, ...((await api.getProfile()) || {}) };
   const warnings = (await api.getProfileWarnings()) || [];
+  const specNames = ((await api.getSpecNames().catch(() => [])) || []).slice(0, 12);
 
   const name = el("input", { type: "text", id: "business_name", value: profile.business_name });
   const turnover = el("input", { type: "text", inputmode: "decimal", id: "turnover",
@@ -71,6 +95,7 @@ export async function renderProfile(container, _params, api) {
   const pfms = triState("pfms", profile.pfms_bank_verified);
   const oemProducts = el("textarea", { id: "oem_products" }); oemProducts.value = profile.oem_products.join(", ");
   const ownMade = el("textarea", { id: "own_made" }); ownMade.value = profile.own_made_products.join(", ");
+  const products = el("textarea", { id: "products", rows: 5 }); products.value = formatProducts(profile.products);
   const mse = checkbox("is_mse", "Registered MSE (Udyam)", profile.is_mse);
   const startup = checkbox("is_startup", "DPIIT-recognised startup", profile.is_startup);
   const oem = checkbox("is_oem", "We are the OEM (manufacturer), not a reseller", profile.is_oem);
@@ -92,6 +117,9 @@ export async function renderProfile(container, _params, api) {
       field("Bank account PFMS-verified on GeM?", pfms.select),
       field("Products where you are the OEM", oemProducts, "Comma-separated. The rest count as resold."),
       field("Items you make yourself", ownMade, "MSE EMD exemption applies only to these."),
+      field("Your main products and key specs", products,
+        "Up to 5 lines, up to 15 specs each, like: A4 paper: GSM = 80; Size = A4." +
+        (specNames.length ? ` Names GeM bids use: ${specNames.join(", ")}.` : "")),
     ),
     el("div", { class: "row", style: "margin-top:16px" }, save),
     status,
@@ -126,6 +154,7 @@ export async function renderProfile(container, _params, api) {
         pfms_bank_verified: pfms.get(),
         oem_products: splitList(oemProducts.value),
         own_made_products: splitList(ownMade.value),
+        products: parseProducts(products.value),
       });
       status.replaceChildren(notice("ok", "Saved. Bid verdicts now use this profile."));
     } catch (error) {

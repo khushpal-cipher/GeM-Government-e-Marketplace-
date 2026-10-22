@@ -41,7 +41,7 @@ def _dt(value: str | None) -> datetime | None:
 
 
 PROFILE_DETAILS = ("gem_registered_on", "itr_filed_on_gem", "pfms_bank_verified",
-                   "oem_products", "own_made_products")
+                   "oem_products", "own_made_products", "products")
 
 
 class SqliteProfileRepository:
