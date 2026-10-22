@@ -65,6 +65,7 @@ from .services.safety_service import SafetyService
 from .services.category_service import CategoryService
 from .services.direct_order_service import DirectOrderService
 from .services.past_price_service import PastPriceService
+from .services.compliance_service import ComplianceService
 from .services.representation_service import RepresentationService
 from .services.result_service import ResultService
 from .services.shortfall_service import ShortfallService
@@ -92,6 +93,7 @@ class Container:
     past_prices: PastPriceService
     direct_order: DirectOrderService
     representations: RepresentationService
+    compliance: ComplianceService
     orders: OrderService
     rejections: RejectionService
     attachments: AttachmentService
@@ -235,6 +237,7 @@ class Container:
             past_prices=PastPriceService(result_repo),
             direct_order=DirectOrderService(fetcher),
             representations=RepresentationService(bid_query, profile_repo, clock),
+            compliance=ComplianceService(bid_query, profile_repo),
             orders=orders,
             rejections=rejections,
             attachments=attachments,

@@ -94,6 +94,9 @@ DEFINITIONS = [
     _tool("draft_representation", "A draft question to the buyer about forbidden terms flagged in a checked bid, "
                                   "with the last date to send it. He sends it himself on GeM.",
           {"bid_id": {"type": "integer"}}, ("bid_id",)),
+    _tool("compliance_sheet", "A draft compliance sheet for a checked bid: each line of the buyer's specification table, "
+                              "what his product offers and yes / no / fill in. He uploads it himself on GeM.",
+          {"bid_id": {"type": "integer"}}, ("bid_id",)),
     _tool("safety_status", "Whether fetching from GeM is stopped for safety, and today's request count."),
 ]
 
@@ -277,6 +280,9 @@ class ChatTools:
 
     def _draft_representation(self, bid_id: int) -> ToolResult:
         return ToolResult(self._c.representations.draft(bid_id) or {"error": f"No checked bid with id {bid_id}."})
+
+    def _compliance_sheet(self, bid_id: int) -> ToolResult:
+        return ToolResult(self._c.compliance.sheet(bid_id) or {"error": f"No checked bid with id {bid_id}."})
 
     def _safety_status(self) -> ToolResult:
         s = self._c.safety.status()

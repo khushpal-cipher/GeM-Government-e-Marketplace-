@@ -60,6 +60,14 @@ def representation(bid_id: int, request: Request) -> dict:
     return result
 
 
+@router.get("/{bid_id}/compliance-sheet")
+def compliance_sheet(bid_id: int, request: Request) -> dict:
+    result = request.app.state.container.compliance.sheet(bid_id)
+    if result is None:
+        raise HTTPException(status_code=404, detail="Bid not found")
+    return result
+
+
 class BuyerFlagIn(BaseModel):
     flag: Literal["none", "orange", "red", "unknown"]  # "unknown" clears the note
 

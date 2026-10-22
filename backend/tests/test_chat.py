@@ -90,7 +90,7 @@ def test_the_model_cannot_reset_the_safety_stop_or_set_the_contact_email(contain
     names = {d["function"]["name"] for d in ChatTools(container).definitions}
     # No get_profile: the profile is in the instructions, and a tool there is a round the model spends.
     assert names == {"propose_profile_update", "search_gem", "search_status", "list_bids",
-                     "get_bid", "bid_checklist", "add_bid_from_link", "past_prices", "direct_order_check", "draft_representation", "safety_status"}
+                     "get_bid", "bid_checklist", "add_bid_from_link", "past_prices", "direct_order_check", "draft_representation", "compliance_sheet", "safety_status"}
     assert "error" in ChatTools(container).call("reset_breaker", {}).data
 
 
