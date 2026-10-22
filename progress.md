@@ -33,21 +33,21 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 
 ## Continue from here (written 22 Oct 2026)
 
-State: `cd backend && uv run pytest -q` → **519 passed** (22 Oct 2026, after 2.2). Phases 0 and 1 and steps 2.1, 2.2 are done:
-about 12 of 45 plan steps (~24%). D1 (Groq key) and D2 (contact email) are set. Build only in Claude Code.
+State: `cd backend && uv run pytest -q` → **526 passed** (22 Oct 2026, after 2.3). Phases 0 and 1 and steps 2.1-2.3 are done:
+about 13 of 45 plan steps (~24%). D1 (Groq key) and D2 (contact email) are set. Build only in Claude Code.
 
-**Next exact action:** step **2.3** (Sonnet · Medium): download the files the bid PDF links to (buyer ATC file, spec PDF,
-BOQ detail), only those links, via `SafeFetcher`, size/page caps, stored by hash, <= 3 per bid; PDF text only, scanned or
-non-PDF -> "open it yourself". `pdf_links()` in `infrastructure/pypdf_extractor.py` already lists the links; recon §
-"buyer ATC file" says they are public but scanned. **Needs fetching un-stopped** (check `container.safety.status()` first;
-the owner resets it). Left from 2.1/2.2 for later: item-wise schedules (fixture 7922876), PAC items (no real PAC bid yet),
-spec table has no screen yet (API only), spec rows are not matched to item names (page only).
+**Next exact action:** step **2.4** (Sonnet · Medium): per-bid document checklist from the bid text + `container.attachments.fetch_for(pdf)`
+(step 2.3, done: text of the spec PDF / readable ATC; scanned ones come back as "open it yourself"). Each required document with
+page + quote, plus "PDF <=10 MB, <=100 pages each", marks what his profile says he has. Deterministic patterns first; chat card.
+Nothing calls `fetch_for` yet: 2.4 decides when (once per bid, <=3 requests, in the budget) and must stop on a safety stop.
+Left from 2.1-2.3 for later: item-wise schedules (fixture 7922876), PAC items (no real PAC bid yet), no screen for spec/consignee
+tables (API only), spec rows not matched to item names, BOQ CSV (item/qty/consignee) not fetched.
 
 **Owner to do (safety stop, 22 Oct 2026 09:45):** fetching may still be **stopped**. He opened
 `mkp.gem.gov.in/search?q=laptop` in his Chrome: it is a normal page (category names with Q2/Q3 tags, **no
 captcha**), so the stop was a false alarm (the word "captcha" is in the page's code). He still has to press
 reset on the app's **Safety** page (type "page looked normal, no captcha"). Check `container.safety.status()`
-first; do not reset it for him. Steps 2.2-2.4 need no GeM requests, so building goes on meanwhile (2.3 fetches files: it needs fetching un-stopped).
+first; do not reset it for him. Building 2.4 needs no GeM requests; only running the attachment fetch for real needs fetching un-stopped.
 
 **D8 answered 22 Oct 2026: YES to both POST searches** (not built yet): (1) Advance Search `/search-bids`
 (exact bid number, delivery state, BOQ title), (2) `getReason` (why a seller was disqualified). Build later,
@@ -83,6 +83,8 @@ accept, upload, pay, "+ New" or anything that changes data; never copy names, ph
 - GeM page facts: `docs/02-RECON-FINDINGS.md`. GeM rules: `docs/HANDOFF.md` §4a. Wording: `docs/wording-rules.md`. Live account tour: `docs/live-tour.md`.
 
 ## Not verified yet
+
+Step 2.3 (22 Oct 2026): tested with a fake network, the real spec PDF (saved fixture) and a blank PDF standing in for the scanned ATC (the real one is 2.4 MB, kept out of the repo). Not run against live GeM through the app (fetching may still be stopped). robots.txt is not re-checked per file (it was checked for mkp and fulfilment in 0.2). Files are fetched but not yet stored against a bid or shown anywhere.
 
 Whether GeM's public listing search finds a bid by its bid number (1.6 lookup) is untested against real GeM: no contact email yet. Steps 1.3–1.5 were built by Gemini and reviewed only for test results and rule scans, not line by line.
 
