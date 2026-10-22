@@ -33,13 +33,21 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 
 ## Continue from here (written 22 Oct 2026)
 
-State: `cd backend && uv run pytest -q` → **530 passed** (22 Oct 2026, after 2.4). Phases 0 and 1 and steps 2.1-2.4 are done:
-about 13 of 45 plan steps (~24%). D1 (Groq key) and D2 (contact email) are set. Build only in Claude Code.
+State: `cd backend && uv run pytest -q` → **530 passed, 1 skipped** (22 Oct 2026, after 2.5a; the skip is the 2.5a
+injection test set). Phases 0 and 1 and steps 2.1-2.5a are done: about 14 of 45 plan steps (~31%). D1 (Groq key) and
+D2 (contact email) are set. Build only in Claude Code.
 
-**Next exact action:** step **2.5a** (**switch to Opus · High**): design the LLM reading of ATC (JSON schema, prompt, quote check,
-what goes to Groq, cost cap, failure -> "not read, check yourself"; injection test set first). Step 2.4 is done (checklist, 55af8d3).
-Left from 2.4: checklist has no screen on the bid page (API + chat card only); text patterns on long ATC pages are high-recall (may
-over-list); attached-file results are cached per app run only; not run against live GeM.
+**Next exact action:** step **2.5b** (**stay on / switch to Opus · High**): build `docs/llm-atc-design.md` exactly.
+First re-read the design and `backend/tests/test_atc_injection.py` and fix the design if a test is wrong; then add
+`domain/atc_reading.py` (prepare, new_boundary, build_request, check_reply, SCHEMA, MAX_CHARS, MAX_ITEMS, PROMPT_VERSION),
+replace the `importorskip` line with a plain import, make all 16 test cases pass, then the Groq call (second method in
+`infrastructure/groq_chat.py`), cache table + 15/day cap (`services/atc_reading_service.py`), and add the items to the
+clause flags / 2.4 checklist. Only on request (button / chat tool), never in discovery.
+Left from 2.5a: Groq limits (8K tokens/min, 200K/day) are the documented base limits, not checked on his key's limits
+page; the test set has never run against code; the AI may still copy a real sentence that sits next to an injection
+(shown as "Other clause to read" beside the injection flag, no verdict change).
+Left from 2.4: checklist has no screen on the bid page (API + chat card only); text patterns on long ATC pages are
+high-recall (may over-list); attached-file results are cached per app run only; not run against live GeM.
 
 **Owner to do (safety stop, 22 Oct 2026 09:45):** fetching may still be **stopped**. He opened
 `mkp.gem.gov.in/search?q=laptop` in his Chrome: it is a normal page (category names with Q2/Q3 tags, **no
