@@ -234,6 +234,10 @@ MIGRATIONS: list[str] = [
         noted_at  TEXT NOT NULL
     );
     """,
+    # 14 — bid type (boq / custom) from the listing, for the listing filter (step 4.2).
+    """
+    ALTER TABLE listing_bid ADD COLUMN bid_type TEXT;
+    """,
 ]
 
 

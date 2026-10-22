@@ -366,10 +366,10 @@ class SqliteListingRepository:
                 if exists:
                     conn.execute(
                         """UPDATE listing_bid SET bid_number=?, kind=?, doc_path=?, category=?, quantity=?,
-                               ministry=?, department=?, starts_at=?, ends_at=?, last_seen_at=?
+                               ministry=?, department=?, starts_at=?, ends_at=?, last_seen_at=?, bid_type=?
                            WHERE doc_id=?""",
                         (b.bid_number, b.kind.value, b.doc_path, b.category, b.quantity, b.ministry,
-                         b.department, _iso(b.starts_at), _iso(b.ends_at), _iso(now), b.doc_id),
+                         b.department, _iso(b.starts_at), _iso(b.ends_at), _iso(now), b.bid_type, b.doc_id),
                     )
                     continue
                 # Already analysed from a manual upload? Link it instead of downloading again.
@@ -383,11 +383,11 @@ class SqliteListingRepository:
                 conn.execute(
                     """INSERT INTO listing_bid (doc_id, bid_number, kind, doc_path, category, quantity, ministry,
                            department, starts_at, ends_at, keyword, first_seen_at, last_seen_at, doc_status,
-                           doc_note, bid_id)
-                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                           doc_note, bid_id, bid_type)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                     (b.doc_id, b.bid_number, b.kind.value, b.doc_path, b.category, b.quantity, b.ministry,
                      b.department, _iso(b.starts_at), _iso(b.ends_at), keyword, _iso(now), _iso(now),
-                     status.value, "Reverse auction: not analysed" if b.kind is BidKind.RA else None, bid_id),
+                     status.value, "Reverse auction: not analysed" if b.kind is BidKind.RA else None, bid_id, b.bid_type),
                 )
                 new.append(b.doc_id)
         return new
@@ -431,7 +431,7 @@ class SqliteListingRepository:
             category=r["category"], quantity=r["quantity"], ministry=r["ministry"],
             department=r["department"], starts_at=_dt(r["starts_at"]), ends_at=_dt(r["ends_at"]),
             keyword=r["keyword"], first_seen_at=_dt(r["first_seen_at"]), last_seen_at=_dt(r["last_seen_at"]),
-            doc_status=r["doc_status"], doc_note=r["doc_note"], bid_id=r["bid_id"],
+            doc_status=r["doc_status"], doc_note=r["doc_note"], bid_id=r["bid_id"], bid_type=r["bid_type"],
         )
 
 

@@ -295,6 +295,7 @@ class ListingBid(BaseModel):
     department: str | None = None
     starts_at: datetime | None = None
     ends_at: datetime | None = None
+    bid_type: str | None = None  # "boq" or "custom"; None when the listing doesn't say
 
 
 class ListingEntry(ListingBid):

@@ -110,6 +110,16 @@ def parse_listing_response(data: Any) -> ListingPage:
     return ListingPage(total_found=total, start=start, bids=bids, skipped=skipped)
 
 
+def _bid_type(doc: dict) -> str | None:
+    """Seen on the 11 Oct 2026 listing: BOQ bids carry bd_details_is_boq, custom bids b_is_custom_item.
+    Service bids are not in that sample, so they come back as None."""
+    if _int(doc.get("b_is_custom_item")) == 1:
+        return "custom"
+    if _first(doc.get("bd_details_is_boq")) is True:
+        return "boq"
+    return None
+
+
 def _parse_doc(doc: Any) -> ListingBid | None:
     if not isinstance(doc, dict):
         return None
@@ -136,4 +146,5 @@ def _parse_doc(doc: Any) -> ListingBid | None:
         department=_text(doc.get("ba_official_details_deptName")),
         starts_at=_ist_wallclock(doc.get("final_start_date_sort")),
         ends_at=_ist_wallclock(doc.get("final_end_date_sort")),
+        bid_type=_bid_type(doc),
     )

@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from datetime import date
+from typing import Literal
+
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse
 
@@ -10,8 +13,10 @@ router = APIRouter(prefix="/api/discovery", tags=["discovery"])
 
 
 @router.get("", response_model=DiscoveryOut)
-def get_discovery(request: Request) -> DiscoveryOut:
-    return DiscoveryOut.from_status(request.app.state.container.discovery.status())
+def get_discovery(request: Request, bid_type: Literal["boq", "custom"] | None = None,
+                  ends_from: date | None = None, ends_to: date | None = None) -> DiscoveryOut:
+    return DiscoveryOut.from_status(
+        request.app.state.container.discovery.status(bid_type, ends_from, ends_to))
 
 
 @router.post("/run", status_code=202)

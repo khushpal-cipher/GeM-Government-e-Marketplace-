@@ -12,7 +12,7 @@ from __future__ import annotations
 import re
 import threading
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from typing import Callable, Sequence
 
 from ..config import DiscoverySettings
@@ -94,13 +94,19 @@ class DiscoveryService:
             return None
         return last.started_at + timedelta(minutes=self._settings.min_minutes_between_runs)
 
-    def status(self) -> DiscoveryStatus:
+    def status(self, bid_type: str | None = None, ends_from: date | None = None,
+               ends_to: date | None = None) -> DiscoveryStatus:
+        # shortcut: filters the 100 most recent listings in Python, not in SQL; upgrade if he keeps more.
+        found = [e for e in self._listings.recent(100)
+                 if (not bid_type or e.bid_type == bid_type)
+                 and (not ends_from or (e.ends_at and e.ends_at.date() >= ends_from))
+                 and (not ends_to or (e.ends_at and e.ends_at.date() <= ends_to))]
         return DiscoveryStatus(
             running=self._lock.locked(),
             keywords=self.keywords(),
             last_run=self._runs.last(),
             next_allowed_at=self.next_allowed_at(),
-            listings=self._ranked(self._listings.recent(100), self._profiles.get()),
+            listings=self._ranked(found, self._profiles.get()),
             settings=self._settings,
         )
 

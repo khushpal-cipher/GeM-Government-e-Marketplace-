@@ -371,3 +371,27 @@ def test_a_search_cut_off_by_a_restart_is_closed_on_the_next_start(settings, clo
         rows = dict(conn.execute("SELECT id, outcome FROM discovery_run").fetchall())
     assert rows[recent] is None  # possibly still running elsewhere
     assert [o for i, o in rows.items() if i != recent] == ["failed"]
+
+
+# ---------- step 4.2: bid type and end-date filters ----------
+
+def test_bid_type_is_read_from_the_real_listing():
+    import json
+    from pathlib import Path
+    from gem_assistant.parsing.listing_parser import parse_listing_response
+    raw = json.loads((Path(__file__).parent / "fixtures" / "all-bids-data_2026-10-11.json").read_text())
+    types = [b.bid_type for b in parse_listing_response(raw).bids]
+    assert sorted(t or "-" for t in types) == ["boq"] * 9 + ["custom"]
+
+
+def test_filters_by_bid_type_and_end_date(app, transport, source):
+    from datetime import date
+    source.docs = [make_doc(1, b_is_custom_item=[1]), make_doc(2, bd_details_is_boq=[True]),
+                   make_doc(3, final_end_date_sort="2026-11-20T15:00:00Z")]
+    _queue_pdf(transport)
+    app.discovery.run()
+    ids = lambda s: sorted(e.doc_id for e in s.listings)
+    assert ids(app.discovery.status(bid_type="custom")) == ["9000001"]
+    assert ids(app.discovery.status(bid_type="boq")) == ["9000002"]
+    assert ids(app.discovery.status(ends_from=date(2026, 11, 1))) == ["9000003"]
+    assert ids(app.discovery.status(ends_to=date(2026, 10, 31))) == ["9000001", "9000002"]
