@@ -89,6 +89,9 @@ DEFINITIONS = [
                                 "requests) and says whether his target price is above the MRP-10% floor and below "
                                 "every listing. Only when he gives a product link and a price.",
           {"link": {"type": "string"}, "target_price_rupees": {"type": "number"}}, ("link", "target_price_rupees")),
+    _tool("draft_representation", "A draft question to the buyer about forbidden terms flagged in a checked bid, "
+                                  "with the last date to send it. He sends it himself on GeM.",
+          {"bid_id": {"type": "integer"}}, ("bid_id",)),
     _tool("safety_status", "Whether fetching from GeM is stopped for safety, and today's request count."),
 ]
 
@@ -260,6 +263,9 @@ class ChatTools:
             return ToolResult(self._c.direct_order.check(link, Decimal(str(target_price_rupees))))
         except ValueError as error:
             return ToolResult({"error": str(error)})
+
+    def _draft_representation(self, bid_id: int) -> ToolResult:
+        return ToolResult(self._c.representations.draft(bid_id) or {"error": f"No checked bid with id {bid_id}."})
 
     def _safety_status(self) -> ToolResult:
         s = self._c.safety.status()

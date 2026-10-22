@@ -46,6 +46,14 @@ def past_prices(bid_id: int, request: Request) -> list[dict]:
     return [container.past_prices.similar(n) for n in names[:10]]
 
 
+@router.get("/{bid_id}/representation")
+def representation(bid_id: int, request: Request) -> dict:
+    result = request.app.state.container.representations.draft(bid_id)
+    if result is None:
+        raise HTTPException(status_code=404, detail="Bid not found")
+    return result
+
+
 class BuyerFlagIn(BaseModel):
     flag: Literal["none", "orange", "red", "unknown"]  # "unknown" clears the note
 
