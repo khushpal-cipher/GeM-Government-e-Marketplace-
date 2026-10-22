@@ -695,3 +695,35 @@ class SqliteBuyerFlagRepository:
             else:
                 conn.execute("INSERT OR REPLACE INTO bid_buyer_flag (bid_id, flag, noted_at) VALUES (?, ?, ?)",
                              (bid_id, flag, _iso(now)))
+
+
+class SqliteBidResultRepository:
+    """Step 6.1: what a finished bid's public result page showed."""
+
+    def __init__(self, db: Database):
+        self._db = db
+
+    def save(self, doc_id: str, result, now: datetime) -> None:
+        l1 = result.l1
+        with self._db.connect() as conn:
+            conn.execute(
+                "INSERT OR REPLACE INTO bid_result (doc_id, bid_number, status, quantity, l1_seller, l1_price,"
+                " bidders, prices, read_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (doc_id, result.bid_number, result.status, result.quantity, l1.seller if l1 else None,
+                 str(l1.total_price) if l1 else None,
+                 json.dumps([{"seller": b.seller, "offered": b.offered, "qualified": b.qualified} for b in result.bidders]),
+                 json.dumps([{"seller": p.seller, "total_price": str(p.total_price), "rank": p.rank} for p in result.prices]),
+                 _iso(now)))
+
+    def get(self, doc_id: str) -> dict | None:
+        with self._db.connect() as conn:
+            row = conn.execute("SELECT * FROM bid_result WHERE doc_id = ?", (doc_id,)).fetchone()
+        if row is None:
+            return None
+        return {"doc_id": row["doc_id"], "bid_number": row["bid_number"], "status": row["status"],
+                "quantity": row["quantity"], "l1_seller": row["l1_seller"], "l1_price": row["l1_price"],
+                "bidders": json.loads(row["bidders"]), "prices": json.loads(row["prices"]), "read_at": row["read_at"]}
+
+    def count_since(self, since: datetime) -> int:
+        with self._db.connect() as conn:
+            return conn.execute("SELECT COUNT(*) FROM bid_result WHERE read_at >= ?", (_iso(since),)).fetchone()[0]

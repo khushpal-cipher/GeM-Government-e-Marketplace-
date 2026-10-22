@@ -238,6 +238,20 @@ MIGRATIONS: list[str] = [
     """
     ALTER TABLE listing_bid ADD COLUMN bid_type TEXT;
     """,
+    # 15 — what the public result page of a finished bid showed (step 6.1); one row per bid, newest read wins.
+    """
+    CREATE TABLE bid_result (
+        doc_id     TEXT PRIMARY KEY,
+        bid_number TEXT,
+        status     TEXT,
+        quantity   INTEGER,
+        l1_seller  TEXT,
+        l1_price   TEXT,
+        bidders    TEXT NOT NULL,
+        prices     TEXT NOT NULL,
+        read_at    TEXT NOT NULL
+    );
+    """,
 ]
 
 

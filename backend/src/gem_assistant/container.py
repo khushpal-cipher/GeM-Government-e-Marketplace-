@@ -24,6 +24,7 @@ from .infrastructure.pypdf_extractor import PypdfTextExtractor, pdf_links
 from .infrastructure.sqlite_repositories import (
     SqliteAlertRepository,
     SqliteAtcReadingRepository,
+    SqliteBidResultRepository,
     SqliteBuyerFlagRepository,
     SqliteBidRepository,
     SqliteBreakerStateStore,
@@ -62,6 +63,7 @@ from .services.profile_service import ProfileService
 from .services.rejection_service import RejectionService
 from .services.safety_service import SafetyService
 from .services.category_service import CategoryService
+from .services.result_service import ResultService
 from .services.shortfall_service import ShortfallService
 
 
@@ -83,6 +85,7 @@ class Container:
     invited_bids: InvitedBidService
     shortfall: ShortfallService
     categories: CategoryService
+    results: ResultService
     orders: OrderService
     rejections: RejectionService
     attachments: AttachmentService
@@ -221,6 +224,7 @@ class Container:
             bid_alerts=BidAlerts(bid_query, discovery, clock),
             shortfall=ShortfallService(profile_repo, clock),
             categories=CategoryService(fetcher),
+            results=ResultService(fetcher, SqliteBidResultRepository(db), clock),
             orders=orders,
             rejections=rejections,
             attachments=attachments,

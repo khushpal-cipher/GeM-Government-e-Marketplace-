@@ -31,6 +31,9 @@ class Expect(str, Enum):
     # GeM's category search page. A whole page whose scripts mention "captcha", so it is judged
     # by its shape (the results heading), not by that word. See docs/02-RECON-FINDINGS.md §8.
     CATEGORY_PAGE = "category_page"
+    # GeM's public bid result page. Its scripts also mention "captcha", so it is judged by its
+    # headings. See docs/02-RECON-FINDINGS.md §5.
+    RESULT_PAGE = "result_page"
 
 
 @dataclass(frozen=True)
@@ -113,6 +116,11 @@ class ResponseClassifier:
             if "category results for" in response.body.decode("utf-8", errors="ignore").lower():
                 return Classification(ResponseKind.OK, "category page")
             return Classification(ResponseKind.BLOCK, "Expected the category results page but got something else")
+
+        if expect is Expect.RESULT_PAGE:
+            if "bid details" in head and "technical evaluation" in head:
+                return Classification(ResponseKind.OK, "result page")
+            return Classification(ResponseKind.BLOCK, "Expected the bid result page but got something else")
 
         marker = _challenge_marker(response)
         if marker:
