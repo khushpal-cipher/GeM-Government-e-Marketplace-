@@ -12,7 +12,7 @@ from datetime import date, datetime, time, timedelta, timezone
 from typing import Callable
 
 from ..domain.models import (
-    BidAnalysis, Consignee, Evidence, CorrigendumStatus, FieldStatus, RuleResult, SellerProfile, Verdict, item_match,
+    BidAnalysis, Consignee, Evidence, SpecRow, CorrigendumStatus, FieldStatus, RuleResult, SellerProfile, Verdict, item_match,
 )
 from ..domain.wording import day, deadline
 from ..domain.india_states import normalise_states, states_for_pin
@@ -452,6 +452,74 @@ class ForbiddenTermRule:
         return results
 
 
+def _norm(text: str) -> str:
+    return re.sub(r"[^a-z0-9.]+", " ", text.lower()).strip()
+
+
+def _number(text: str) -> float | None:
+    m = re.fullmatch(r"(\d+(?:\.\d+)?)(?:\s*[a-z%/²³]+)?", text.strip().lower().replace(",", ""))
+    return float(m[1]) if m else None
+
+
+def spec_allows(allowed: str, mine: str) -> bool | None:
+    """Is his value one the buyer allows? True / False, or None when the two cannot be compared (a text value
+    against numbers). The buyer's list is comma-separated; "a to b" is a band; "Or higher" ends the last."""
+    higher = bool(re.search(r"\bor higher\s*$", allowed, re.IGNORECASE))
+    options = [o.strip() for o in re.sub(r"\s*\bor higher\s*$", "", allowed, flags=re.IGNORECASE).split(",")]
+    options = [o for o in options if o]
+    want, value = _norm(mine), _number(mine)
+    numeric = False
+    for i, option in enumerate(options):
+        if _norm(option) == want or set(_norm(want).split()) <= set(_norm(option).split()):
+            return True
+        band = re.fullmatch(r"(\d+(?:\.\d+)?)\s+to\s+(\d+(?:\.\d+)?)", option.strip().lower())
+        low = _number(option)
+        if band:
+            numeric = True
+            if value is not None and float(band[1]) <= value <= float(band[2]):
+                return True
+        elif low is not None:
+            numeric = True
+            if value is not None and (value == low or (higher and i == len(options) - 1 and value >= low)):
+                return True
+    return None if numeric and value is None else False
+
+
+class SpecMatchRule:
+    """The buyer's allowed values against the key specs of the products he typed in (step 3.9). His five products
+    are not his whole catalogue, so a mismatch is a look, never a block."""
+
+    name = "spec_match"
+
+    def evaluate(self, bid: BidAnalysis, profile: SellerProfile | None, now: datetime) -> list[RuleResult]:
+        if profile is None or not bid.specifications:
+            return []
+        tables: list[list[SpecRow]] = [[]]
+        seen: set[str] = set()
+        for row in bid.specifications:  # a spec name repeating starts the next item's table
+            key = _norm(row.name)
+            if key in seen:
+                tables.append([])
+                seen = set()
+            seen.add(key)
+            tables[-1].append(row)
+        results = []
+        for product in profile.products:
+            if not item_match(bid.found_value("item_category"), [product.name], profile.ignore_words)[0]:
+                continue
+            mine = {_norm(k): (k, v) for k, v in product.specs.items()}
+            per_table = [[(row, mine[_norm(row.name)]) for row in table
+                          if _norm(row.name) in mine and spec_allows(row.value, mine[_norm(row.name)][1]) is False]
+                         for table in tables]
+            if all(per_table):
+                row, (spec, value) = min(per_table, key=len)[0]
+                results.append(RuleResult(
+                    rule=self.name, outcome=Verdict.NEEDS_REVIEW, evidence=row.evidence,
+                    reason=f"Your product “{product.name}” has {spec} = {value}; this bid allows only {row.value} "
+                           f"(page {row.page}: “{row.evidence.quote}”). Offer a product that matches exactly."))
+        return results
+
+
 class CategoryMatchRule:
     name = "category_match"
 
@@ -491,5 +559,6 @@ DEFAULT_RULES = (
     OemRule(),
     PacRule(),
     ForbiddenTermRule(),
+    SpecMatchRule(),
     CategoryMatchRule(),
 )
