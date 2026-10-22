@@ -56,6 +56,7 @@ Annotation per step (owner's rule): `→ Model · Effort · Why`.
 | D6 | Put the website online (Fly.io Mumbai, card needed, ~₹0–500/month) or stay on the Mac app? | Mac app until Phase 5 is done |
 | D7 | New real bid PDFs as test fixtures hold officers' names/phones. Commit them? | Commit only the few each test needs |
 | D8 | Allow two new read-only POST searches the GeM pages themselves make: Advance Search `/search-bids` (exact bid number for 1.6, consignee state, BOQ title for 4.2) and result details `getReason` (why others were disqualified, 6.1)? (recon §5, §6) | **YES to both (22 Oct 2026)**; not built yet, see "Continue from here" |
+| D9 | May a Phase 3 check (delivery state, certificates, OEM, EMD, spec, PAC, forbidden terms) ever say BLOCKED and hide a bid? (`docs/checks-design.md`) | **No**: they only say "review" with the buyer's words; the only blocks stay "bid closed" and "turnover/experience clearly short" |
 
 ### Phase 0 — Prove what exists, collect real documents
 
@@ -140,6 +141,9 @@ Annotation per step (owner's rule): `→ Model · Effort · Why`.
   → Haiku · Low · one field or one note.
 
 ### Phase 3 — Checks (each a new class in `eligibility/rules.py`)
+
+Design fixed in **`docs/checks-design.md`** (3.0, 22 Oct 2026): inputs, cases, words per check. Order: 3.9 before 3.5;
+3.4 starts with the `emd_required` footer fix; 3.6 waits for an item-wise bid fixture.
 
 - **3.0** Write down each rule's inputs, BLOCK vs REVIEW thresholds, and wording before coding.
   → Opus · High · decides when the app says "blocked"; a wrong block hides a winnable bid. Depends on 1.1 + 2.1; re-verify them first.
