@@ -8,6 +8,11 @@ Details live in `docs/HANDOFF.md`; this file only says what is done, what is nex
 - Commit only on this computer. **Never push or open a PR**: a friend is changing the GitHub repo.
 - Don't redo work listed under "Done".
 - Explain things in simple words.
+- **Anything a step needs from GeM (his account or a page): Claude fetches it from his logged-in Chrome** with the
+  Claude in Chrome tools (owner, 22 Oct 2026). New tab, read-only, human speed, other tabs untouched; never click
+  submit/accept/upload/pay/download/"+ New"; never log in, enter an OTP or solve a captcha (stop and tell him);
+  never copy names, phones, PAN or bank data. Write what was seen, with the date, in `docs/live-tour.md` or
+  `docs/02-RECON-FINDINGS.md`. Don't ask him to look, paste or click.
 - **Build only in Claude Code** (owner, 22 Oct 2026). No Kimi / Gemini / other tools for now.
 - **Update this file before the session ends**: move finished items to "Done", rewrite "Continue from here",
   add the date. Then commit it locally.
@@ -39,6 +44,7 @@ Details live in `docs/HANDOFF.md`; this file only says what is done, what is nex
 | 22 Oct 2026 | **Step 1.6** invited bids: paste GeM invitation lines on the Daily check page → bid numbers + "extended to" dates; known bids link straight to their check; unknown ones (≤ 10 per click) are looked up with one public listing search through a discovery run's guards, and **only the card with exactly that bid number is downloaded** (Gemini's draft took the first loose match: removed). Needs D2 (contact email) to fetch; refuses cleanly without it | 2647f0f |
 | 22 Oct 2026 | **Step 0.2** `corpus laptop manpower pump "office chair" printer`: 30 bid PDFs saved in `<data folder>/corpus/20261022-0920/` (52 GeM requests, 10 corrigendum checks, no block). `probe`: robots.txt ok, buyer spec file and ATC file both **public** (no login). Found: "Delivery Days" appears as `/Delivery | Days` across lines (20 of 30 bids); services/manpower/custom bids have no consignee delivery table. No item-wise-evaluation or bid-to-RA bid was in the 30 (all "Total value wise"). Fixtures for Phases 2-3 picked (below); PDFs stay outside the repo (D7), 2.1 copies only the ones its tests need | 3e8822c |
 | 22 Oct 2026 | **Step 0.3** recon (Opus): new `gem-assistant recon URL` (URL rules → robots.txt → one GET through SafeFetcher, saved to `<data folder>/recon/`; 5 tests). Findings in `docs/02-RECON-FINDINGS.md`: bid **result pages are public** with sellers, qualified/disqualified, prices and L1 (6.1 buildable); `/all-bids` filters for type/status/high value/end date; Advance Search has exact bid-number, consignee state and BOQ title search but only via new POST `/search-bids`; BOQ line-items CSV on mkp is public (item, qty, consignee, delivery days); buyer ATC file public but scanned; `/resources/` links (35) never; first **real corrigenda** captured (4); no public buyer Red/Orange flag or PBP notice. **mkp search page tripped the breaker** ("captcha" on the page): 4.1 and 6.3 not checked. 70 GeM requests today | 4cb328e, 871b8c4 |
+| 22 Oct 2026 | **Step 2.1** (Sonnet) bid PDF facts: consignee rows (PIN, address, quantity, **delivery days**, page + quote; masked defence rows keep the place name), estimated bid value, inspection required, ePBG months, past performance %, technical-clarification days, documents asked from seller. `sum(consignee qty) != Total Quantity` marks the total CONFLICTING. New table `bid_consignee` (migration 10), `consignees` in the bid API, `PARSER_VERSION` 4 (stored bids are re-read). Checked on all 30 corpus PDFs + 4 repo fixtures: on every bid that has a table the rows add up to Total Quantity (up to 69 rows); service and manpower bids have no table. 2 new fixtures (laptop 9971825, 9913333). **Not done here:** item-wise schedules, PAC items, file links (go to 2.3), no screen yet for consignees; 10 new tests, 514 pass | 6b9635c, parsing/consignee_table.py |
 | 20 Oct 2026 | FINAL build plan from videos + live tour (replaces the first plan; Phase 1 = paste-in daily check, shortfall helper, order tracker) | progress.md |
 
 ## Which model to use (owner switches it in the app's model picker)
@@ -55,12 +61,15 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 
 ## Continue from here (written 22 Oct 2026)
 
-State: `cd backend && uv run pytest -q` → **503 passed** (22 Oct 2026, after 0.3). Phases 0 and 1 are done:
-about 10 of 45 plan steps (~22%). D1 (Groq key) and D2 (contact email) are set. Build only in Claude Code.
+State: `cd backend && uv run pytest -q` → **514 passed** (22 Oct 2026, after 2.1). Phases 0 and 1 and step 2.1 are done:
+about 11 of 45 plan steps (~24%). D1 (Groq key) and D2 (contact email) are set. Build only in Claude Code.
 
-**Next exact action:** step **2.1** (switch back to **Sonnet · High**): new fields from the bid PDF, first test
-on corpus doc 9971825 (1 consignee, Delivery Days 15); labels split over lines (recon §2); use the BOQ CSV
-shape (recon §7) only from 2.3 on. Read `docs/02-RECON-FINDINGS.md` §2, §7, §10 first.
+**Next exact action:** step **2.2** (Sonnet · Medium): specification table per item ("Specification / Bid
+Requirement (Allowed Values)") as rows with page + quote. Real examples: corpus 9913333 (office tables),
+10014519 (cartridges; the same table repeats on several pages). Read the text with
+`PypdfTextExtractor` first; the table comes as label line, then value line(s). 2.1 left for later:
+item-wise schedules ("Schedule N / item / quantity", fixture 7922876), PAC items (no real PAC bid in the
+set yet: find one before coding), file links (2.3).
 
 **Owner to do (safety stop, 22 Oct 2026 09:45):** fetching may still be **stopped**. He opened
 `mkp.gem.gov.in/search?q=laptop` in his Chrome: it is a normal page (category names with Q2/Q3 tags, **no
