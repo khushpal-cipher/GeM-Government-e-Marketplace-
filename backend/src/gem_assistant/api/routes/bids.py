@@ -29,13 +29,14 @@ def get_bid(bid_id: int, request: Request) -> BidDetailOut:
 
 class ChecklistIn(BaseModel):
     read_files: bool = False
+    read_terms: bool = False  # the AI reads the buyer's terms (one Groq call, cached)
 
 
 @router.post("/{bid_id}/checklist")
 def bid_checklist(bid_id: int, body: ChecklistIn, request: Request) -> dict:
     """Documents this bid asks for. `read_files` also downloads the files the bid links to (<= 3 requests)."""
     try:
-        checklist = request.app.state.container.checklists.for_bid(bid_id, body.read_files)
+        checklist = request.app.state.container.checklists.for_bid(bid_id, body.read_files, body.read_terms)
     except SafetyError as error:  # breaker open, blocked, budget used up
         raise HTTPException(status_code=409, detail=str(error)) from error
     if checklist is None:

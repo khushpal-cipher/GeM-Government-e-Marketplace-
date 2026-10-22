@@ -11,6 +11,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Callable, Sequence
 
+from .atc_reading import AtcReading
 from .models import PageText, SellerProfile
 from .shortfall import detect_documents
 
@@ -44,6 +45,7 @@ class Checklist:
     items: list[ChecklistItem] = field(default_factory=list)
     unread_files: list[UnreadFile] = field(default_factory=list)
     upload_rules: str = UPLOAD_RULES
+    ai_terms: AtcReading | None = None  # step 2.5b, only when asked
 
 
 def form_entries(value: str) -> list[str]:
@@ -88,3 +90,24 @@ def build_checklist(
                      or item.name.lower() in w["missing_doc"].lower()), None)
         result.append(ChecklistItem(**{**item.__dict__, "past_rejection": note}))
     return Checklist(result, list(unread))
+
+
+AI_DOCUMENT_CATEGORIES = ("document", "certification", "oem_authorisation")
+
+
+def add_ai_terms(checklist: Checklist, reading: AtcReading, profile: SellerProfile | None) -> Checklist:
+    """Clauses the AI found that ask for a document join the list (named by the shortfall patterns,
+    else by the buyer's own words); everything else stays in `ai_terms`. Nothing is removed."""
+    known = {item.name.lower() for item in checklist.items}
+    added = []
+    for clause in reading.items:
+        if clause.category not in AI_DOCUMENT_CATEGORIES:
+            continue
+        docs = detect_documents(clause.quote, profile)
+        found = [(d.name, d.in_profile, d.profile_note) for d in docs] or [
+            (clause.quote if len(clause.quote) <= 80 else clause.quote[:77] + "...", None, "Read what the buyer wants.")]
+        for name, in_profile, note in found:
+            if name.lower() not in known:
+                known.add(name.lower())
+                added.append(ChecklistItem(name, f"AI: {clause.source}", clause.page, clause.quote, in_profile, note))
+    return Checklist(checklist.items + added, checklist.unread_files, checklist.upload_rules, reading)

@@ -21,7 +21,7 @@ class PatternClauseScanner:
     def scan(self, pages: Sequence[PageText]) -> list[ClauseFlag]:
         flags: list[ClauseFlag] = []
         seen: set[tuple[str, str]] = set()
-        for page_number, section_text in self._section_by_page(pages):
+        for page_number, section_text in self.section_by_page(pages):
             if ATTACHMENT_MARKER.search(section_text):
                 flags.append(ClauseFlag(
                     category="unread_attachment",
@@ -45,7 +45,7 @@ class PatternClauseScanner:
         return flags
 
     @staticmethod
-    def _section_by_page(pages: Sequence[PageText]) -> list[tuple[int, str]]:
+    def section_by_page(pages: Sequence[PageText]) -> list[tuple[int, str]]:
         """Return (page, text) slices that lie inside the buyer-added terms section."""
         result: list[tuple[int, str]] = []
         inside = False

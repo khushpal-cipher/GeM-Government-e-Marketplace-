@@ -216,6 +216,16 @@ MIGRATIONS: list[str] = [
         PRIMARY KEY (bid_id, position)
     );
     """,
+    # 12 — every reply Groq gave for the AI reading of a bid's terms (step 2.5b): the cache and the daily count.
+    """
+    CREATE TABLE atc_reading (
+        id          INTEGER PRIMARY KEY,
+        key         TEXT NOT NULL,
+        reply       TEXT NOT NULL,
+        created_at  TEXT NOT NULL
+    );
+    CREATE INDEX atc_reading_key ON atc_reading (key);
+    """,
 ]
 
 

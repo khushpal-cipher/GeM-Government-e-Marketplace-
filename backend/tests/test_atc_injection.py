@@ -1,8 +1,7 @@
 """Step 2.5a: injection test set for the AI reading of the buyer's terms (ATC).
 
-Written before the code; the design is docs/llm-atc-design.md. Skipped until step 2.5b adds
-domain/atc_reading.py. 2.5b removes the skip, and every test here must pass before the AI
-reading is switched on. The fake replies are what a confused or manipulated model could send.
+Written before the code (2.5a); the design is docs/llm-atc-design.md. Every test here must
+pass before the AI reading is switched on (2.5b). The fake replies are what a confused or manipulated model could send.
 """
 
 from __future__ import annotations
@@ -11,12 +10,12 @@ import json
 
 import pytest
 
+from gem_assistant.domain import atc_reading as atc
 from gem_assistant.domain.models import PageText
 from gem_assistant.infrastructure.pypdf_extractor import PypdfTextExtractor
 
 from .conftest import FIXTURES
 
-atc = pytest.importorskip("gem_assistant.domain.atc_reading")  # 2.5b: replace with a plain import
 
 BID = FIXTURES / "GEM-2026-B-8054438_doc9913333.pdf"  # buyer-added terms on pages 9-10
 EXPERIENCE = "PSU for 3 years before the bid opening date."                             # page 9
@@ -52,9 +51,11 @@ def test_honest_reply_is_kept_with_page_from_code_and_numbers_read_from_the_quot
         ("performance_security", DD_DAYS),
         ("turnover", TURNOVER),
         ("certification", ISO.replace("ﬁ", "fi")),                          # model wrote the ligature as "fi"
+        ("other", "the offered product shall not be declared end\u2011of\u2011life by the OEM"),  # PDF has "-"
     ), prepared)
     assert reading.status == "read" and reading.dropped == 0
-    assert [(i.source, i.page) for i in reading.items] == [("bid", 9), ("bid", 10), ("bid", 10), ("atc", 1), ("atc", 1)]
+    assert [(i.source, i.page) for i in reading.items] == [("bid", 9), ("bid", 10), ("bid", 10), ("atc", 1), ("atc", 1),
+                                                           ("bid", 9)]
     numbers = [i.numbers for i in reading.items]
     assert ("years", 3) in numbers[0] and ("percent", 35) in numbers[1] and ("days", 15) in numbers[2]
     assert ("inr", 5_000_000) in numbers[3] and ("years", 3) in numbers[3]
@@ -93,7 +94,6 @@ def test_an_empty_reply_on_terms_full_of_clauses_says_read_them_yourself():
     "Sure! The bid needs 3 years of experience.",                                      # not JSON
     json.dumps({"items": [{"category": "experience", "quote": EXPERIENCE, "years": 0}]}),  # a number of its own
     json.dumps({"items": [], "verdict": "eligible"}),                                    # a verdict of its own
-    json.dumps({"items": [{"category": "eligible", "quote": EXPERIENCE}]}),              # unknown category
     json.dumps({"items": [{"category": "experience", "quote": ["PSU for 3 years"]}]}),   # quote not text
     json.dumps({"items": {"category": "experience", "quote": EXPERIENCE}}),              # items not a list
     json.dumps([{"category": "experience", "quote": EXPERIENCE}]),                       # no object around it
@@ -102,6 +102,18 @@ def test_a_reply_outside_the_schema_is_not_read(raw):
     reading = atc.check_reply(raw, atc.prepare(_bid()))
     assert reading.status == "not_read" and reading.items == []
     assert any("yourself" in note for note in reading.notes)
+
+
+def test_an_unknown_category_is_shown_as_other_with_the_code_label():
+    item, = atc.check_reply(_reply(("eligible", EXPERIENCE)), atc.prepare(_bid())).items
+    assert (item.category, item.label) == ("other", "Other clause to read")
+
+
+def test_a_quote_with_words_left_out_is_dropped_but_an_added_full_stop_is_not():
+    cut = "Experience Criteria: The Bidder or its OEM ... for 3 years before the bid opening date."
+    stop = "the Category related to primary product having highest bid value should meet this criterion."  # page 10: no stop
+    reading = atc.check_reply(_reply(("experience", cut), ("experience", stop)), atc.prepare(_bid()))
+    assert [i.quote for i in reading.items] == [stop] and reading.dropped == 1
 
 
 def test_short_and_repeated_quotes_are_dropped():
@@ -147,3 +159,10 @@ def test_long_terms_are_cut_at_whole_pages_and_quotes_from_unsent_pages_are_drop
     reading = atc.check_reply(_reply(("experience", EXPERIENCE), ("document", late)), prepared)
     assert [i.quote for i in reading.items] == [EXPERIENCE]
     assert any("not read by the AI" in note for note in reading.notes)
+
+
+def test_numbers_are_read_from_odd_amounts_without_crashing():
+    quote = "EMD of INR, as per bid document; Rs. 1,50,000 or Rs 2.5 crore, and 0.5% per week."
+    prepared = atc.prepare(_bid(), _atc_file(quote))
+    item, = atc.check_reply(_reply(("emd", quote)), prepared).items
+    assert ("inr", 150_000) in item.numbers and ("inr", 25_000_000) in item.numbers and ("percent", "0.5") in item.numbers

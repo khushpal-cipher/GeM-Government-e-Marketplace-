@@ -37,16 +37,29 @@ class GroqChatModel:
         return bool(self._api_key())
 
     def complete(self, messages: list[dict], tools: list[dict]) -> dict:
+        message = self._message({"model": self.model, "messages": messages, "tools": tools, "temperature": 0.2,
+                                 "max_completion_tokens": 2048})
+        return {k: message[k] for k in _KEPT if message.get(k) is not None}
+
+    def read_json(self, body: dict) -> str:
+        """One structured-output call with a body built by the caller (step 2.5b: no tools). The
+        reply text is returned unchecked: the caller validates it."""
+        content = self._message(body).get("content")
+        if not isinstance(content, str):
+            raise ChatModelError("Groq sent an answer this app couldn't read. Ask again.")
+        return content
+
+    def _message(self, payload: dict) -> dict:
         key = self._api_key()
         if not key:
             raise ChatModelError("The chat has no Groq API key yet. On a server, set GROQ_API_KEY; on a Mac, run: "
                                 "gem-assistant set-groq-key")
-        response = self._post(key, messages, tools)
+        response = self._post(key, payload)
         if response.status_code == 429:
             wait = _seconds(response.headers.get("retry-after"))
             if wait is not None and wait <= _LONGEST_WAIT_SECONDS:  # once: a model that loops can't stall here
                 self._sleep(wait)
-                response = self._post(key, messages, tools)
+                response = self._post(key, payload)
         if response.status_code == 401:
             raise ChatModelError("Groq refused the API key. Set GROQ_API_KEY again (server) or run: "
                                 "gem-assistant set-groq-key (Mac)")
@@ -56,15 +69,15 @@ class GroqChatModel:
             raise ChatModelError(f"Groq answered with an error ({response.status_code}). Try again shortly.")
         try:
             message = response.json()["choices"][0]["message"]
-            return {k: message[k] for k in _KEPT if message.get(k) is not None}
+            if not isinstance(message, dict):
+                raise TypeError("message is not an object")
+            return message
         except (ValueError, KeyError, IndexError, TypeError, AttributeError) as error:
             raise ChatModelError("Groq sent an answer this app couldn't read. Ask again.") from error
 
-    def _post(self, key: str, messages: list[dict], tools: list[dict]) -> httpx.Response:
+    def _post(self, key: str, payload: dict) -> httpx.Response:
         try:
-            return self._client.post(GROQ_URL, headers={"Authorization": f"Bearer {key}"}, json={
-                "model": self.model, "messages": messages, "tools": tools, "temperature": 0.2,
-                "max_completion_tokens": 2048})
+            return self._client.post(GROQ_URL, headers={"Authorization": f"Bearer {key}"}, json=payload)
         except httpx.HTTPError as error:
             raise ChatModelError("Couldn't reach Groq. Check the internet connection and ask again.") from error
 

@@ -655,3 +655,23 @@ class SqliteRejectionRepository:
         with self._db.connect() as conn:
             res = conn.execute("DELETE FROM past_rejection WHERE id = ?", (rejection_id,))
             return res.rowcount == 1
+
+
+class SqliteAtcReadingRepository:
+    """Groq's replies for the AI reading of bid terms, kept as sent back (checked again on every use)."""
+
+    def __init__(self, db: Database):
+        self._db = db
+
+    def replies(self, key: str) -> list[str]:
+        with self._db.connect() as conn:
+            rows = conn.execute("SELECT reply FROM atc_reading WHERE key = ? ORDER BY id DESC", (key,)).fetchall()
+        return [r["reply"] for r in rows]
+
+    def add(self, key: str, reply: str, now: datetime) -> None:
+        with self._db.connect() as conn:
+            conn.execute("INSERT INTO atc_reading (key, reply, created_at) VALUES (?, ?, ?)", (key, reply, _iso(now)))
+
+    def count_since(self, since: datetime) -> int:
+        with self._db.connect() as conn:
+            return conn.execute("SELECT COUNT(*) FROM atc_reading WHERE created_at >= ?", (_iso(since),)).fetchone()[0]

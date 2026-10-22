@@ -73,8 +73,10 @@ DEFINITIONS = [
                      "values read from the document.", {"bid_id": {"type": "integer"}}, ("bid_id",)),
     _tool("bid_checklist", "The documents a checked bid asks him to upload, each with page and quote, which his "
                            "profile covers, and past rejections for the same document. read_files=true also "
-                           "downloads the files the bid links to (up to 3 GeM requests): only when he asks.",
-          {"bid_id": {"type": "integer"}, "read_files": {"type": "boolean"}}, ("bid_id",)),
+                           "downloads the files the bid links to (up to 3 GeM requests): only when he asks. read_terms=true "
+                           "also has the AI list the buyer's terms with quotes (ai_terms): only when he asks.",
+          {"bid_id": {"type": "integer"}, "read_files": {"type": "boolean"}, "read_terms": {"type": "boolean"}},
+          ("bid_id",)),
     _tool("add_bid_from_link", "Download and check one bid from its GeM link "
                                "(https://bidplus.gem.gov.in/showbidDocument/<number>).",
           {"link": {"type": "string"}}, ("link",)),
@@ -215,9 +217,9 @@ class ChatTools:
         }
         return ToolResult(for_model, card)
 
-    def _bid_checklist(self, bid_id: int, read_files: bool = False) -> ToolResult:
+    def _bid_checklist(self, bid_id: int, read_files: bool = False, read_terms: bool = False) -> ToolResult:
         try:
-            checklist = self._c.checklists.for_bid(bid_id, read_files)
+            checklist = self._c.checklists.for_bid(bid_id, read_files, read_terms)
         except SafetyError as error:
             return ToolResult({"error": f"Fetching is stopped: {error}"}, {"type": "safety_stop", "reason": str(error)})
         if checklist is None:

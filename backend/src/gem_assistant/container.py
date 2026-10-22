@@ -23,6 +23,7 @@ from .infrastructure.httpx_transport import HttpxTransport
 from .infrastructure.pypdf_extractor import PypdfTextExtractor, pdf_links
 from .infrastructure.sqlite_repositories import (
     SqliteAlertRepository,
+    SqliteAtcReadingRepository,
     SqliteBidRepository,
     SqliteBreakerStateStore,
     SqliteDiscoveryRunStore,
@@ -49,6 +50,7 @@ from .services.bid_import_service import BidImportService
 from .services.bid_query_service import BidQueryService
 from .services.chat_service import ChatModel
 from .services.attachment_service import MAX_PAGES, AttachmentService
+from .services.atc_reading_service import AtcReadingService
 from .services.checklist_service import ChecklistService
 from .services.corpus_service import CorpusService
 from .services.discovery_service import DiscoveryService
@@ -185,6 +187,8 @@ class Container:
         bid_query = BidQueryService(bid_repo, profile_repo, EligibilityEvaluator(), clock)
         rejections = RejectionService(SqliteRejectionRepository(db), profile_repo)
         attachments = AttachmentService(fetcher, documents, PypdfTextExtractor(MAX_PAGES))
+        model = chat_model or GroqChatModel(lambda: _groq_key(settings), settings.groq_model)
+        terms = AtcReadingService(model, SqliteAtcReadingRepository(db), clock)
 
         return cls(
             settings=settings,
@@ -206,8 +210,9 @@ class Container:
             orders=OrderService(SqliteOrderRepository(db), profile_repo, clock),
             rejections=rejections,
             attachments=attachments,
-            checklists=ChecklistService(bid_query, documents, attachments, profile_repo, rejections),
-            chat_model=chat_model or GroqChatModel(lambda: _groq_key(settings), settings.groq_model),
+            checklists=ChecklistService(bid_query, documents, attachments, profile_repo, rejections,
+                                        PypdfTextExtractor(settings.max_pdf_pages), terms),
+            chat_model=model,
         )
 
 
