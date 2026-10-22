@@ -30,10 +30,18 @@ def item_match(text: str | None, keywords: Sequence[str], ignore: Sequence[str] 
     from counting as an office chair."""
     # ponytail: GeM separates items with commas but a few item names hold commas too,
     # which only makes a basket look bigger than it is.
-    items = list(dict.fromkeys(i.strip() for i in (text or "").split(",") if i.strip()))
-    hits = sum(1 for i in items
-               if any(_names(i, k) for k in keywords) and not any(_names(i, w) for w in ignore))
-    return hits, len(items)
+    items = _items(text)
+    return len(matching_items(text, keywords, ignore)), len(items)
+
+
+def _items(text: str | None) -> list[str]:
+    return list(dict.fromkeys(i.strip() for i in (text or "").split(",") if i.strip()))
+
+
+def matching_items(text: str | None, keywords: Sequence[str], ignore: Sequence[str] = ()) -> list[str]:
+    """The items of a GeM item list that name one of `keywords` and none of `ignore`."""
+    return [i for i in _items(text)
+            if any(_names(i, k) for k in keywords) and not any(_names(i, w) for w in ignore)]
 
 
 class FieldStatus(str, Enum):

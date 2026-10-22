@@ -63,6 +63,14 @@ export async function renderBidDetail(container, { id }, api) {
     ));
   }
 
+  if (bid.your_items.length) {
+    const itemWise = /item wise/i.test((bid.fields.find((f) => f.name === "evaluation_method") || {}).value || "");
+    container.append(el("h2", {}, `Items here that are your products (${bid.your_items.length} of ${bid.item_count})`),
+      el("div", { class: "card" },
+        itemWise ? el("div", { class: "hint" }, "This bid is judged item by item: you can bid on just these items.") : null,
+        el("ul", {}, bid.your_items.map((name) => el("li", {}, name)))));
+  }
+
   container.append(...corrigendumSection(bid.corrigendum));
 
   // ---- extracted fields ----

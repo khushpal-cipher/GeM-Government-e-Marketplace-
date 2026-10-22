@@ -6,6 +6,7 @@ from typing import Literal
 from fastapi import APIRouter, HTTPException, Request, UploadFile
 from pydantic import BaseModel
 
+from ...domain.models import item_match, matching_items
 from ...infrastructure.pypdf_extractor import InvalidPdf
 from ...safety.errors import SafetyError, UnexpectedResponse, UrlNotAllowed
 from ...services.bid_fetch_service import BadBidLink
@@ -25,8 +26,13 @@ def get_bid(bid_id: int, request: Request) -> BidDetailOut:
     item = request.app.state.container.bid_query.get(bid_id)
     if item is None:
         raise HTTPException(status_code=404, detail="Bid not found")
-    return BidDetailOut.from_assessed(item).model_copy(
-        update={"buyer_flag": request.app.state.container.buyer_flags.get(bid_id)})
+    container = request.app.state.container
+    profile = container.profiles.get()
+    text = item.bid.found_value("item_category")
+    return BidDetailOut.from_assessed(item).model_copy(update={
+        "buyer_flag": container.buyer_flags.get(bid_id),
+        "your_items": matching_items(text, profile.categories, profile.ignore_words) if profile else [],
+        "item_count": item_match(text, [])[1]})
 
 
 class BuyerFlagIn(BaseModel):

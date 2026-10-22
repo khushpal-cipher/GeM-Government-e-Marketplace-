@@ -56,6 +56,8 @@ class BidDetailOut(BaseModel):
     consignees: list[Consignee] = []
     specifications: list[SpecRow] = []
     buyer_flag: str | None = None  # noted by him (step 2.7)
+    your_items: list[str] = []     # items of this bid that are his products (step 3.6)
+    item_count: int = 0
 
     @classmethod
     def from_assessed(cls, item: AssessedBid) -> "BidDetailOut":
