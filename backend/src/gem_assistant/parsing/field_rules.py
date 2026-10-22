@@ -15,7 +15,8 @@ from . import normalizers as n
 
 # Bump whenever field rules, clause patterns or conflict checks change: stored bids analysed
 # by an older version are re-read from their kept PDF on the next start.
-PARSER_VERSION = 3  # 3: GeM's standard wording raises no flag; explaining EMD is no conflict
+PARSER_VERSION = 4  # 4: estimated value, inspection, ePBG months, past performance, documents, consignees
+# 3: GeM's standard wording raises no flag; explaining EMD is no conflict
 
 # Matches the whitespace/newlines pypdf puts between label words.
 _ = r"\s+"
@@ -98,6 +99,20 @@ DEFAULT_FIELD_RULES: tuple[FieldRule, ...] = (
          also=((rf"/ePBG Detail\s*\n/Advisory Bank\s*\n[^\n]+\n\(%\)\s*\n/ePBG Percentage\(%\)\s*\n"
                 rf"(?P<value>\d+(?:\.\d+)?)", n.shown_means_yes),)),
     rule("epbg_percent", "ePBG (% of order value)", rf"/ePBG Percentage\(%\)\s*\n(?P<value>\d+(?:\.\d+)?)", n.percent),
+    # Estimated value: 23 of 30 real bids; services and custom bids may omit it. Paise are dropped.
+    rule("estimated_bid_value", "Estimated bid value (₹)",
+         rf"/\s*Estimated Bid Value(?: in INR{_}\(Inclusive of all{_}taxes\))?\s*\n(?P<value>[\d,]+(?:\.\d+)?)",
+         n.rupees),
+    rule("inspection_required", "Inspection required",
+         rf"Inspection{_}Required{_}\(By[^)]*\)\s*\n{_YES_NO}", n.yes_no),
+    rule("epbg_months", "ePBG duration (months)",
+         rf"/Duration of ePBG{_}required{_}\(Months\)\.\s*\n(?P<value>\d+)", n.integer),
+    rule("past_performance_percent", "Past performance required (% of quantity)",
+         rf"/Past Performance\s*\n(?P<value>\d+) %", n.percent),
+    rule("technical_clarification_days", "Days allowed for technical clarifications",
+         rf"Clarifications during technical evaluation\s*\n(?P<value>\d+) Days", n.integer),
+    rule("documents_required", "Documents required from seller",
+         rf"/Document required{_}from seller\s*\n(?P<value>[^\n]+(?:\n(?![*/?])[^\n]+)*)", n.text),
     rule("mii_preference", "MII purchase preference", rf"/\s*MII Purchase Preference\s*\n{_YES_NO}", n.yes_no),
     rule("mii_compliance", "MII compliance required", rf"/\s*MII Compliance\s*\n{_YES_NO}", n.yes_no),
     rule("mse_preference", "MSE purchase preference", rf"/\s*MSE Purchase Preference\s*\n{_YES_NO}", n.yes_no),

@@ -12,6 +12,7 @@ from ..domain.ports import (
 )
 from ..infrastructure.pypdf_extractor import InvalidPdf
 from ..parsing.evidence import quote_is_on_page
+from ..parsing.consignee_table import check_quantity, read_consignees
 from ..parsing.field_rules import PARSER_VERSION
 
 
@@ -95,8 +96,11 @@ class BidImportService:
         pages = self._text.extract(pdf_bytes)
         flags = self._clauses.scan(pages)
         fields = self._reconciler.reconcile(self._fields.extract(pages), flags)
+        consignees = read_consignees(pages)
+        fields = check_quantity(fields, consignees)
 
-        for item in [*(f.evidence for f in fields if f.evidence), *(f.evidence for f in flags)]:
+        for item in [*(f.evidence for f in fields if f.evidence), *(f.evidence for f in flags),
+                     *(c.evidence for c in consignees)]:
             if not quote_is_on_page(item, pages):
                 raise EvidenceMismatch(f"Quote not found on page {item.page}: {item.quote[:80]!r}")
 
@@ -112,5 +116,6 @@ class BidImportService:
             imported_at=self._clock.now(),
             fields=fields,
             flags=flags,
+            consignees=consignees,
             parser_version=PARSER_VERSION,
         )

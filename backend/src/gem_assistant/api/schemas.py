@@ -7,7 +7,7 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 
 from ..domain.models import (
-    BreakerState, ClauseFlag, Corrigendum, DiscoveryRun, ExtractedField, ListingEntry, RequestRecord,
+    BreakerState, ClauseFlag, Consignee, Corrigendum, DiscoveryRun, ExtractedField, ListingEntry, RequestRecord,
     RuleResult, Verdict,
 )
 from ..services.bid_query_service import AssessedBid
@@ -53,6 +53,7 @@ class BidDetailOut(BaseModel):
     fields: list[ExtractedField]
     flags: list[ClauseFlag]
     corrigendum: Corrigendum
+    consignees: list[Consignee] = []
 
     @classmethod
     def from_assessed(cls, item: AssessedBid) -> "BidDetailOut":
@@ -61,7 +62,7 @@ class BidDetailOut(BaseModel):
             id=bid.id, bid_number=bid.bid_number, source_name=bid.source_name,
             page_count=bid.page_count, unread_lines=bid.unread_lines, imported_at=bid.imported_at,
             verdict=item.assessment.verdict, results=item.assessment.results,
-            fields=bid.fields, flags=bid.flags, corrigendum=bid.corrigendum,
+            fields=bid.fields, flags=bid.flags, corrigendum=bid.corrigendum, consignees=bid.consignees,
         )
 
 

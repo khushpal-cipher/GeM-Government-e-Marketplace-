@@ -186,6 +186,22 @@ MIGRATIONS: list[str] = [
     );
     CREATE INDEX past_rejection_doc ON past_rejection(missing_doc);
     """,
+    # 10 — consignee rows of a bid (where the goods go, quantity, delivery days), with the quote.
+    # Existing bids get theirs when they are re-read (parser version 4).
+    """
+    CREATE TABLE bid_consignee (
+        bid_id         INTEGER NOT NULL REFERENCES bid(id) ON DELETE CASCADE,
+        position       INTEGER NOT NULL,
+        pin            TEXT,
+        address        TEXT NOT NULL,
+        quantity       INTEGER NOT NULL,
+        delivery_days  INTEGER NOT NULL,
+        page           INTEGER NOT NULL,
+        quote          TEXT NOT NULL,
+        method         TEXT NOT NULL,
+        PRIMARY KEY (bid_id, position)
+    );
+    """,
 ]
 
 

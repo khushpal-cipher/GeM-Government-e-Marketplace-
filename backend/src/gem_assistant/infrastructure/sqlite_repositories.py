@@ -11,6 +11,7 @@ from ..domain.order_tracker import TrackedOrder
 from ..domain.models import (
     BidAnalysis,
     BidKind,
+    Consignee,
     Corrigendum,
     DiscoveryRun,
     DocStatus,
@@ -186,6 +187,16 @@ class SqliteBidRepository:
                     for i, flag in enumerate(analysis.flags)
                 ],
             )
+            conn.executemany(
+                """INSERT INTO bid_consignee (bid_id, position, pin, address, quantity, delivery_days,
+                                              page, quote, method)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                [
+                    (bid_id, i, c.pin, c.address, c.quantity, c.delivery_days,
+                     c.evidence.page, c.evidence.quote, c.evidence.method.value)
+                    for i, c in enumerate(analysis.consignees)
+                ],
+            )
         return int(bid_id)
 
     def list(self) -> list[BidAnalysis]:
@@ -203,6 +214,9 @@ class SqliteBidRepository:
             ).fetchall()
             flag_rows = conn.execute(
                 "SELECT * FROM bid_flag WHERE bid_id = ? ORDER BY position", (bid_id,)
+            ).fetchall()
+            consignee_rows = conn.execute(
+                "SELECT * FROM bid_consignee WHERE bid_id = ? ORDER BY position", (bid_id,)
             ).fetchall()
             listed = conn.execute(
                 """SELECT ends_at FROM listing_bid WHERE bid_id = ? OR bid_number = ?
@@ -240,6 +254,13 @@ class SqliteBidRepository:
                 text=row["corrigendum_text"],
                 note=row["corrigendum_note"],
             ),
+            consignees=[
+                Consignee(
+                    pin=r["pin"], address=r["address"], quantity=r["quantity"], delivery_days=r["delivery_days"],
+                    evidence=Evidence(page=r["page"], quote=r["quote"], method=r["method"]),
+                )
+                for r in consignee_rows
+            ],
             parser_version=row["parser_version"],
             listed_end=_dt(listed["ends_at"]) if listed else None,
         )

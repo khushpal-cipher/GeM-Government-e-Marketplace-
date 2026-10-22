@@ -99,6 +99,16 @@ class ClauseFlag(BaseModel):
     evidence: Evidence
 
 
+class Consignee(BaseModel):
+    """One row of a bid's consignee table: where the goods go, how many, in how many days."""
+
+    pin: str | None  # None when the buyer masked it (defence bids)
+    address: str
+    quantity: int = Field(ge=0)
+    delivery_days: int = Field(ge=0)
+    evidence: Evidence
+
+
 class CorrigendumStatus(str, Enum):
     NOT_CHECKED = "NOT_CHECKED"  # no doc_id, or the check hasn't run yet
     NONE = "NONE"                # GeM answered "0": this bid has no corrigendum
@@ -144,6 +154,7 @@ class BidAnalysis(BaseModel):
     fields: list[ExtractedField]
     flags: list[ClauseFlag]
     corrigendum: Corrigendum = Field(default_factory=Corrigendum)
+    consignees: list[Consignee] = Field(default_factory=list)
     parser_version: int = 0  # which version of the field rules produced `fields`
     # GeM's bid list's closing time, read on the latest search. Not stored with the bid:
     # it is GeM's own current value and reflects any extension the PDF can't.
