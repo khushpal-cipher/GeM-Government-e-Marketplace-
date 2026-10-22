@@ -395,3 +395,15 @@ def test_filters_by_bid_type_and_end_date(app, transport, source):
     assert ids(app.discovery.status(bid_type="boq")) == ["9000002"]
     assert ids(app.discovery.status(ends_from=date(2026, 11, 1))) == ["9000003"]
     assert ids(app.discovery.status(ends_to=date(2026, 10, 31))) == ["9000001", "9000002"]
+
+
+def test_new_since_last_search(app, transport, source, clock):
+    _queue_pdf(transport)
+    app.discovery.run()
+    assert all(e.is_new for e in app.discovery.status().listings)
+
+    clock.advance(minutes=16)
+    source.docs = source.docs + [make_doc(2)]
+    app.discovery.run()
+    assert {e.doc_id: e.is_new for e in app.discovery.status().listings}["9000002"] is True
+    assert sum(e.is_new for e in app.discovery.status().listings) == 1

@@ -101,10 +101,13 @@ class DiscoveryService:
                  if (not bid_type or e.bid_type == bid_type)
                  and (not ends_from or (e.ends_at and e.ends_at.date() >= ends_from))
                  and (not ends_to or (e.ends_at and e.ends_at.date() <= ends_to))]
+        last_run = self._runs.last()
+        if last_run:
+            found = [e.model_copy(update={"is_new": e.first_seen_at >= last_run.started_at}) for e in found]
         return DiscoveryStatus(
             running=self._lock.locked(),
             keywords=self.keywords(),
-            last_run=self._runs.last(),
+            last_run=last_run,
             next_allowed_at=self.next_allowed_at(),
             listings=self._ranked(found, self._profiles.get()),
             settings=self._settings,

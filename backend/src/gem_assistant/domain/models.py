@@ -308,6 +308,7 @@ class ListingEntry(ListingBid):
     # Filled in for display from the current profile; not stored.
     matched_items: int = 0
     total_items: int = 0
+    is_new: bool = False  # first seen in the latest search
 
 
 class DiscoveryRun(BaseModel):

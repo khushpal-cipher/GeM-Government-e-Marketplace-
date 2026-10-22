@@ -159,7 +159,8 @@ export async function renderDiscover(container, _params, api) {
             ...["Bid no.", "Items", "Your items", "Buyer", "Closes", "Status"].map((h) => el("th", {}, h)))),
           el("tbody", {}, shown.map((item) =>
             el("tr", item.bid_id ? { class: "clickable", onclick: () => { location.hash = `#/bids/${item.bid_id}`; } } : {},
-              el("td", {}, el("strong", {}, item.bid_number), item.kind === "RA" ? el("span", { class: "subtle" }, " (RA)") : null),
+              el("td", {}, el("strong", {}, item.bid_number), item.kind === "RA" ? el("span", { class: "subtle" }, " (RA)") : null,
+                item.is_new ? el("span", { class: "badge" }, " New") : null),
               el("td", { title: item.category }, clip(item.category) || "—"),
               el("td", {}, matchText(item)),
               el("td", {}, item.department || item.ministry || "—"),

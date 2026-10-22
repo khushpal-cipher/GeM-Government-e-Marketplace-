@@ -164,7 +164,8 @@ class ChatTools:
         mine = [{"bid_number": e.bid_number, "items": (e.category or "")[:200],
                  "your_items": f"{e.matched_items} of {e.total_items}",
                  "closes_at": e.ends_at.isoformat() if e.ends_at else None,
-                 "checked": e.doc_status.value, "note": e.doc_note, "bid_id": e.bid_id}
+                 "checked": e.doc_status.value, "note": e.doc_note, "bid_id": e.bid_id,
+                 "new_in_last_search": e.is_new}
                 for e in status.listings if e.matched_items][:20]
         return ToolResult({"running": status.running, "searches_for": status.keywords,
                            "last_search": {"outcome": last.outcome, "message": last.message,
