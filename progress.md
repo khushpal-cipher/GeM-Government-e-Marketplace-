@@ -33,12 +33,12 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 
 ## Continue from here (written 22 Oct 2026)
 
-State: `cd backend && uv run pytest -q` → **576 passed** (22 Oct 2026, after 3.2). Phases 0 and 1, steps 2.1-2.7 and 3.0-3.2 are
-done: about 20 of 45 plan steps (~44%). D1 (Groq key) and D2 (contact email) are set; D9 default: Phase 3 checks never block. Build only in Claude Code.
+State: `cd backend && uv run pytest -q` → **583 passed** (22 Oct 2026, after 3.3). Phases 0 and 1, steps 2.1-2.7 and 3.0-3.3 are
+done: about 21 of 45 plan steps (~47%). D1 (Groq key) and D2 (contact email) are set; D9 default: Phase 3 checks never block. Build only in Claude Code.
 
-**Next exact action:** step **3.3** OEM, authorisation, OEM turnover (Sonnet · Medium), built exactly to `docs/checks-design.md` §3.3
-(takes over the `oem_authorisation` category from RestrictiveClauseRule). Then 3.4 (starts with the `emd_required` footer fix on a copy
-of corpus bid 9748067), 3.7, 3.8; 3.9 before 3.5; 3.6 needs an item-wise bid first.
+**Next exact action:** step **3.4** EMD (Sonnet · Medium), built exactly to `docs/checks-design.md` §3.4, starting with the `emd_required`
+footer fix on a copy of corpus bid 9748067 (bump `PARSER_VERSION`). Then 3.7, 3.8; 3.9 before 3.5; 3.6 needs an item-wise bid first.
+Left from 3.3: no real Q1 bid yet; Q tags are read from the whole item list, not per item.
 Left from 3.2: standards inside the attached ATC file are not seen (2.4 checklist lists them); `ISI marked` is not a recognised standard.
 Left from 3.1: the delivery-state result shows no city name; the check is not yet shown on any screen beyond the normal bid reasons list.
 Left from 2.7: the buyer flag has no screen or chat card yet and no check uses it.
