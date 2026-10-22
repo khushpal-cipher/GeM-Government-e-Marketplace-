@@ -103,6 +103,20 @@ None of these POST paths is allowed today. **`bidNumber` is an exact bid-number 
 route for the 1.6 invited-bid lookup than the full-text listing (owner OK needed to allow
 `/search-bids`).
 
+### 6a. Advance search: how the page sends a search (looked at 23 Oct 2026 in his Chrome, read-only; no search was run, nothing clicked)
+
+Read from the page's own scripts (`searchBid`, `loadBids`, `fetchStateList`, `fetchBoqTitle`); no response was captured, so there is **no answer fixture yet**.
+- robots.txt (same host) disallows only `/resources/` and three `/bg_emd/epbgservice/...` paths: `/search-bids` and the `-adv` lists are not listed.
+- `searchBid(type)` with type `bidNumber` | `ministry...` | `con` (consignee) | `boq` fills a `payload` object from the form boxes, checks them, then calls `loadBids(payload)`.
+  Needs: both end dates or neither is refused ("Please select atleast one search parameter"); date format is `yy-mm-dd` (e.g. 2026-10-31).
+  - `con`: `searchType`, `state_name_con`, `city_name_con`, `bidEndFromCon`, `bidEndToCon` (state + both dates needed).
+  - `boq`: `searchType`, `boqtitle_con`, `bidvalue`, `bidEndFromBoq`, `bidEndToBoq` (BOQ title needed).
+  - `bidNumber`: `bidNumber`, `category`, `bidEndFrom`, `bidEndTo`.
+- `loadBids(payload)` sets `payload.page = window.currentPage` and POSTs `https://bidplus.gem.gov.in/search-bids` with form fields `payload` (JSON text) and the CSRF token (a field and value the page itself writes into its script; take it from the live page, never store it).
+  It reads `data.code == 200` and `data.response.response.{numFound,start,docs}` — the same shape as `/all-bids-data`, so `parse_listing_response` is likely reusable (unconfirmed).
+- The state list and BOQ-title list come from two more POSTs, `/state-list-adv` and `/boq-title-adv` (token only, answer `{status: 200, data: [...]}` as JSON text; options are `state_name` / `bbt_title`). **Those two paths are not covered by D8**; the dropdowns start empty until they run. Without them the exact spelling of a state or title is unknown, so the owner's OK is needed (or the state names can be typed from his own knowledge and checked on the first real answer).
+- Same trick as the listing: render `/advance-search` in the headless page (scripts replaced like `/all-bids`), set the boxes, call `searchBid('con' | 'boq')`, let exactly one armed POST out through SafeFetcher.
+
 ## 7. Links inside a bid PDF (30 corpus bids)
 
 | Link shape | Count | Public? |

@@ -36,7 +36,8 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 State: `cd backend && uv run pytest -q` → **642 passed** (22 Oct 2026, after 4.2 local part). Phases 0, 1 and 3 and steps 2.1-2.7 are
 done: about 27 of 45 plan steps (~60%). D1 (Groq key) and D2 (contact email) are set; D4 = yes; D9 default: Phase 3 checks never block. Build only in Claude Code.
 
-**Next exact action:** **4.2 rest** (Advance Search POST `/search-bids`: BOQ title, consignee state; D8 = yes; first look at `/advance-search` in his Chrome read-only to see how the page sends the CSRF token and what the answer looks like, save it as a fixture) OR step 4.3 ("new since last search", Haiku · Low, first_seen_at already stored). Left from 4.2: no "service" bid type, no screen for the filters.
+**Next exact action:** 4.2 rest: Advance Search is now looked at (recon §6a, 23 Oct 2026). Build `search_advance(kind, ...)` on `PlaywrightListingSource` the same way as `/all-bids` (render `/advance-search`, allow only the one `/search-bids` POST via `post_allowed_paths`, call `searchBid('con'|'boq')`), reusing `parse_listing_response`. **Needs the owner's answer first:** may the app also POST `/state-list-adv` and `/boq-title-adv` (to fill the state and BOQ-title dropdowns)? Default if he does not answer: no; he types the state/title and the first real answer shows if the spelling works. No answer fixture exists yet: the first real run (fetching un-stopped) must save one. Or do 4.3 first (Haiku · Low).
+Left from 4.2: no "service" bid type, no screen for the filters.
 Left from 4.1: `GET /api/categories?q=` only (no screen/chat card, no "he confirms", no saving extra words); a no-result page would count as a block (never seen).
 Left from 3.8: the sample clause "within 07 days of receipt of supply order" (bid 9939006) is flagged as a forbidden term but is post-award: a false alarm to tighten
 (exclude "supply order|receipt of|after award" in `forbidden_sample`).
