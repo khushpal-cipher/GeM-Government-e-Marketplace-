@@ -66,7 +66,8 @@ class SafetySettings:
     )
     # The listing page's own search request. POST-only, and only the headless
     # browser rendering /all-bids ever triggers it.
-    post_allowed_paths: tuple[str, ...] = ("/all-bids-data",)
+    # /search-bids and the two dropdown lists are /advance-search's own requests (recon §6a; owner OK 23 Oct 2026).
+    post_allowed_paths: tuple[str, ...] = ("/all-bids-data", "/search-bids", "/state-list-adv", "/boq-title-adv")
     # The listing page's own corrigendum view, which carries the bid's document id in
     # the path (docs/02-RECON-FINDINGS.md §4). Only "<prefix>/<id>" is allowed.
     post_allowed_prefixes: tuple[str, ...] = ("/bidding/bid/viewCorrigendum",)

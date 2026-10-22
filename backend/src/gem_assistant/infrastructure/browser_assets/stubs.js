@@ -8,7 +8,7 @@
   if ($ && $.fn) {
     var noop = function () { return this; };
     ["popover", "tooltip", "modal", "dropdown", "collapse", "tab", "datepicker",
-     "autocomplete", "pagination", "fancybox", "smartmenus", "writtenNumber"].forEach(function (name) {
+     "autocomplete", "select2", "pagination", "fancybox", "smartmenus", "writtenNumber"].forEach(function (name) {
       if (!$.fn[name]) $.fn[name] = noop;
     });
     if (!$.datepicker) $.datepicker = { setDefaults: noop, formatDate: function () { return ""; } };

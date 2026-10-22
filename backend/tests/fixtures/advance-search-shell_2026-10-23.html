@@ -1,0 +1,45 @@
+<!-- Reduced copy of https://bidplus.gem.gov.in/advance-search, read from the page's own scripts on 23 Oct 2026
+     (his Chrome, read-only). Only the boxes and functions the app uses are kept; the logic of searchBid/loadBids/
+     fetchStateList/fetchBoqTitle follows what was read there. The CSRF value is a dummy. -->
+<html><head><title>GeM | Bidding</title>
+<script src="https://bidplus.gem.gov.in/resources/js/vendor/jquery-3.6.0.min.js"></script></head><body>
+<select id="state_name_con"><option value="">--Select--</option></select>
+<select id="city_name_con"><option value="">--Select--</option></select>
+<input id="bidEndFromCon"><input id="bidEndToCon">
+<select id="boqtitle_con"><option value="">--Select--</option></select>
+<input id="bidvalue"><input id="bidEndFromBoq"><input id="bidEndToBoq">
+<div id="bidCard"></div>
+<script>
+window.currentPage = 1;
+function searchBid(searchType){
+  window.currentPage = 1; var payload = {};
+  if (searchType == 'con') {
+    payload['searchType'] = searchType;
+    var state = payload['state_name_con'] = document.getElementById("state_name_con").value;
+    payload['city_name_con'] = document.getElementById("city_name_con").value;
+    var f = payload['bidEndFromCon'] = document.getElementById("bidEndFromCon").value;
+    var t = payload['bidEndToCon'] = document.getElementById("bidEndToCon").value;
+    if (!state || !f || !t) return false;
+  }
+  if (searchType == 'boq') {
+    payload['searchType'] = searchType;
+    var title = payload['boqtitle_con'] = document.getElementById("boqtitle_con").value;
+    payload['bidvalue'] = document.getElementById("bidvalue").value;
+    var bf = payload['bidEndFromBoq'] = document.getElementById("bidEndFromBoq").value;
+    var bt = payload['bidEndToBoq'] = document.getElementById("bidEndToBoq").value;
+    if (!title || !bf || !bt) return false;
+  }
+  loadBids(payload);
+}
+function loadBids(payload){
+  payload['page'] = window.currentPage;
+  $.ajax({ type: 'POST', url: 'https://bidplus.gem.gov.in/search-bids', dataType: 'json',
+    data: {'payload': JSON.stringify(payload), 'csrf_bd_gem_nk': 'dummy'}, success: function (data) {} });
+}
+function fetchStateList(){
+  $.ajax({ type: "POST", data: {'csrf_bd_gem_nk': 'dummy'}, url: 'https://bidplus.gem.gov.in/state-list-adv', success: function (r) {} });
+}
+function fetchBoqTitle(){
+  $.ajax({ type: "POST", data: {'csrf_bd_gem_nk': 'dummy'}, url: 'https://bidplus.gem.gov.in/boq-title-adv', success: function (r) {} });
+}
+</script></body></html>

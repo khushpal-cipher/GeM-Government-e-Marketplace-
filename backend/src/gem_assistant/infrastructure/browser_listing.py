@@ -19,6 +19,7 @@ from __future__ import annotations
 import json
 import time
 from contextlib import contextmanager
+from datetime import date
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable, Iterator, Protocol, Sequence
@@ -35,7 +36,10 @@ from .system_clock import SystemClock
 
 ASSETS = Path(__file__).parent / "browser_assets"
 LISTING_URL = "https://bidplus.gem.gov.in/all-bids"
+ADVANCE_URL = "https://bidplus.gem.gov.in/advance-search"
 SEARCH_PATH = "/all-bids-data"
+ADVANCE_SEARCH_PATH = "/search-bids"
+ADVANCE_LIST_PATHS = ("/state-list-adv", "/boq-title-adv")
 # The page's own corrigendum view; the bid's document id is appended.
 # docs/02-RECON-FINDINGS.md §4.
 CORRIGENDUM_PREFIX = "/bidding/bid/viewcorrigendum/"
@@ -107,7 +111,7 @@ class _Session:
             self._through_gate(route, "GET", Expect.HTML)
             return
 
-        if is_gem and request.method == "POST" and path == SEARCH_PATH:
+        if is_gem and request.method == "POST" and path in (SEARCH_PATH, ADVANCE_SEARCH_PATH, *ADVANCE_LIST_PATHS):
             self._armed_post(route, Expect.JSON)
             return
 
@@ -182,16 +186,55 @@ class PlaywrightListingSource:
             self._check_corrigendum_shape(page)
             return {doc_id: self._one_corrigendum(page, session, doc_id) for doc_id in doc_ids}
 
+    def advance_lists(self) -> dict[str, list[str]]:
+        """The state and BOQ-title names the Advance Search dropdowns offer (2 requests)."""
+        with self._listing_page(ADVANCE_URL) as (page, session):
+            self._check_advance_shape(page)
+            states = self._trigger(page, session, lambda: page.evaluate("() => fetchStateList()"), "state list")
+            titles = self._trigger(page, session, lambda: page.evaluate("() => fetchBoqTitle()"), "BOQ title list")
+        return {"states": _names(states.body, "state_name"), "boq_titles": _names(titles.body, "bbt_title")}
+
+    def advance_search(self, kind: str, ends_from: date, ends_to: date, max_pages: int,
+                       state: str | None = None, city: str | None = None,
+                       boq_title: str | None = None) -> ListingSearchResult:
+        """Consignee-state (kind "con") or BOQ-title (kind "boq") search, through the page's own
+        searchBid(): the page checks the boxes and builds the payload, we only fill the boxes."""
+        boxes = {"con": {"state_name_con": state, "city_name_con": city,
+                         "bidEndFromCon": ends_from.isoformat(), "bidEndToCon": ends_to.isoformat()},
+                 "boq": {"boqtitle_con": boq_title,
+                         "bidEndFromBoq": ends_from.isoformat(), "bidEndToBoq": ends_to.isoformat()}}.get(kind)
+        if boxes is None or not (state if kind == "con" else boq_title):
+            raise ValueError("Advance search needs kind 'con' with a state, or 'boq' with a BOQ title")
+        with self._listing_page(ADVANCE_URL) as (page, session):
+            self._check_advance_shape(page)
+            # Remember the payload the page builds, so page 2+ can ask again for the same search.
+            page.evaluate("() => { const o = window.loadBids; window.loadBids = p => { window.__payload = p; return o(p); }; }")
+            first = self._search_page(page, session, lambda: page.evaluate(_FILL_AND_SEARCH, [kind, boxes]))
+            bids, total = list(first.bids), first.total_found
+            for number in range(2, max_pages + 1):
+                if total <= (number - 1) * PAGE_SIZE:
+                    break
+                nxt = self._search_page(page, session, lambda n=number: page.evaluate(
+                    "n => { window.currentPage = n; loadBids(window.__payload); }", n))
+                bids.extend(nxt.bids)
+        return ListingSearchResult(keyword=f"advance:{kind}", total_found=total, bids=bids)
+
     # ---- internals ----
 
+    @staticmethod
+    def _check_advance_shape(page: Any) -> None:
+        if not page.evaluate("() => ['searchBid', 'loadBids', 'fetchStateList', 'fetchBoqTitle']"
+                             ".every(f => typeof window[f] === 'function')"):
+            raise ListingFormatChanged("The /advance-search page changed: searchBid() or loadBids() not found")
+
     @contextmanager
-    def _listing_page(self) -> Iterator[tuple[Any, "_Session"]]:
+    def _listing_page(self, url: str | None = None) -> Iterator[tuple[Any, "_Session"]]:
         """Renders /all-bids once and yields the live page. Closing the context throws
         away the temporary session cookies."""
         session = _Session(
             fetcher=self._fetcher,
             network=self._network,
-            listing_path=urlsplit(self._listing_url).path.rstrip("/"),
+            listing_path=urlsplit(url or self._listing_url).path.rstrip("/"),
             jquery=(ASSETS / "jquery-3.6.0.min.js").read_bytes(),
             stubs=(ASSETS / "stubs.js").read_bytes(),
         )
@@ -212,13 +255,14 @@ class PlaywrightListingSource:
                     page = context.new_page()
                     page.set_default_timeout(self._timeout * 1000)
                     try:
-                        page.goto(self._listing_url, wait_until="domcontentloaded")
+                        page.goto(url or self._listing_url, wait_until="domcontentloaded")
                     except Exception:
                         self._raise_if_failed(session)  # a safety stop explains the failure better
                         raise
                     self._raise_if_failed(session)
                     page.wait_for_load_state("load")
-                    self._check_page_shape(page)
+                    if url is None:
+                        self._check_page_shape(page)
                     yield page, session
                 finally:
                     context.close()
@@ -334,6 +378,27 @@ class PlaywrightListingSource:
             return
         self._save_corrigenda_to.mkdir(parents=True, exist_ok=True)
         (self._save_corrigenda_to / f"{doc_id}.html").write_bytes(body)
+
+
+# Fills the boxes (adding the option when a dropdown is still empty) and calls the page's own search.
+_FILL_AND_SEARCH = """([kind, boxes]) => {
+  for (const [id, value] of Object.entries(boxes)) {
+    const el = document.getElementById(id);
+    if (!el || value == null) continue;
+    if (el.tagName === 'SELECT' && ![...el.options].some(o => o.value === value)) el.add(new Option(value, value));
+    el.value = value;
+  }
+  searchBid(kind);
+}"""
+
+
+def _names(body: bytes, key: str) -> list[str]:
+    """GeM answers these list requests with JSON text: {"status": 200, "data": [{key: name}, ...]}."""
+    try:
+        rows = json.loads(body)["data"]
+        return sorted({str(r[key]).strip() for r in rows if r.get(key)})
+    except (ValueError, KeyError, TypeError, AttributeError) as error:
+        raise ListingFormatChanged(f"The dropdown list answer was not as expected ({error})") from error
 
 
 def _default_playwright():
