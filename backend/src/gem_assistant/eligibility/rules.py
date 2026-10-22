@@ -159,17 +159,40 @@ class CorrigendumRule:
 
 
 class EmdRule:
+    """EMD is a step to plan, not a bar, so this only ever asks for a look. An amount alone also means it is asked."""
+
     name = "emd"
+    _MIN_VALUE = 500_000  # GeM's terms: no EMD on a bid estimated below ₹5 lakh
 
     def evaluate(self, bid: BidAnalysis, profile: SellerProfile | None, now: datetime) -> list[RuleResult]:
-        if bid.found_value("emd_required") != "Yes":
-            return []
-        field = bid.field("emd_required")
         amount = bid.found_value("emd_amount")
-        what = f"An EMD of {inr(int(amount))}" if amount else "EMD"
-        note = " You're marked as an MSE; check whether the exemption applies." if profile and profile.is_mse else ""
-        return [RuleResult(rule=self.name, outcome=Verdict.NEEDS_REVIEW,
-                           reason=f"{what} is required for this bid.{note}", evidence=field.evidence)]
+        if bid.found_value("emd_required") != "Yes" and not (amount and int(amount) > 0):
+            return []
+        field = bid.field("emd_required") if bid.found_value("emd_required") == "Yes" else bid.field("emd_amount")
+        what = f"EMD {inr(int(amount))}" if amount else "EMD"
+        due = bid.deadline()
+        when = deadline(due, now) if due else "before the bid closes"
+        value = bid.found_value("estimated_bid_value")
+        if value and int(value) < self._MIN_VALUE:
+            reason = (f"This bid asks an {what}, but its estimated value is {inr(int(value))} (below ₹5 lakh); "
+                      f"GeM's terms say no EMD below ₹5 lakh. You may ask the buyer through a representation {when}.")
+            return [RuleResult(rule=self.name, outcome=Verdict.NEEDS_REVIEW, reason=reason, evidence=field.evidence)]
+        makes = profile is not None and item_match(bid.found_value("item_category"), profile.own_made_products,
+                                                   profile.ignore_words)[0] > 0
+        if profile and (profile.is_startup or (profile.is_mse and makes)):
+            who = "DPIIT startup" if profile.is_startup else "MSE making this item"
+            limit = next((f.evidence for f in bid.flags if f.category == "emd_state_limit"), None)
+            reason = (f"{what}: you may be exempt ({who}). Claim it with your Udyam / DPIIT certificate when you bid."
+                      + (f" The buyer limits it: “{limit.quote}”" if limit else ""))
+        elif profile and profile.is_mse and not profile.own_made_products:
+            reason = (f"{what}. MSEs are exempt only for items they make; add the items you make to your "
+                      "profile to check.")
+        elif profile and profile.is_mse:
+            reason = (f"{what}: the MSE exemption covers only items you make, so pay it before the bid closes "
+                      f"({when}).")
+        else:
+            reason = f"Pay an {what.replace('EMD ', 'EMD of ') if amount else 'EMD'} before the bid closes ({when})."
+        return [RuleResult(rule=self.name, outcome=Verdict.NEEDS_REVIEW, reason=reason, evidence=field.evidence)]
 
 
 @dataclass(frozen=True)

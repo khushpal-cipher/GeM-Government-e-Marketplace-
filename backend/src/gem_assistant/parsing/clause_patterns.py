@@ -43,6 +43,9 @@ DEFAULT_CLAUSE_PATTERNS: tuple[ClausePattern, ...] = (
            r"\b(office|service cent(re|er)|branch|workshop|warehouse|showroom)\b[^.]{0,80}"
            r"\b(located|registered|situated|present|available|established)\b[^.]{0,30}"
            r"\b(in|at|within)\s+(the\s+)?(state|city|district|town)\b"),
+    clause("emd_state_limit", "EMD exemption limited to sellers of a state",
+           r"\b(EMD|earnest money)\b[^.]{0,120}\b(exempt\w*|waive\w*)\b[^.]{0,120}\b(only|limited)\b[^.]{0,80}"
+           r"\b(state|local)\b"),
     clause("penalty", "Penalty or extra charges", r"\b(penalty|liquidated damages|demurrage)\b"),
 )
 

@@ -15,7 +15,7 @@ from . import normalizers as n
 
 # Bump whenever field rules, clause patterns or conflict checks change: stored bids analysed
 # by an older version are re-read from their kept PDF on the next start.
-PARSER_VERSION = 6  # 6: local_presence clause; 5: specification table rows
+PARSER_VERSION = 7  # 7: EMD over a page break; 6: local_presence clause; 5: specification table rows
 # 4: estimated value, inspection, ePBG months, past performance, documents, consignees
 # 3: GeM's standard wording raises no flag; explaining EMD is no conflict
 
@@ -92,7 +92,10 @@ DEFAULT_FIELD_RULES: tuple[FieldRule, ...] = (
     rule("evaluation_method", "Evaluation method", rf"/Evaluation Method\s*\n{_LINE}", n.text),
     rule("emd_required", "EMD required", rf"/EMD Detail\s*\n/Required\s*\n{_YES_NO}", n.yes_no, critical=True,
          also=((rf"/EMD Detail\s*\n/Advisory Bank\s*\n[^\n]+\n(?:Schedule \d+\s*\n/\s*\n)?/?\s*"
-                rf"EMD Amount(?: \(In INR\))?\s*\n(?P<value>[\d,]+)", n.shown_means_yes),)),
+                rf"EMD Amount(?: \(In INR\))?\s*\n(?P<value>[\d,]+)", n.shown_means_yes),
+          # A page break (and its "2 / 8" footer) can put the amount on the next page: the bank line alone
+          # also means the EMD is required, because the bid form lists it only then.
+          (rf"/EMD Detail\s*\n/Advisory Bank\s*\n(?P<value>[^\n]+)", n.shown_means_yes))),
     # One amount only. Schedule-wise bids ("EMD Amount (In INR)" per schedule) are not reduced
     # to a single figure; they stay NOT_FOUND here and EMD shows as required.
     rule("emd_amount", "EMD amount (₹)", rf"/EMD Amount\s*\n(?P<value>[\d,]+)", n.rupees),
