@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import date
 
+from .india_states import normalise_states
 from .models import SellerProfile
 from .wording import day
 
@@ -28,4 +29,8 @@ def profile_warnings(profile: SellerProfile, today: date) -> list[str]:
     if profile.is_mse and profile.categories and not profile.own_made_products:
         out.append("You are an MSE but no product is marked as made by you. The EMD exemption applies "
                    "only to items you make yourself, so I will not assume it.")
+    unknown = normalise_states(profile.states)[1]
+    if unknown:
+        out.append(f"I don't recognise these as Indian states: {', '.join(unknown)}. They are ignored when I "
+                   "check where a bid delivers; please fix the spelling in your profile.")
     return out

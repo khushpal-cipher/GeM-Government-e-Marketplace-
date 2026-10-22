@@ -38,6 +38,11 @@ DEFAULT_CLAUSE_PATTERNS: tuple[ClausePattern, ...] = (
            r"\b(ISO\s?\d{3,5}|BIS|NABL|test reports?|type test)\b"),
     clause("emd", "Mentions EMD / bid security", r"\b(EMD|earnest money|bid security)\b"),
     clause("performance_security", "Performance security", r"\b(PSD|performance security|PBG)\b"),
+    # Handled by DeliveryStateRule, so no blocking_hint: one quote must not give two reviews.
+    clause("local_presence", "Local office or service centre needed",
+           r"\b(office|service cent(re|er)|branch|workshop|warehouse|showroom)\b[^.]{0,80}"
+           r"\b(located|registered|situated|present|available|established)\b[^.]{0,30}"
+           r"\b(in|at|within)\s+(the\s+)?(state|city|district|town)\b"),
     clause("penalty", "Penalty or extra charges", r"\b(penalty|liquidated damages|demurrage)\b"),
 )
 

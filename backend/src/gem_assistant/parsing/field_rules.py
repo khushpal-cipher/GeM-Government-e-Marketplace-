@@ -15,7 +15,7 @@ from . import normalizers as n
 
 # Bump whenever field rules, clause patterns or conflict checks change: stored bids analysed
 # by an older version are re-read from their kept PDF on the next start.
-PARSER_VERSION = 5  # 5: specification table rows
+PARSER_VERSION = 6  # 6: local_presence clause; 5: specification table rows
 # 4: estimated value, inspection, ePBG months, past performance, documents, consignees
 # 3: GeM's standard wording raises no flag; explaining EMD is no conflict
 

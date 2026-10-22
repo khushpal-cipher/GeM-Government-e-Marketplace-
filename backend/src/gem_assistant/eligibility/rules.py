@@ -11,8 +11,9 @@ from datetime import datetime
 from typing import Callable
 
 from ..domain.models import (
-    BidAnalysis, CorrigendumStatus, FieldStatus, RuleResult, SellerProfile, Verdict, item_match,
+    BidAnalysis, Consignee, CorrigendumStatus, FieldStatus, RuleResult, SellerProfile, Verdict, item_match,
 )
+from ..domain.india_states import normalise_states, states_for_pin
 from ..parsing.clause_patterns import DEFAULT_CLAUSE_PATTERNS
 
 _BLOCKING_CATEGORIES = {p.category for p in DEFAULT_CLAUSE_PATTERNS if p.blocking_hint}
@@ -229,6 +230,46 @@ class TurnoverExperienceRule:
         return RuleResult(rule=self.name, outcome=outcome, reason=reason, evidence=field.evidence)
 
 
+class DeliveryStateRule:
+    """Consignee states (from the PIN) against the states he delivers to. His states are a preference,
+    so this only ever asks for a look. Also owns the `local_presence` clause (docs/checks-design.md 3.1)."""
+
+    name = "delivery_state"
+
+    def evaluate(self, bid: BidAnalysis, profile: SellerProfile | None, now: datetime) -> list[RuleResult]:
+        results = [RuleResult(rule=self.name, outcome=Verdict.NEEDS_REVIEW, evidence=f.evidence,
+                              reason=f"The buyer asks for a local office: “{f.evidence.quote}”. "
+                                     "Check you have one there.")
+                   for f in bid.flags if f.category == "local_presence"]
+        mine = normalise_states(profile.states)[0] if profile else set()
+        if not mine:
+            return results
+        groups: dict[frozenset[str], list[Consignee]] = {}
+        masked: list[Consignee] = []
+        for row in bid.consignees:
+            found = frozenset(states_for_pin(row.pin))
+            if not found:
+                masked.append(row)
+            elif not found <= mine:
+                groups.setdefault(found, []).append(row)
+        for found, rows in groups.items():
+            first, units = rows[0], sum(r.quantity for r in rows)
+            names = " or ".join(sorted(found))
+            if found & mine:
+                reason = f"Delivery to PIN {first.pin} ({names}): check it is a state you deliver to."
+            else:
+                reason = (f"Delivery to {names} ({len(rows)} rows, {units} units): not one of the states you "
+                          "deliver to. Price the freight to the consignee, or skip.")
+            results.append(RuleResult(rule=self.name, outcome=Verdict.NEEDS_REVIEW, reason=reason,
+                                      evidence=first.evidence))
+        if masked:
+            places = ", ".join(dict.fromkeys(r.address.strip("* ") for r in masked))[:120]
+            results.append(RuleResult(rule=self.name, outcome=Verdict.NEEDS_REVIEW, evidence=masked[0].evidence,
+                                      reason=f"Delivery place masked by the buyer: {places} ({len(masked)} rows). "
+                                             "Check its state."))
+        return results
+
+
 class CategoryMatchRule:
     name = "category_match"
 
@@ -263,5 +304,6 @@ DEFAULT_RULES = (
     RestrictiveClauseRule(),
     EmdRule(),
     TurnoverExperienceRule(),
+    DeliveryStateRule(),
     CategoryMatchRule(),
 )
