@@ -20,10 +20,15 @@ Phases 0 and 1 are DONE (steps 0.1-0.3, 1.0-1.6). Keep BUILDING from progress.md
    BEFORE each step, tell me in one line if I must switch model ("Which model to use" in progress.md),
    and wait for me if it's an Opus step (2.5a is the next one; 2.1-2.4 are Sonnet).
 3. Commit only on this computer. Never push, never open a PR: my friend is changing the GitHub repo.
-4. The app and you never log in to GeM, never solve or bypass a captcha, never submit anything on GeM.
-   Public GeM pages go only through the app's SafeFetcher (contact email is set). My Chrome may be
-   logged in to GeM (I logged in myself): you may LOOK there read-only if a step needs my account;
-   never click submit/accept/upload/pay/"+ New", never copy names, phones, PAN or bank data.
+4. The APP never logs in to GeM, never solves a captcha, never submits anything. Public pages go only
+   through the app's SafeFetcher (contact email is set). I have no time to fetch things for you: **when a
+   step needs something from my GeM account or a page, get it yourself from my Chrome** (Claude in Chrome
+   tools; I am already logged in; open a new tab, don't touch my other tabs). Do not ask me to look, paste
+   or click if you can look. Rules there: read-only, human speed, open pages/tabs/menus/"view" windows
+   only; never click submit/accept/upload/pay/download/"+ New"/anything that changes data; never log in,
+   enter OTP or solve a captcha (if GeM asks, stop and tell me); never copy names, phones, PAN, bank data
+   into the repo or chat (write what the page contains in general terms, save only the page layout/labels).
+   Write what you saw in docs/live-tour.md or docs/02-RECON-FINDINGS.md with the date.
 5. Ask me only about product decisions, money or accounts (D3-D8 in progress.md; use the default if
    I haven't answered). Explain things to me in simple words.
 6. Build only in Claude Code. Keep progress.md accurate (done / next / not verified, dates, hashes).
