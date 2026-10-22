@@ -15,7 +15,7 @@ from . import normalizers as n
 
 # Bump whenever field rules, clause patterns or conflict checks change: stored bids analysed
 # by an older version are re-read from their kept PDF on the next start.
-PARSER_VERSION = 7  # 7: EMD over a page break; 6: local_presence clause; 5: specification table rows
+PARSER_VERSION = 8  # 8: PAC; 7: EMD over a page break; 6: local_presence clause; 5: specification table rows
 # 4: estimated value, inspection, ePBG months, past performance, documents, consignees
 # 3: GeM's standard wording raises no flag; explaining EMD is no conflict
 
@@ -117,6 +117,7 @@ DEFAULT_FIELD_RULES: tuple[FieldRule, ...] = (
          rf"Clarifications during technical evaluation\s*\n(?P<value>\d+) Days", n.integer),
     rule("documents_required", "Documents required from seller",
          rf"/Document required{_}from seller\s*\n(?P<value>[^\n]+(?:\n(?![*/?])[^\n]+)*)", n.text),
+    rule("pac_mode", "PAC (fixed make) procurement", rf"(?P<value>procurement is based on PAC\s+mode)", n.text),
     rule("mii_preference", "MII purchase preference", rf"/\s*MII Purchase Preference\s*\n{_YES_NO}", n.yes_no),
     rule("mii_compliance", "MII compliance required", rf"/\s*MII Compliance\s*\n{_YES_NO}", n.yes_no),
     rule("mse_preference", "MSE purchase preference", rf"/\s*MSE Purchase Preference\s*\n{_YES_NO}", n.yes_no),

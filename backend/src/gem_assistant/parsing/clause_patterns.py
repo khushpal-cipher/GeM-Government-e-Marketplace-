@@ -46,6 +46,9 @@ DEFAULT_CLAUSE_PATTERNS: tuple[ClausePattern, ...] = (
     clause("emd_state_limit", "EMD exemption limited to sellers of a state",
            r"\b(EMD|earnest money)\b[^.]{0,120}\b(exempt\w*|waive\w*)\b[^.]{0,120}\b(only|limited)\b[^.]{0,80}"
            r"\b(state|local)\b"),
+    # Reviewed by PacRule only (no blocking_hint). The bid form's own "based on PAC mode" line is the
+    # `pac_mode` field, because the form lies outside the buyer section this scans.
+    clause("pac", "PAC bid: one named make", r"\bPAC\s+(mode|bidding)\b|\bproprietary article certificate\b"),
     clause("penalty", "Penalty or extra charges", r"\b(penalty|liquidated damages|demurrage)\b"),
 )
 
@@ -56,6 +59,8 @@ GEM_STANDARD_WORDING = re.compile(
     r"liable to be rejected if they don'?t upload any of the certificates"
     r"|date of constitution\s*/\s*incorporation of the bidder is less than"
     r"|documentary evidence in the form of certified audited balance sheets"
+    r"|except in case of\s*single bid / proprietary article certificate"
+    r"|such PAC may not be required"
     r"|any one of the following documents may be considered as valid proof",
     re.IGNORECASE)
 

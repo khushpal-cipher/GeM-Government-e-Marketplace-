@@ -384,6 +384,22 @@ class OemRule:
         return []
 
 
+class PacRule:
+    """A PAC (Proprietary Article Certificate) bid names one make. His profile has no list of makes he is
+    authorised for, so it is a look, never a block."""
+
+    name = "pac"
+
+    def evaluate(self, bid: BidAnalysis, profile: SellerProfile | None, now: datetime) -> list[RuleResult]:
+        evidence = [f.evidence for f in bid.flags if f.category == "pac"]
+        if bid.found_value("pac_mode"):
+            evidence.append(bid.field("pac_mode").evidence)
+        return [RuleResult(rule=self.name, outcome=Verdict.NEEDS_REVIEW, evidence=ev,
+                           reason=f"This is a PAC bid: only the named make can be offered (page {ev.page}: “{ev.quote}”). "
+                                  "Bid only if you sell that make, with the maker's authorisation.")
+                for ev in evidence]
+
+
 class CategoryMatchRule:
     name = "category_match"
 
@@ -421,5 +437,6 @@ DEFAULT_RULES = (
     DeliveryStateRule(),
     CertificateRule(),
     OemRule(),
+    PacRule(),
     CategoryMatchRule(),
 )
