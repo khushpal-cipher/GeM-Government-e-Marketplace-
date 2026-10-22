@@ -8,6 +8,7 @@ terms (`read_terms=True`, step 2.5b) is also only on request; it uses the files 
 from __future__ import annotations
 
 from ..domain.checklist import Checklist, UnreadFile, add_ai_terms, build_checklist
+from ..domain.models import PageText
 from ..domain.ports import DocumentStore, ProfileReader, TextExtractor
 from .atc_reading_service import AtcReadingService
 from .attachment_service import Attachment, AttachmentService
@@ -49,5 +50,7 @@ class ChecklistService:
             pdf = self._documents.load(bid.sha256)
             if pdf is not None:
                 atc_pages = [p for a in files if a.kind == "atc" and a.status == "read" for p in a.pages]
-                checklist = add_ai_terms(checklist, self._terms.read(self._extractor.extract(pdf), atc_pages), profile)
+                amended = [PageText(number=1, text=bid.corrigendum.text)] if bid.corrigendum.text else []
+                checklist = add_ai_terms(
+                    checklist, self._terms.read(self._extractor.extract(pdf), atc_pages, amended), profile)
         return checklist

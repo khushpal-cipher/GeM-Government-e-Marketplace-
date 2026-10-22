@@ -1,0 +1,157 @@
+ 
+                                <div class="border block">
+                                    <div class="block_bid_no">
+                                        <p> Corrigendum Details</p>
+                                    </div>
+                                    <div class="clearfix" style="height:3px"></div>
+                                    <div class="col-md-12 col-xs-12">
+                                        <div class="well"><div class="col-block"> <span id=span_4669122><strong >Modified On: </strong><span>2026-10-12 17:31:21</span></span></div><div class="col-block" style="width:48% !important;">Bid extended to <strong>2026-10-22 11:00:00</strong></div><div class="clearfix"></div></div><div class="well"><div class="col-block"><strong>&nbsp;</strong><span></span></div><div class="col-block" style="width:48%;">Bid Opening Date: <strong>2026-10-23 11:00:00</strong></div><div class="clearfix"></div></div>                                        <div class="clearfix"></div>
+                                    </div>
+
+
+                                    <div class="clearfix"></div>
+                                </div>
+                                <!-- Modal -->
+                                <div id="myModal12" class="modal fade" role="dialog">
+                                    <div class="modal-dialog">
+
+                                        <!-- Modal content-->
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close1"><span aria-hidden="true">&times;</span></button>
+                                                <h4 class="modal-title" id="myModalLabel"><b>View(s)</b></h4>
+                                            </div>
+                                            <div class="modal-body" id="chart_dt22">
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div id="myModalNew" class="modal fade" role="dialog">
+                                    <div class="modal-dialog">
+
+                                        <!-- Modal content-->
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" onclick="close_model()" data-dismiss="modal11" aria-label="Close1"><span aria-hidden="true">&times;</span></button>                                                
+                                                <h4 class="modal-title" id="myModalLabel"><b>View(s)</b></h4>
+                                            </div>
+                                            <div class="modal-body" id="chartdt22">
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                
+
+                                <script type="text/javascript">
+                         
+                            $('body').on('click', '.view_tc', function (e) {
+                                                  var bidID = '9930606';
+                                                    var iid = $(this).attr('data-id');
+                                                    e.preventDefault();
+                                                    showLoader();
+                                                    var post_array = {'csrf_bd_gem_nk': '128d101ddeea9ffa56ef9b7a0280b2b9'};
+
+                                                    $.ajax({
+                                                        url: "https://bidplus.gem.gov.in/bidding/bid/getPublicTchtml/" + iid,
+                                                        async: false,
+                                                        type: "POST",
+                                                        data: post_array,
+                                                        dataType: "json",
+                                                        success: function (data) {
+                                                            hideLoader();
+                                                            var newHeader = $('#span_'+iid).html();
+                                                            $('#atcBody').html('');
+                                                            $('#myModal12').modal('show');
+                                                            if (data.bcm_txt != '')
+                                                            {
+                                                                
+                                                                $('#atcBody').html(data.bcm_txt).append('<p class="pull-right"><a onclick="showOriginal('+bidID+');" href="#">Back</a></p><div class="clearfix"></div>');
+                                                                $('#myModal5 #myModalLabel').html(newHeader);
+                                                                 $('#atcBody').css('overflow-y','auto','important');
+                                                                 $('#atcBody').css('height','500px','important');
+
+                                                            } else {
+                                                                $('#chart_dt22').html("<strong>Not found.</strong>");
+                                                                
+                                                            }
+                                                        }
+                                                    });
+                                                });
+                                                
+                                                
+                                                function showOriginal(bidID)
+                                                {
+                                                   //  e.preventDefault();
+        var dataBid = bidID;
+         $.ajax({
+                                    url: "https://bidplus.gem.gov.in/bidding/bid/viewCorrigendum/" + dataBid,
+                                    type: "POST",
+                                    dataType: "html",
+                                    data: {'csrf_bd_gem_nk': '128d101ddeea9ffa56ef9b7a0280b2b9'},
+
+                                    success: function (data) {
+                                        if(data==0)
+                                        {
+                                            bootbox.alert('No corrigendum found for this bid.');
+                                        }
+                                        else
+                                        {
+                                             $('#myModal5').modal('show');
+                                              $('#myModal5 #myModalLabel').html('<strong>Corrigendum</strong>');
+
+                                             $('#atcBody').html(data);
+                                        }
+                                       
+                                    }
+                                });
+                                                }
+                              
+function isNumber(evt) {
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        return false;
+    }
+    return true;
+}
+$('body').on('click', '.view_tc_new', function (e) {
+    var bidID = '9930606';
+      var iid = $(this).attr('data-id');
+      e.preventDefault();
+      showLoader();
+      var post_array = {'csrf_bd_gem_nk': '128d101ddeea9ffa56ef9b7a0280b2b9'};
+
+      $.ajax({
+          url: "https://bidplus.gem.gov.in/bidding/bid/getDraftPublicTchtml/" + iid,
+          async: false,
+          type: "POST",
+          data: post_array,
+          dataType: "json",
+          success: function (data) {
+              hideLoader();
+              var newHeader = $('#span_'+iid).html();
+              $('#chartdt22').html('');
+              $('#myModalNew').modal('show');
+              if (data.bcm_txt != '')
+              {
+                  $('#chartdt22').html(data.bcm_txt);
+
+              } else {
+                  $('#chartdt22').html("<strong>Not found.</strong>");
+
+              }
+          }
+      });
+  });
+function close_model(){
+    $('#myModalNew').modal('hide');
+}
+
+                                </script>
+ 

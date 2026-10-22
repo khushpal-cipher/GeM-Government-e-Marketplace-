@@ -34,8 +34,9 @@ class AtcReadingService:
         self._clock = clock
         self._daily_limit = daily_limit
 
-    def read(self, bid_pages: Sequence[PageText], atc_file_pages: Sequence[PageText] = ()) -> AtcReading:
-        prepared = atc_reading.prepare(bid_pages, atc_file_pages)
+    def read(self, bid_pages: Sequence[PageText], atc_file_pages: Sequence[PageText] = (),
+             corrigendum_pages: Sequence[PageText] = ()) -> AtcReading:
+        prepared = atc_reading.prepare(bid_pages, atc_file_pages, corrigendum_pages)
         if not prepared.pages:
             return AtcReading("read", notes=["This bid has no buyer-added terms for the AI to read."])
         key = hashlib.sha256(f"{atc_reading.PROMPT_VERSION}|{self._model.model}|{prepared.text}".encode()).hexdigest()
