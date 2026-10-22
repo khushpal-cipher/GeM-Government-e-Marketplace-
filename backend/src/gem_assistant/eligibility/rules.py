@@ -6,12 +6,13 @@ write a new class with `name` and `evaluate()` and add it to DEFAULT_RULES.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Callable
 
 from ..domain.models import (
-    BidAnalysis, Consignee, CorrigendumStatus, FieldStatus, RuleResult, SellerProfile, Verdict, item_match,
+    BidAnalysis, Consignee, Evidence, CorrigendumStatus, FieldStatus, RuleResult, SellerProfile, Verdict, item_match,
 )
 from ..domain.india_states import normalise_states, states_for_pin
 from ..parsing.clause_patterns import DEFAULT_CLAUSE_PATTERNS
@@ -270,6 +271,52 @@ class DeliveryStateRule:
         return results
 
 
+_STANDARD = re.compile(r"\b(ISO(?:\s*/\s*IEC)?\s*(\d{3,5})(?::\d{4})?|I\s?S\s*:?\s*(\d{2,5})|(BIS)|(NABL))\b",
+                       re.IGNORECASE)
+
+
+def standards_in(text: str) -> list[str]:
+    """Named standards in `text`, by number, in order: 'ISO/IEC 27001:2013' -> 'ISO 27001'. A bare 'ISO' is none."""
+    found = ((f"ISO {m[2]}" if m[2] else f"IS {m[3]}" if m[3] else (m[4] or m[5]).upper()) for m in _STANDARD.finditer(text))
+    return list(dict.fromkeys(found))
+
+
+class CertificateRule:
+    """Named standards the bid asks for, against his certificates, matched by number (a bare "ISO" in the
+    profile covers none). The profile list is free text he may not have finished, so never a block."""
+
+    name = "certificates"
+
+    def evaluate(self, bid: BidAnalysis, profile: SellerProfile | None, now: datetime) -> list[RuleResult]:
+        if profile is None:
+            return []
+        asked: dict[str, Evidence] = {}
+        for flag in bid.flags:
+            if flag.category == "certification":
+                for s in standards_in(flag.evidence.quote):
+                    asked.setdefault(s, flag.evidence)
+        item = bid.field("item_category")
+        if item and item.value and item_match(item.value, profile.oem_products, profile.ignore_words)[0]:
+            for s in standards_in(item.value):  # a product standard is held by its maker
+                if s.startswith("IS "):
+                    asked.setdefault(s, item.evidence)
+        have = {s for c in profile.certifications for s in standards_in(c)}
+        missing = {s: ev for s, ev in asked.items() if s not in have}
+        if not missing:
+            return []
+        shown = lambda s: f"{s} (page {missing[s].page}: “{missing[s].quote}”)"
+        if not profile.certifications:
+            quotes = dict.fromkeys(f"page {e.page}: “{e.quote}”" for e in missing.values())
+            return [RuleResult(rule=self.name, outcome=Verdict.NEEDS_REVIEW, evidence=next(iter(missing.values())),
+                               reason=f"The bid asks for {', '.join(missing)} ({'; '.join(quotes)}). "
+                                      "Add your certificates to the profile to check them.")]
+        listed = ", ".join(profile.certifications)
+        return [RuleResult(rule=self.name, outcome=Verdict.NEEDS_REVIEW, evidence=ev,
+                           reason=f"The bid asks for {shown(s)}; your profile lists {listed}. "
+                                  "Attach it if you have it, or skip.")
+                for s, ev in missing.items()]
+
+
 class CategoryMatchRule:
     name = "category_match"
 
@@ -305,5 +352,6 @@ DEFAULT_RULES = (
     EmdRule(),
     TurnoverExperienceRule(),
     DeliveryStateRule(),
+    CertificateRule(),
     CategoryMatchRule(),
 )
