@@ -33,10 +33,10 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 
 ## Continue from here (written 22 Oct 2026)
 
-State: `cd backend && uv run pytest -q` → **651 passed** (23 Oct 2026, after 4.4). Phases 0, 1 and 3 and steps 2.1-2.7 are
+State: `cd backend && uv run pytest -q` → **655 passed** (23 Oct 2026, after 5.1). Phases 0, 1 and 3 and steps 2.1-2.7 are
 done: about 27 of 45 plan steps (~60%). D1 (Groq key) and D2 (contact email) are set; D4 = yes; D9 default: Phase 3 checks never block. Build only in Claude Code.
 
-**Next exact action:** Phase 5, step 5.1 (bid alerts in the Phase 1 alerts list; Sonnet · Medium; read Phase 5 in `docs/build-plan.md` first). 4.6 (PBP notice alert) only if the notice list is public: recon found none, so drop it unless asked. Left from 4.4: scheduler is off unless `GEM_SCHEDULE_TIMES` is set; only runs while the app is open.
+**Next exact action:** step 5.2 (outbound alerts, Mac notification first; D3: check its default in `docs/build-plan.md` Decisions; Sonnet · Medium) or 5.3 (CSV export, Haiku · Low). Left from 5.1: alerts cannot tell if he already listed the product; not seen in a browser.
 Left from 4.3: only the latest run counts as "new"; no New mark on the analysed-bids list.
 Left from 4.2 rest: `advance_search` / `advance_lists` exist on `PlaywrightListingSource` but are not on any API route, screen or discovery run, and were never run on live GeM (first live run must save a real `/search-bids` answer as a fixture and check the real page works with our script stubs).
 Left from 4.2: no "service" bid type, no screen for the filters.
