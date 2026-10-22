@@ -180,7 +180,9 @@ export async function renderToday(container, _params, api) {
 
   container.append(el("h1", {}, "Daily GeM check"),
     el("div", { class: "subtle" }, "Log in to GeM yourself, copy what is waiting for you, paste it here. I never log in."),
-    form, invitedCard(api), el("h2", {}, "Waiting for you"), list);
+    form, invitedCard(api), el("h2", {}, "Waiting for you"), list,
+    el("p", { class: "subtle" }, "Download for Excel: ",
+      el("a", { href: "/api/export/bids.csv" }, "bids"), " · ", el("a", { href: "/api/export/orders.csv" }, "orders")));
   await refresh();
 }
 

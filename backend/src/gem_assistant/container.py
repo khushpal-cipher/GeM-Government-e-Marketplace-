@@ -49,6 +49,7 @@ from .services.invited_bid_service import InvitedBidService
 from .services.bid_fetch_service import BidFetchService
 from .services.bid_import_service import BidImportService
 from .services.bid_alerts import BidAlerts
+from .services.export_service import ExportService
 from .services.bid_query_service import BidQueryService
 from .services.chat_service import ChatModel
 from .services.attachment_service import MAX_PAGES, AttachmentService
@@ -78,6 +79,7 @@ class Container:
     chat_model: ChatModel
     alerts: AlertService
     bid_alerts: BidAlerts
+    export: ExportService
     invited_bids: InvitedBidService
     shortfall: ShortfallService
     categories: CategoryService
@@ -197,6 +199,9 @@ class Container:
         model = chat_model or GroqChatModel(lambda: _groq_key(settings), settings.groq_model)
         terms = AtcReadingService(model, SqliteAtcReadingRepository(db), clock)
 
+        orders = OrderService(SqliteOrderRepository(db), profile_repo, clock)
+        checklists = ChecklistService(bid_query, documents, attachments, profile_repo, rejections,
+                                      PypdfTextExtractor(settings.max_pdf_pages), terms)
         return cls(
             settings=settings,
             profiles=ProfileService(profile_repo, profile_repo, clock),
@@ -216,11 +221,11 @@ class Container:
             bid_alerts=BidAlerts(bid_query, discovery, clock),
             shortfall=ShortfallService(profile_repo, clock),
             categories=CategoryService(fetcher),
-            orders=OrderService(SqliteOrderRepository(db), profile_repo, clock),
+            orders=orders,
             rejections=rejections,
             attachments=attachments,
-            checklists=ChecklistService(bid_query, documents, attachments, profile_repo, rejections,
-                                        PypdfTextExtractor(settings.max_pdf_pages), terms),
+            checklists=checklists,
+            export=ExportService(bid_query, checklists, orders),
             chat_model=model,
             buyer_flags=SqliteBuyerFlagRepository(db),
             clock=clock,

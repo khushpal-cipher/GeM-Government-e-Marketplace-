@@ -261,3 +261,19 @@ def test_search_preferences_round_trip(client):
     saved = client.get("/api/profile").json()
     assert (saved["ignore_words"], saved["bid_order"]) == (["refilling", "AMC"], "closing")
     assert client.put("/api/profile", json={**profile, "bid_order": "random"}).status_code == 422
+
+
+def test_csv_export_of_bids_and_orders(client):
+    _import(client)
+    response = client.get("/api/export/bids.csv")
+    assert response.status_code == 200 and "attachment" in response.headers["content-disposition"]
+    lines = response.text.lstrip("﻿").splitlines()
+    assert lines[0].startswith("Bid number,Items,Buyer,Closes,Verdict")
+    assert lines[1].startswith("GEM/2025/B/6819518,") and "NEEDS_REVIEW" in lines[1]
+    assert client.get("/api/export/orders.csv").text.lstrip("﻿").startswith("Contract,Date,Value (Rs)")
+
+
+def test_csv_cells_cannot_run_as_formulas():
+    from gem_assistant.services.export_service import _csv
+    assert "'=HYPERLINK" in _csv(["a"], [['=HYPERLINK("http://x")']])
+    assert "'+1" in _csv(["a"], [["+1"]])
