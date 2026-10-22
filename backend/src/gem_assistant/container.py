@@ -49,6 +49,7 @@ from .services.bid_import_service import BidImportService
 from .services.bid_query_service import BidQueryService
 from .services.chat_service import ChatModel
 from .services.attachment_service import MAX_PAGES, AttachmentService
+from .services.checklist_service import ChecklistService
 from .services.corpus_service import CorpusService
 from .services.discovery_service import DiscoveryService
 from .services.order_service import OrderService
@@ -76,6 +77,7 @@ class Container:
     orders: OrderService
     rejections: RejectionService
     attachments: AttachmentService
+    checklists: ChecklistService
 
     @property
     def rejection_service(self) -> RejectionService:
@@ -180,11 +182,15 @@ class Container:
             max_pages=settings.discovery.max_pages_per_keyword,
         )
 
+        bid_query = BidQueryService(bid_repo, profile_repo, EligibilityEvaluator(), clock)
+        rejections = RejectionService(SqliteRejectionRepository(db), profile_repo)
+        attachments = AttachmentService(fetcher, documents, PypdfTextExtractor(MAX_PAGES))
+
         return cls(
             settings=settings,
             profiles=ProfileService(profile_repo, profile_repo, clock),
             bid_import=bid_import,
-            bid_query=BidQueryService(bid_repo, profile_repo, EligibilityEvaluator(), clock),
+            bid_query=bid_query,
             safety=SafetyService(breaker, budget, request_log, settings.safety, fetcher, settings.contact_file,
                                  settings.discovery.min_minutes_between_runs),
             fetcher=fetcher,
@@ -198,8 +204,9 @@ class Container:
             alerts=AlertService(SqliteAlertRepository(db), clock),
             shortfall=ShortfallService(profile_repo, clock),
             orders=OrderService(SqliteOrderRepository(db), profile_repo, clock),
-            rejections=RejectionService(SqliteRejectionRepository(db), profile_repo),
-            attachments=AttachmentService(fetcher, documents, PypdfTextExtractor(MAX_PAGES)),
+            rejections=rejections,
+            attachments=attachments,
+            checklists=ChecklistService(bid_query, documents, attachments, profile_repo, rejections),
             chat_model=chat_model or GroqChatModel(lambda: _groq_key(settings), settings.groq_model),
         )
 

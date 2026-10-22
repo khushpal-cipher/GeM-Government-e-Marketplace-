@@ -47,6 +47,15 @@ function bidCard(card) {
         el("span", { class: "page-ref" }, ` · page ${f.page}`))))) : null);
 }
 
+function checklistCard(card) {
+  return el("div", { class: "card" }, el("strong", {}, "Documents this bid asks for"),
+    el("ul", { class: "reasons" }, card.items.map((i) => el("li", {},
+      el("strong", {}, i.name), ` (${i.source}, page ${i.page ?? "?"}): `, i.profile_note,
+      i.past_rejection ? el("div", { class: "hint" }, i.past_rejection) : null))),
+    card.unread_files.map((f) => el("div", { class: "hint" }, `${f.kind}: ${f.note}`)),
+    el("div", { class: "hint" }, card.upload_rules));
+}
+
 function listingsCard(card) {
   return el("div", { class: "table-wrap" }, el("table", {},
     el("thead", {}, el("tr", {}, ...["Bid no.", "Items", "Your items", "Closes", "Checked"].map((h) => el("th", {}, h)))),
@@ -133,6 +142,7 @@ function renderCard(card, api) {
   switch (card.type) {
     case "bid_list": return bidListCard(card);
     case "bid": return bidCard(card);
+    case "checklist": return checklistCard(card);
     case "listings": return listingsCard(card);
     case "profile_proposal": return proposalCard(card, api);
     case "search": return searchCard(api);

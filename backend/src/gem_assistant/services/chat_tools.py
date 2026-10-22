@@ -12,7 +12,7 @@ there is no tool to reset the safety stop or change the contact email.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from datetime import date
 from typing import TYPE_CHECKING, Any
 
@@ -71,6 +71,10 @@ DEFINITIONS = [
     _tool("list_bids", "Bids already downloaded and checked, with the verdict for each."),
     _tool("get_bid", "One checked bid in full: verdict, every reason with its page and quote, and the "
                      "values read from the document.", {"bid_id": {"type": "integer"}}, ("bid_id",)),
+    _tool("bid_checklist", "The documents a checked bid asks him to upload, each with page and quote, which his "
+                           "profile covers, and past rejections for the same document. read_files=true also "
+                           "downloads the files the bid links to (up to 3 GeM requests): only when he asks.",
+          {"bid_id": {"type": "integer"}, "read_files": {"type": "boolean"}}, ("bid_id",)),
     _tool("add_bid_from_link", "Download and check one bid from its GeM link "
                                "(https://bidplus.gem.gov.in/showbidDocument/<number>).",
           {"link": {"type": "string"}}, ("link",)),
@@ -210,6 +214,16 @@ class ChatTools:
             "conflicting": [f.label for f in bid.fields if f.status is FieldStatus.CONFLICTING],
         }
         return ToolResult(for_model, card)
+
+    def _bid_checklist(self, bid_id: int, read_files: bool = False) -> ToolResult:
+        try:
+            checklist = self._c.checklists.for_bid(bid_id, read_files)
+        except SafetyError as error:
+            return ToolResult({"error": f"Fetching is stopped: {error}"}, {"type": "safety_stop", "reason": str(error)})
+        if checklist is None:
+            return ToolResult({"error": f"No checked bid with id {bid_id}."})
+        data = asdict(checklist)
+        return ToolResult(data, {"type": "checklist", "bid_id": bid_id, **data})
 
     def _add_bid_from_link(self, link: str) -> ToolResult:
         try:

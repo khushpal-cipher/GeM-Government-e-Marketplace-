@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from dataclasses import asdict
+
 from fastapi import APIRouter, HTTPException, Request, UploadFile
 from pydantic import BaseModel
 
@@ -23,6 +25,22 @@ def get_bid(bid_id: int, request: Request) -> BidDetailOut:
     if item is None:
         raise HTTPException(status_code=404, detail="Bid not found")
     return BidDetailOut.from_assessed(item)
+
+
+class ChecklistIn(BaseModel):
+    read_files: bool = False
+
+
+@router.post("/{bid_id}/checklist")
+def bid_checklist(bid_id: int, body: ChecklistIn, request: Request) -> dict:
+    """Documents this bid asks for. `read_files` also downloads the files the bid links to (<= 3 requests)."""
+    try:
+        checklist = request.app.state.container.checklists.for_bid(bid_id, body.read_files)
+    except SafetyError as error:  # breaker open, blocked, budget used up
+        raise HTTPException(status_code=409, detail=str(error)) from error
+    if checklist is None:
+        raise HTTPException(status_code=404, detail="Bid not found")
+    return asdict(checklist)
 
 
 @router.post("/import", response_model=ImportOut)
