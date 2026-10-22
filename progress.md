@@ -8,6 +8,7 @@ Details live in `docs/HANDOFF.md`; this file only says what is done, what is nex
 - Commit only on this computer. **Never push or open a PR**: a friend is changing the GitHub repo.
 - Don't redo work listed under "Done".
 - Explain things in simple words.
+- **Build only in Claude Code** (owner, 22 Oct 2026). No Kimi / Gemini / other tools for now.
 - **Update this file before the session ends**: move finished items to "Done", rewrite "Continue from here",
   add the date. Then commit it locally.
 - When the owner types **"give me a prompt"**: update this file and `docs/NEXT_SESSION_PROMPT.md`,
@@ -54,7 +55,7 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 
 State: `cd backend && uv run pytest -q` → **490 passed** (20 Oct 2026, after 1.5).
 
-**Next exact action:** Phase 1 is done. Next: ask the owner for **D2 (contact email)**, then **0.2** (corpus of 30 real bid PDFs) and **0.3** recon (Opus · High); without D2, start **2.1** (Sonnet · High) on the 4 existing fixtures.
+**Next exact action:** Phase 1 is done. D2 is set. Next: **0.2** (corpus of 30 real bid PDFs) and **0.3** recon (Opus · High); without D2, start **2.1** (Sonnet · High) on the 4 existing fixtures.
 
 ## Build plan (FINAL, written 20 Oct 2026, approved by the owner 20 Oct 2026, nothing started)
 
@@ -103,7 +104,7 @@ Annotation per step (owner's rule): `→ Model · Effort · Why`.
 | # | Question | Default |
 |---|---|---|
 | D1 | Groq API key | **Done 20 Oct 2026**: in `~/Library/Application Support/GeM Assistant/.env`, accepted by Groq |
-| D2 | Which email GeM sees on every request (the app won't contact GeM without one) | **Still needed** for 0.2, 0.3, 4.x, 6.x; Phase 1 needs none |
+| D2 | Which email GeM sees on every request | **Done 22 Oct 2026**: saved in the data folder's `contact-email.txt` (not in the repo) |
 | D3 | How alerts reach him: in-app + Mac notification (free) / email (free, Gmail "app password") / WhatsApp (paid) | In-app + Mac notification; email next; WhatsApp only if he asks and pays |
 | D4 | Will he type the key specs of his main products (e.g. "A4, 80 GSM") for exact-spec checks? | Yes, up to 5 products; without it 3.5 is skipped |
 | D5 | One seller (his father) or several (a pilot)? | One seller until the pilot |
