@@ -44,3 +44,16 @@ def test_no_matching_product_means_all_fill_in_and_unknown_bid_is_none():
 
 def test_bid_without_spec_table_says_so():
     assert _service([], [PAPER]).sheet(1)["sheet"] is None
+
+
+def test_make_model_hsn_list_one_row_per_boq_item_filled_from_his_product():
+    bid = SimpleNamespace(bid_number="GEM/2026/B/9781965", specifications=[],
+                          found_value=lambda n: "LOUNGE , OFFICE , A4 Copier Paper" if n == "item_category" else None)
+    paper = ProductSpec(name="A4 Copier Paper", specs={"Make": "JK", "model": "Excel", "HSN": "4802"})
+    svc = ComplianceService(SimpleNamespace(get=lambda i: SimpleNamespace(bid=bid)),
+                            SimpleNamespace(get=lambda: SimpleNamespace(products=[paper], ignore_words=[])))
+    result = svc.make_model_hsn(1)
+    assert [r["item"] for r in result["rows"]] == ["LOUNGE", "OFFICE", "A4 Copier Paper"]
+    assert result["rows"][2] == {"item": "A4 Copier Paper", "make": "JK", "model": "Excel", "hsn": "4802"}
+    assert result["rows"][0]["make"] is None and result["problems"] == []
+    assert result["sheet"].startswith(DRAFT_NOTE) and "[fill in]" in result["sheet"]

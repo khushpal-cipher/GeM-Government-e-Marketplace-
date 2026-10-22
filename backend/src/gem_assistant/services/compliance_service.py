@@ -12,6 +12,30 @@ class ComplianceService:
     def __init__(self, bid_query, profiles):
         self._bids, self._profiles = bid_query, profiles
 
+    def make_model_hsn(self, bid_id: int) -> dict | None:
+        """Step 7.3: one row per item of a bid (a BOQ bid has no catalogue, so make, model and HSN go on the
+        purchase order). Filled from the Make / Model / HSN specs he typed for a matching product, else blank."""
+        item = self._bids.get(bid_id)
+        if item is None:
+            return None
+        bid, profile = item.bid, self._profiles.get()
+        names = [n.strip() for n in (bid.found_value("item_category") or "").split(",") if n.strip()]
+        if not names:
+            return {"sheet": None, "message": "No item names were read from this bid."}
+        rows = []
+        for name in names:
+            product = next((p for p in (profile.products if profile else [])
+                            if item_match(name, [p.name], profile.ignore_words)[0]), None)
+            have = {_norm(k): v for k, v in (product.specs if product else {}).items()}
+            rows.append({"item": name, **{f: have.get(f) for f in ("make", "model", "hsn")}})
+        lines = [DRAFT_NOTE, "", f"Make / Model / HSN, Bid No. {bid.bid_number or '[bid number]'}", "",
+                 "Item | Make | Model | HSN"]
+        lines += [f"{r['item']} | {r['make'] or '[fill in]'} | {r['model'] or '[fill in]'} | {r['hsn'] or '[fill in]'}"
+                  for r in rows]
+        sheet = "\n".join(lines)
+        return {"rows": rows, "sheet": sheet, "problems": check_draft(sheet),
+                "note": "Items are the bid's item names; fill make, model and HSN from your own papers."}
+
     def sheet(self, bid_id: int) -> dict | None:
         item = self._bids.get(bid_id)
         if item is None:

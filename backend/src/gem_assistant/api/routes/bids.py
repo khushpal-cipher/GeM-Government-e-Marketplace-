@@ -68,6 +68,14 @@ def compliance_sheet(bid_id: int, request: Request) -> dict:
     return result
 
 
+@router.get("/{bid_id}/make-model-hsn")
+def make_model_hsn(bid_id: int, request: Request) -> dict:
+    result = request.app.state.container.compliance.make_model_hsn(bid_id)
+    if result is None:
+        raise HTTPException(status_code=404, detail="Bid not found")
+    return result
+
+
 class BuyerFlagIn(BaseModel):
     flag: Literal["none", "orange", "red", "unknown"]  # "unknown" clears the note
 
