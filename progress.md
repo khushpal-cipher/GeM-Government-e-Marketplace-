@@ -33,10 +33,12 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 
 ## Continue from here (written 22 Oct 2026)
 
-State: `cd backend && uv run pytest -q` → **553 passed** (22 Oct 2026, after 2.7). Phases 0 and 1 and steps 2.1-2.7 are
-done: about 17 of 45 plan steps (~33%). D1 (Groq key) and D2 (contact email) are set. Build only in Claude Code.
+State: `cd backend && uv run pytest -q` → **553 passed** (22 Oct 2026, after 3.0). Phases 0 and 1, steps 2.1-2.7 and 3.0 are
+done: about 18 of 45 plan steps (~40%). D1 (Groq key) and D2 (contact email) are set; D9 default: Phase 3 checks never block. Build only in Claude Code.
 
-**Next exact action:** read `docs/build-plan.md` Phase 3: step **3.0** (**switch to Opus · High**): write down each rule's inputs, BLOCK vs REVIEW thresholds and wording before coding; re-verify 1.1 and 2.1 first.
+**Next exact action:** step **3.1** delivery state (Sonnet · Medium), built exactly to `docs/checks-design.md` §3.1: PIN prefix → state set,
+profile state aliases, new clause pattern `local_presence` (bump `PARSER_VERSION`), table tests on the fixtures' real PINs.
+Then 3.2, 3.3, 3.4 (starts with the `emd_required` footer fix on a copy of corpus bid 9748067), 3.7, 3.8; 3.9 before 3.5; 3.6 needs an item-wise bid first.
 Left from 2.7: the buyer flag has no screen or chat card yet and no check uses it.
 Left from 2.6: the corrigendum is summarised by the AI only when he asks (`read_terms`); a new deadline is not read by code into
 DeadlineRule (the quote is only shown); changed-document corrigenda (`showcorrigendumpdf`) not fetched; not run on real Groq.
