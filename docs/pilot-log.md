@@ -1,4 +1,4 @@
-# Pilot log (step 8.2): 23 Oct – 5 Nov 2026
+# Pilot log (step 8.2): 23 – 26 Oct 2026 (shortened from two weeks by the owner)
 
 Claude runs the app once a day and checks it against his father's logged-in GeM account in Chrome (read-only).
 The owner chose this instead of a pilot run by his father (23 Oct 2026). Daily prompt: `docs/pilot-daily-prompt.md`.

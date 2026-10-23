@@ -35,10 +35,10 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 ## Continue from here (written 23 Oct 2026, after pilot day 1)
 
 State: `cd backend && uv run pytest -q` → **704 passed** (23 Oct 2026). Phases 0–7 done. D6 = **no** (stay on the Mac app; 8.1 skipped).
-**Now running: step 8.2, the two-week pilot (23 Oct – 5 Nov 2026).** The owner asked Claude to do the pilot itself:
+**Now running: step 8.2, the pilot (23 – 26 Oct 2026, shortened by the owner).** The owner asked Claude to do the pilot itself:
 once a day, paste the prompt in `docs/pilot-daily-prompt.md` (the automatic scheduled task was refused by the
 permission check; the owner can allow `mcp__scheduled-tasks__create_scheduled_task` or paste it daily). Day 1 is in
-`docs/pilot-log.md`. On 5 Nov write the final report there, then the done-log row, then the .env reminder.
+`docs/pilot-log.md`. On 26 Oct write the final report there, then the done-log row, then the .env reminder.
 
 Pilot day 1 facts: GeM in Chrome is his father's account; it logs out often ("multiple login"); open bidplus only
 through Bids → List of Bids. Profile keywords are now the 5 invite categories (toner cartridge, ink cartridge,

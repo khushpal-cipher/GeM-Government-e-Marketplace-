@@ -1,13 +1,13 @@
-# Pilot daily check: prompt to paste (step 8.2, 23 Oct – 5 Nov 2026)
+# Pilot daily check: prompt to paste (step 8.2, 23 Oct – 26 Oct 2026)
 
-Paste the box below into Claude Code once a day (or save it as a scheduled task, daily at 10:30).
-The automatic scheduled task could not be created on 23 Oct 2026 (the permission check refused it).
+Runs as the scheduled task "gem-pilot-daily-check", daily at 10:30 (or paste the box below by hand).
+Shortened to 4 days (23–26 Oct) by the owner on 23 Oct 2026.
 
 ```
-You are running one day of the two-week pilot (build step 8.2) of GeM Assistant, a local app in
+You are running one day of the short pilot (build step 8.2, 23-26 Oct 2026) of GeM Assistant, a local app in
 /Users/khushpalsinghchouhan/Documents/startup/GEM/GeM (branch docs/hinglish-testing-guide). Explain things in simple words.
 
-STOP CONDITION: if today's date is after 5 Nov 2026, only say "The pilot ended on 5 Nov 2026." and stop.
+STOP CONDITION: if today's date is after 26 Oct 2026, only say "The pilot ended on 26 Oct 2026." and stop.
 
 RULES (from the owner, never break them):
 - Read progress.md "Rules" first and obey them.
@@ -42,7 +42,7 @@ STEPS:
 9. A clear, small bug: fix it with a test, run `cd backend && uv run pytest -q` (all must pass), commit locally.
    Bigger problems: only write them under "To build next".
 10. Commit docs/pilot-log.md locally ("docs: pilot day N").
-11. On the LAST day (5 Nov 2026) also write "Final report" in docs/pilot-log.md (bids missed, wrong fields, fixes made,
+11. On the LAST day (26 Oct 2026) also write "Final report" in docs/pilot-log.md (bids missed, wrong fields, fixes made,
     what to build next or whether to continue), add a row for 8.2 to docs/done-log.md, update progress.md
     "Continue from here", commit locally, then remind the owner to fill the data-folder .env (GEM_SMTP_USER,
     GEM_SMTP_APP_PASSWORD = Gmail app password, optional GEM_SCHEDULE_TIMES="09:00,15:00", GEM_NOTIFY_TO) and to
