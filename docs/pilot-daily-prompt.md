@@ -1,6 +1,6 @@
 # Pilot daily check: prompt to paste (step 8.2, 23 Oct – 26 Oct 2026)
 
-Runs as the scheduled task "gem-pilot-daily-check", daily at 10:30 (or paste the box below by hand).
+Runs as scheduled tasks: "gem-pilot-daily-check" on 24 and 25 Oct at 10:30, "gem-pilot-last-day" on 26 Oct at 2 PM (or paste the box below by hand).
 Shortened to 4 days (23–26 Oct) by the owner on 23 Oct 2026.
 
 ```
