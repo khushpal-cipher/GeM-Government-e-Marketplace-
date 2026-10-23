@@ -5,6 +5,8 @@ Details live in `docs/HANDOFF.md`; this file only says what is done, what is nex
 
 ## Rules (from the owner)
 
+- **Commit messages: no "Co-Authored-By: Claude" line** or any AI credit (owner, 23 Oct 2026): the commits must
+  show as his own work.
 - Commit only on this computer. **Never push to `origin` (Qwerty-2308/GeM) or open a PR there**: a friend is changing
   that repo. Since 23 Oct 2026 the owner has his own fork `github.com/khushpal-cipher/GeM`; pushing his branch there
   is allowed when he asks (the automatic permission check refused it once, so he may push it himself).
