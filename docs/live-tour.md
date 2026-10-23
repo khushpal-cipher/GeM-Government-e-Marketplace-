@@ -40,3 +40,22 @@ uploaded, downloaded or typed. No names, phone numbers, PAN or bank data are cop
    to show them himself if needed.
 5. **8.1 tracker stages and dates** are now fixed from the screens: Contract Placed → Dispatched
    (invoice before expected delivery date) → Received (CRAC date) → Payment (CRAC + 10 days).
+
+## Pilot day 1 (23 Oct 2026, step 8.2), read-only
+
+Seen in his logged-in Chrome (father's seller account). Nothing clicked except menus, tabs, filters and the × on
+two pop-ups (a "TAN not updated, update now?" box and the GeM Sahay loan box). No names, phones, PAN or bank data
+copied.
+
+| Screen | What was seen | What it means for the app |
+|---|---|---|
+| Login | Opening `fulfilment.gem.gov.in/fulfilment/home` first gave the login page: "session has expired or terminated due to multiple login". He logged in again himself | One login at a time: if he logs in on his phone, Chrome is logged out. The daily check must stop, not log in |
+| Direct link | Typing `bidplus.gem.gov.in/seller-bids` gives the login page; the same page opens fine from the **Bids → List of Bids** menu | Open bidplus pages through the menu |
+| Dashboard → Notifications → Latest Bids | 10 lines "You are invited to participate in bid (GEM/2026/B/…)" | Ground truth for "bids it missed": GeM picked these for his categories |
+| Dashboard → Bid/RA | Participated 50 (₹51.71 Cr), won 13 (₹24.59 L), lost 37; last 10 lost: half financial, half technical; "lost category wise": no data | Same shape as the 20 Oct tour |
+| Dashboard → Category Insights | "No Data" | Categories must come from the invites, not the dashboard |
+| Orders | 133 orders, latest all "Completed", mostly navy / military buyers in Mumbai and Karwar; no item names on the list | Cities he already delivers to: Mumbai, Karwar |
+| List of Bids → Already Submitted/Participated | 118 records; items include lighting tower, split AC, installation and civil repair work; none of the first 5 shows "Pending Clarifications" | He bids far wider than 5 keywords; the 5-keyword cap is too small for him |
+
+The 5 invited bids the app read: categories chosen for notification were Video Conferencing End Point,
+Modular Table (V2), Toner / Ink Cartridges, Plain Copier Paper. These became his profile keywords for the pilot.

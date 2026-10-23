@@ -32,12 +32,20 @@ Default: **Sonnet · Medium**. Before starting each step, Claude tells the owner
 | 2.7, 4.3, 5.3 | Haiku · Low (or just stay on Sonnet) |
 | everything else | Sonnet · Medium |
 
-## Continue from here (written 23 Oct 2026)
+## Continue from here (written 23 Oct 2026, after pilot day 1)
 
-State: `cd backend && uv run pytest -q` → **702 passed** (23 Oct 2026, after 7.5). Phases 0, 1, 3, 4 (4.6 dropped), 5 and steps 2.1-2.7 are
-done: about 35 of 45 plan steps. Left: Phase 6 done;, Phase 7, Phase 8, plus 2.8/2.x leftovers listed below. D1 (Groq key) and D2 (contact email) are set; D4 = yes; D9 default: Phase 3 checks never block. Build only in Claude Code.
+State: `cd backend && uv run pytest -q` → **704 passed** (23 Oct 2026). Phases 0–7 done. D6 = **no** (stay on the Mac app; 8.1 skipped).
+**Now running: step 8.2, the two-week pilot (23 Oct – 5 Nov 2026).** The owner asked Claude to do the pilot itself:
+once a day, paste the prompt in `docs/pilot-daily-prompt.md` (the automatic scheduled task was refused by the
+permission check; the owner can allow `mcp__scheduled-tasks__create_scheduled_task` or paste it daily). Day 1 is in
+`docs/pilot-log.md`. On 5 Nov write the final report there, then the done-log row, then the .env reminder.
 
-**Next exact action:** Phase 8: step 8.1 is only if D6 = yes (website online; default is no, so skip); next real step is 8.2 (**Opus · High**, tell him to switch). Read Phase 8 in `docs/build-plan.md` first. Phase 7 done. Left from 7.5: photos counted not viewed; proof is pasted text, word match only; no screen/chat card. 7.3 done. Left from 7.3: item names only (BOQ CSV `BoqLineItemsDocument` not fetched: needs CSV support in the fetcher + a real sample); no screen/chat card/file. 7.2 done. Left from 7.2: spec-table lines only (no free-text ATC/BOQ lines); unfilled specs show "fill in"; no screen/chat card or file. Left from 7.1: forbidden-term flags only (no PAC / experience / turnover representations); no screen/chat card; GeM's Representation form length limit unknown. Left from 6.3: no screen/chat card; the public Other Sellers page has no locations (recon §8a); no category scan. Left from 6.2: no screen/chat card; per-piece wrong for multi-item bids; nothing fills the saved results yet (6.1 has no finder of finished bids). Left from 6.1: no finder of finished bids, no screen/chat card, `getReason` not built, not run on live GeM through the app, fixture rebuilt from seen text. Left from 5.3: not opened in real Excel; no filters.
+Pilot day 1 facts: GeM in Chrome is his father's account; it logs out often ("multiple login"); open bidplus only
+through Bids → List of Bids. Profile keywords are now the 5 invite categories (toner cartridge, ink cartridge,
+copier paper, modular table, video conferencing). Main finding: the keyword search finds only 2 of 10 invited bids;
+invites are the better bid finder (see "To build next" in the pilot log).
+
+Older leftovers (still true): Left from 7.5: photos counted not viewed; proof is pasted text, word match only; no screen/chat card. 7.3 done. Left from 7.3: item names only (BOQ CSV `BoqLineItemsDocument` not fetched: needs CSV support in the fetcher + a real sample); no screen/chat card/file. 7.2 done. Left from 7.2: spec-table lines only (no free-text ATC/BOQ lines); unfilled specs show "fill in"; no screen/chat card or file. Left from 7.1: forbidden-term flags only (no PAC / experience / turnover representations); no screen/chat card; GeM's Representation form length limit unknown. Left from 6.3: no screen/chat card; the public Other Sellers page has no locations (recon §8a); no category scan. Left from 6.2: no screen/chat card; per-piece wrong for multi-item bids; nothing fills the saved results yet (6.1 has no finder of finished bids). Left from 6.1: no finder of finished bids, no screen/chat card, `getReason` not built, not run on live GeM through the app, fixture rebuilt from seen text. Left from 5.3: not opened in real Excel; no filters.
 Left from 4.7 (cities): only read bids are judged by city; Discover list is all-India; city spellings must be listed by him; search by city/state (4.2 Advance Search) not connected yet.
 Left from 4.3: only the latest run counts as "new"; no New mark on the analysed-bids list.
 Left from 4.2 rest: `advance_search` / `advance_lists` exist on `PlaywrightListingSource` but are not on any API route, screen or discovery run, and were never run on live GeM (first live run must save a real `/search-bids` answer as a fixture and check the real page works with our script stubs).
