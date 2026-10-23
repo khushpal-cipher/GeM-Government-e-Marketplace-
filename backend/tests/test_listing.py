@@ -173,7 +173,7 @@ def test_one_bids_corrigendum_trouble_stays_with_that_bid(container, tmp_path):
 
 @browser_test
 def test_browser_search_reads_results_from_the_page_request(source, fake_gem, container, tmp_path):
-    (result,) = source.search(["pump"], max_pages=2)
+    (result,) = list(source.search(["pump"], max_pages=2))
     assert result.total_found == 23
     assert len(result.bids) == 20  # capped at 2 pages
     assert result.bids[0].bid_number == "GEM/2026/B/7000001"
@@ -189,9 +189,20 @@ def test_browser_search_reads_results_from_the_page_request(source, fake_gem, co
 
 @browser_test
 def test_browser_respects_rate_limit(source, clock, settings):
-    source.search(["pump", "valve"], max_pages=1)
+    list(source.search(["pump", "valve"], max_pages=1))
     # 3 requests (page + 2 searches): two waits of the minimum interval
     assert clock.slept.count(settings.safety.min_interval_seconds) == 2
+
+
+@browser_test
+def test_server_error_on_a_later_keyword_keeps_the_earlier_results(source, fake_gem):
+    # Pilot 23 Oct 2026: a GeM 500 on keyword 4 of 5 threw away the 3 good searches.
+    from gem_assistant.safety.errors import UnexpectedResponse
+    fake_gem.search_errors = {"valve"}
+    results = source.search(["pump", "valve"], max_pages=1)
+    assert next(results).keyword == "pump"
+    with pytest.raises(UnexpectedResponse):
+        next(results)
 
 
 @browser_test
@@ -199,10 +210,10 @@ def test_block_page_trips_breaker_and_stops_browser(source, fake_gem, container)
     from gem_assistant.domain.ports import HttpResponse
     fake_gem.override = lambda route: HttpResponse(url="", status=403, headers={}, body=b"")
     with pytest.raises(BlockedByGeM):
-        source.search(["pump"], max_pages=1)
+        list(source.search(["pump"], max_pages=1))
     assert len(fake_gem.requests) == 1
     with pytest.raises(FetchingStopped):
-        source.search(["pump"], max_pages=1)
+        list(source.search(["pump"], max_pages=1))
     assert len(fake_gem.requests) == 1  # nothing left the machine
 
 
@@ -218,7 +229,7 @@ def test_challenge_instead_of_json_trips_breaker(source, fake_gem, container):
 
     fake_gem.override = challenge_on_search
     with pytest.raises(BlockedByGeM):
-        source.search(["pump"], max_pages=1)
+        list(source.search(["pump"], max_pages=1))
     assert container.safety.status().breaker.open
 
 
@@ -228,7 +239,7 @@ def test_changed_page_is_detected(container, tmp_path):
     src = PlaywrightListingSource(fetcher=container.fetcher, network=gem,
                                   executable_path=_chromium(), timeout_seconds=10)
     with pytest.raises(ListingFormatChanged):
-        src.search(["pump"], max_pages=1)
+        list(src.search(["pump"], max_pages=1))
 
 
 @browser_test

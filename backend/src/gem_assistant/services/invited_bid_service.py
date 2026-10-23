@@ -58,9 +58,15 @@ class InvitedBidService:
                 for n in unknown:
                     results[n] = {"status": "FAILED", "message": run.message}
                 return [{"bid_number": n, **results[n]} for n in numbers]
+            # The run searches at most max_keywords numbers; the rest were never asked, so not "not found".
+            searched = {k.upper() for k in run.keywords}
+            for n in unknown:
+                if n not in searched:
+                    results[n] = {"status": "NOT_STARTED", "message": f"Only {len(searched)} bids are looked up "
+                                  "per search. Ask again in 15 minutes for this one."}
 
         for n in numbers:
-            if results[n]["status"] == "ANALYSED":
+            if results[n]["status"] in ("ANALYSED", "NOT_STARTED"):
                 continue
             entry = self._listings.find_by_bid_number(n)  # exact number only, never a loose match
             if entry is None:

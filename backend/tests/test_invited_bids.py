@@ -100,6 +100,17 @@ def test_a_lookup_downloads_only_the_exact_bid_number(app, source, transport):
     assert len(source.calls) == 1
 
 
+def test_numbers_past_the_search_cap_are_not_called_missing(app, source, transport):
+    # Pilot 23 Oct 2026: 10 invites, search capped at 5 keywords, bids 6-10 were wrongly NOT_FOUND.
+    _queue_pdf(transport)
+    numbers = ["GEM/2025/B/6819518"] + [f"GEM/2026/B/810000{i}" for i in range(5)]
+    results = app.invited_bids.import_bids(numbers)
+    assert len(source.calls[0][0]) == 5
+    assert results[0]["status"] == "ANALYSED"
+    assert [r["status"] for r in results[1:5]] == ["NOT_FOUND"] * 4
+    assert results[5]["status"] == "NOT_STARTED" and "15 minutes" in results[5]["message"]
+
+
 def test_without_a_contact_email_nothing_is_fetched(app, source, settings):
     from dataclasses import replace
     from gem_assistant.config import PLACEHOLDER_CONTACT

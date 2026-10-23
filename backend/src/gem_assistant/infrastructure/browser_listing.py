@@ -173,9 +173,11 @@ class PlaywrightListingSource:
 
     # ---- public ----
 
-    def search(self, keywords: Sequence[str], max_pages: int) -> list[ListingSearchResult]:
+    def search(self, keywords: Sequence[str], max_pages: int) -> Iterator[ListingSearchResult]:
+        """One keyword at a time, so a GeM error on a later keyword keeps the ones before it."""
         with self._listing_page() as (page, session):
-            return [self._search_keyword(page, session, k, max_pages) for k in keywords]
+            for k in keywords:
+                yield self._search_keyword(page, session, k, max_pages)
 
     def corrigenda(self, doc_ids: Sequence[str]) -> dict[str, Corrigendum]:
         """One request per bid, through the page's own corrigendum handler so the CSRF

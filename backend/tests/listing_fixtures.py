@@ -53,6 +53,7 @@ class FakeGeM:
         self.corrigendum_bodies = corrigendum_bodies or {}
         # doc_ids whose request blows up, to check one bid's trouble stays with that bid.
         self.corrigendum_errors: set[str] = set()
+        self.search_errors: set[str] = set()  # keywords GeM answers with HTTP 500
         self.requests: list[tuple[str, str, dict | None]] = []
         self.override = None  # callable(route) -> HttpResponse, to simulate blocks
 
@@ -83,6 +84,8 @@ class FakeGeM:
                                 body=self.corrigendum_bodies.get(doc_id, b"0"))
 
         keyword = payload["param"]["searchBid"]
+        if keyword in self.search_errors:
+            return HttpResponse(url=request.url, status=500, headers={}, body=b"")
         page = int(payload.get("page") or 1)
         docs = self.catalogue.get(keyword, [])
         start = (page - 1) * 10

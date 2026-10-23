@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Protocol, Sequence
+from typing import Iterable, Protocol, Sequence
 
 from .models import (
     BidAnalysis,
@@ -136,7 +136,7 @@ class ListingSource(Protocol):
     """Finds bids on the public listing. Implementations must send every request
     to GeM through SafeFetcher."""
 
-    def search(self, keywords: Sequence[str], max_pages: int) -> list[ListingSearchResult]: ...
+    def search(self, keywords: Sequence[str], max_pages: int) -> Iterable[ListingSearchResult]: ...
 
 
 class CorrigendumSource(Protocol):

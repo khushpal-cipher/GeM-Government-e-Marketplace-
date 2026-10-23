@@ -30,7 +30,7 @@ RULES = (
     "One request at a time, at least {interval:g}s apart, at most {limit} per day.",
     "Identifies itself honestly in the User-Agent. No proxies, IP rotation or browser disguise.",
     "Nothing is sent to GeM until you give a contact email on this page.",
-    "Any 401/403/429, server error, redirect, CAPTCHA or block page stops all fetching until you reset it.",
+    "Any 401/403/429, redirect, CAPTCHA or block page stops all fetching until you reset it. A GeM server error (5xx) only ends that search.",
     "Failed requests are never retried automatically.",
 )
 
