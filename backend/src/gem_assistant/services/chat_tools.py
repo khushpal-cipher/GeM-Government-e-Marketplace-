@@ -24,6 +24,7 @@ from ..domain.cities import delivers_to_cities
 from ..domain.listing_check import check_listing
 from ..domain.models import FieldStatus, SellerProfile, Verdict
 from ..domain.profile_warnings import profile_warnings
+from ..domain.wording import IST
 from ..infrastructure.pypdf_extractor import InvalidPdf
 from ..safety.errors import SafetyError, UrlNotAllowed
 from .bid_fetch_service import BadBidLink
@@ -188,15 +189,15 @@ class ChatTools:
         if status.running:  # the last search's results would read as this one's; the page follows it
             return ToolResult({"running": True, "note": "Still searching GeM; the page shows the results when done."})
         last = status.last_run
-        mine = [{"bid_number": e.bid_number, "items": (e.category or "")[:200],
+        mine = [{"bid_number": e.bid_number, "kind": e.kind.value, "items": (e.category or "")[:200],
                  "your_items": f"{e.matched_items} of {e.total_items}",
-                 "closes_at": e.ends_at.isoformat() if e.ends_at else None,
+                 "closes_at": e.ends_at.astimezone(IST).isoformat() if e.ends_at else None,  # GeM lists UTC
                  "checked": e.doc_status.value, "note": e.doc_note, "bid_id": e.bid_id,
                  "new_in_last_search": e.is_new}
                 for e in status.listings if e.matched_items][:20]
         return ToolResult({"running": status.running, "searches_for": status.keywords,
                            "last_search": {"outcome": last.outcome, "message": last.message,
-                                           "started_at": last.started_at.isoformat()} if last else None,
+                                           "started_at": last.started_at.astimezone(IST).isoformat()} if last else None,
                            "his_products_found": mine},
                           {"type": "listings", "listings": mine} if mine else None)
 

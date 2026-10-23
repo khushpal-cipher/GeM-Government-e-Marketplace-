@@ -198,6 +198,25 @@ def test_search_status_lists_what_the_last_search_found(container):
     assert (result.data["running"], result.data["his_products_found"]) == (False, [])
 
 
+def test_search_status_gives_closing_times_in_india_time(container, monkeypatch):
+    """GeM's list gives UTC; the chat read 04:30Z as "04:30 AM" for a bid closing at 10:00 IST (pilot, 23 Oct 2026)."""
+    from datetime import datetime, timezone
+    from types import SimpleNamespace
+    from gem_assistant.domain.models import BidKind, DocStatus, ListingEntry
+    from gem_assistant.services.chat_tools import ChatTools
+
+    now = datetime(2026, 10, 23, tzinfo=timezone.utc)
+    entry = ListingEntry(doc_id="1", bid_number="GEM/2026/B/8191125", kind=BidKind.BID, doc_path="p",
+                         ends_at=datetime(2026, 10, 28, 4, 30, tzinfo=timezone.utc), keyword="k",
+                         first_seen_at=now, last_seen_at=now, doc_status=DocStatus.PENDING,
+                         matched_items=1, total_items=1)
+    monkeypatch.setattr(container.discovery, "status", lambda: SimpleNamespace(
+        running=False, keywords=["k"], last_run=None, listings=[entry]))
+    (found,) = ChatTools(container).call("search_status", {}).data["his_products_found"]
+    assert found["closes_at"] == "2026-10-28T10:00:00+05:30"
+    assert found["kind"] == "BID"  # the chat called every bid a reverse auction
+
+
 def test_while_a_search_runs_its_status_gives_nothing_older_to_misreport(container):
     """Asked straight after starting a search, the last search's results would read as this one's."""
     from gem_assistant.services.chat_tools import ChatTools
