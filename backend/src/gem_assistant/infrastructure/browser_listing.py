@@ -312,8 +312,11 @@ class PlaywrightListingSource:
         # Same path as typing in the box and pressing search, including the page's
         # own keyword validation. Done through the page's jQuery handler because
         # the box isn't laid out (we never load GeM's CSS).
+        # The page's own "Bid Start Date: Latest First" choice. Its default (end date, oldest first) filled
+        # every page with bids closing that day, so new bids were never seen (pilot, 23 Oct 2026).
         page.evaluate(
-            "kw => { document.getElementById('searchBid').value = kw; jQuery('#searchBidRA').trigger('click'); }",
+            "kw => { window.filter['sort'] = 'Bid-Start-Date-Latest';"
+            " document.getElementById('searchBid').value = kw; jQuery('#searchBidRA').trigger('click'); }",
             keyword,
         )
         error_text = page.evaluate("() => (document.getElementById('searchError') || {}).textContent || ''")

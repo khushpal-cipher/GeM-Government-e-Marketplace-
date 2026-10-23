@@ -184,6 +184,8 @@ def test_browser_search_reads_results_from_the_page_request(source, fake_gem, co
     # The page's automatic "show everything" search on load was aborted locally.
     assert methods == [("GET", "/all-bids"), ("POST", "/all-bids-data"), ("POST", "/all-bids-data")]
     assert [p["param"]["searchBid"] for _, _, p in fake_gem.requests[1:]] == ["pump", "pump"]
+    # newest bids first, not the ones closing today
+    assert [p["filter"]["sort"] for _, _, p in fake_gem.requests[1:]] == ["Bid-Start-Date-Latest"] * 2
     assert container.safety.status().used_today == 3
 
 
