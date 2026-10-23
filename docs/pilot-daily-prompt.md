@@ -38,6 +38,17 @@ STEPS:
 7. Compare: an invited bid that the keyword search (listings whose keyword is a profile category) did NOT find
    = "missed by the daily search". For each bid analysed today, check bid end date, EMD amount and total quantity
    against GeM's own bid card; note any mismatch, anything broken, wrong or confusing.
+7b. CHAT TEST (in Hinglish, like his father would type). Ask the app's chat with POST /api/chat
+   {"messages":[{"role":"user","content":"..."}]} one question per feature below, and check each answer against the
+   app's own data (GET /api/bids/<id>, /api/discovery, /api/profile) and GeM. Mark each PASS / WRONG / BROKEN with one line why.
+   24 Oct: features 1-5. 25 Oct: features 6-10. 26 Oct: features 11-14 and re-ask any that were WRONG or BROKEN.
+   1 search_gem ("naye bids dhoondo"), 2 search_status ("kya mila?"), 3 list_bids, 4 get_bid (a bid analysed today:
+   "GEM/2026/B/... ka EMD aur last date batao"), 5 bid_checklist ("is bid ke liye kaunse documents chahiye?"),
+   6 add_bid_from_link (a bid link from GeM's public list), 7 past_prices, 8 direct_order_check,
+   9 draft_representation, 10 compliance_sheet, 11 make_model_hsn, 12 listing_precheck,
+   13 safety_status ("fetching chal raha hai?"), 14 propose_profile_update ("meri city Mumbai add karo": it must only
+   SHOW a Confirm card, never save). A Confirm card is never pressed. Also check: replies are in Hinglish, dates and
+   times are India time, nothing is invented (bid numbers and amounts must exist in the app's data).
 8. Append today's section to docs/pilot-log.md in the same format as earlier days. Facts only, with the date.
 9. A clear, small bug: fix it with a test, run `cd backend && uv run pytest -q` (all must pass), commit locally.
    Bigger problems: only write them under "To build next".
